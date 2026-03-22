@@ -138,7 +138,7 @@ const EventDayAdmin = () => {
     };
 
     const tableGrid = useMemo(() => {
-        const grid = Array.from({ length: 100 }, (_, i) => i + 1);
+        const grid = Array.from({ length: 112 }, (_, i) => i + 1);
         return grid.map(num => {
             const occupant = registrations.find(r => r.tableNo === num);
             return { number: num, occupant };
@@ -549,7 +549,7 @@ const EventDayAdmin = () => {
                                             {isFullyVerified ? (
                                                 <span className="allotment-alert">SELECT DEPLOYMENT STATION FOR: {editingDetails.teamName}</span>
                                             ) : 'SEATING GRID'}
-                                            {!isFullyVerified && <span className="count-label"> 1-100</span>}
+                                            {!isFullyVerified && <span className="count-label"> 1-112</span>}
                                         </h3>
                                     </div>
                                     <div className="legend-pills">
@@ -558,40 +558,156 @@ const EventDayAdmin = () => {
                                         <span className="pill occupied">ENGAGED</span>
                                     </div>
                                 </div>
-                                <div className={`tables-grid tactical-grid ${isFullyVerified ? 'allotment-mode' : ''}`}>
-                                    {tableGrid.map(t => (
-                                        <div
-                                            key={t.number}
-                                            className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
-                                            onClick={() => {
-                                                if (isFullyVerified) {
-                                                    const updatePayload = {
-                                                        ...editingDetails,
-                                                        tableNo: t.number,
-                                                        groupNo: t.number
-                                                    };
-                                                    handleUpdateEntry(editingDetails._id, updatePayload).then(ok => {
-                                                        if (ok) {
-                                                            setDeploymentSuccess(updatePayload);
-                                                            setEditingEntry(null);
-                                                        }
-                                                    });
-                                                } else {
-                                                    handleTableClick(t);
-                                                }
-                                            }}
-                                        >
-                                            <div className="cell-corner top-left"></div>
-                                            <div className="cell-corner bottom-right"></div>
-                                            <span className="cell-num">{t.number.toString().padStart(2, '0')}</span>
-                                            {t.occupant && (
-                                                <div className="cell-occupant">
-                                                    <span className="occ-name">{t.occupant.teamName}</span>
-                                                    <div className="occ-scanner"></div>
-                                                </div>
-                                            )}
+                                <div className={`tactical-grid-wrapper ${isFullyVerified ? 'allotment-mode' : ''}`}>
+                                    <div className="tactical-grid-side left">
+                                        {tableGrid.slice(60, 88).map(t => (
+                                            <div
+                                                key={t.number}
+                                                className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                onClick={() => {
+                                                    if (isFullyVerified) {
+                                                        const updatePayload = {
+                                                            ...editingDetails,
+                                                            tableNo: t.number,
+                                                            groupNo: t.number
+                                                        };
+                                                        handleUpdateEntry(editingDetails._id, updatePayload).then(ok => {
+                                                            if (ok) {
+                                                                setDeploymentSuccess(updatePayload);
+                                                                setEditingEntry(null);
+                                                            }
+                                                        });
+                                                    } else {
+                                                        handleTableClick(t);
+                                                    }
+                                                }}
+                                            >
+                                                <div className="cell-corner top-left"></div>
+                                                <div className="cell-corner bottom-right"></div>
+                                                <span className="cell-num">{t.number.toString().padStart(2, '0')}</span>
+                                                {t.occupant && (
+                                                    <div className="cell-occupant">
+                                                        <span className="occ-name">{t.occupant.teamName}</span>
+                                                        <div className="occ-scanner"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <div className="tactical-horizontal-road">
+                                            <div className="road-line"></div>
+                                            <span>SECTOR PATH B</span>
+                                            <div className="road-line"></div>
                                         </div>
-                                    ))}
+                                        {tableGrid.slice(88, 112).map(t => (
+                                            <div
+                                                key={t.number}
+                                                className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                onClick={() => {
+                                                    if (isFullyVerified) {
+                                                        const updatePayload = {
+                                                            ...editingDetails,
+                                                            tableNo: t.number,
+                                                            groupNo: t.number
+                                                        };
+                                                        handleUpdateEntry(editingDetails._id, updatePayload).then(ok => {
+                                                            if (ok) {
+                                                                setDeploymentSuccess(updatePayload);
+                                                                setEditingEntry(null);
+                                                            }
+                                                        });
+                                                    } else {
+                                                        handleTableClick(t);
+                                                    }
+                                                }}
+                                            >
+                                                <div className="cell-corner top-left"></div>
+                                                <div className="cell-corner bottom-right"></div>
+                                                <span className="cell-num">{t.number.toString().padStart(2, '0')}</span>
+                                                {t.occupant && (
+                                                    <div className="cell-occupant">
+                                                        <span className="occ-name">{t.occupant.teamName}</span>
+                                                        <div className="occ-scanner"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="tactical-road"></div>
+
+                                    <div className="tactical-grid-side right">
+                                        {tableGrid.slice(0, 28).map(t => (
+                                            <div
+                                                key={t.number}
+                                                className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                onClick={() => {
+                                                    if (isFullyVerified) {
+                                                        const updatePayload = {
+                                                            ...editingDetails,
+                                                            tableNo: t.number,
+                                                            groupNo: t.number
+                                                        };
+                                                        handleUpdateEntry(editingDetails._id, updatePayload).then(ok => {
+                                                            if (ok) {
+                                                                setDeploymentSuccess(updatePayload);
+                                                                setEditingEntry(null);
+                                                            }
+                                                        });
+                                                    } else {
+                                                        handleTableClick(t);
+                                                    }
+                                                }}
+                                            >
+                                                <div className="cell-corner top-left"></div>
+                                                <div className="cell-corner bottom-right"></div>
+                                                <span className="cell-num">{t.number.toString().padStart(2, '0')}</span>
+                                                {t.occupant && (
+                                                    <div className="cell-occupant">
+                                                        <span className="occ-name">{t.occupant.teamName}</span>
+                                                        <div className="occ-scanner"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <div className="tactical-horizontal-road">
+                                            <div className="road-line"></div>
+                                            <span>SECTOR PATH A</span>
+                                            <div className="road-line"></div>
+                                        </div>
+                                        {tableGrid.slice(28, 60).map(t => (
+                                            <div
+                                                key={t.number}
+                                                className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                onClick={() => {
+                                                    if (isFullyVerified) {
+                                                        const updatePayload = {
+                                                            ...editingDetails,
+                                                            tableNo: t.number,
+                                                            groupNo: t.number
+                                                        };
+                                                        handleUpdateEntry(editingDetails._id, updatePayload).then(ok => {
+                                                            if (ok) {
+                                                                setDeploymentSuccess(updatePayload);
+                                                                setEditingEntry(null);
+                                                            }
+                                                        });
+                                                    } else {
+                                                        handleTableClick(t);
+                                                    }
+                                                }}
+                                            >
+                                                <div className="cell-corner top-left"></div>
+                                                <div className="cell-corner bottom-right"></div>
+                                                <span className="cell-num">{t.number.toString().padStart(2, '0')}</span>
+                                                {t.occupant && (
+                                                    <div className="cell-occupant">
+                                                        <span className="occ-name">{t.occupant.teamName}</span>
+                                                        <div className="occ-scanner"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -771,15 +887,74 @@ const EventDayAdmin = () => {
                 .pill.available { color: var(--neon-blue); border-color: rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.1); }
                 .pill.occupied { color: var(--neon-green); border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
 
-                .tactical-grid {
+                .tactical-grid-wrapper {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 10px;
+                    padding: 5px;
+                    height: auto;
+                    align-items: flex-start;
+                }
+
+                .tactical-grid-side {
                     display: grid;
-                    grid-template-columns: repeat(10, 1fr);
-                    gap: 8px;
-                    padding: 10px;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 5px;
+                    flex: 1;
+                    direction: rtl; /* Start numbering from right side (top-right) */
+                }
+
+                .tactical-road {
+                    width: 40px;
+                    background: rgba(255,255,255,0.02);
+                    border-left: 1px dashed rgba(255,255,255,0.1);
+                    border-right: 1px dashed rgba(255,255,255,0.1);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    align-self: stretch;
+                    position: relative;
+                }
+
+                .tactical-horizontal-road {
+                    grid-column: 1 / -1;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 15px;
+                    margin: 5px 0;
+                    opacity: 0.4;
+                    direction: ltr; /* Ensure text isn't mirrored by parent RTL */
+                }
+
+                .tactical-horizontal-road span {
+                    font-size: 0.5rem;
+                    color: white;
+                    letter-spacing: 3px;
+                    font-weight: 900;
+                    white-space: nowrap;
+                    font-family: 'Orbitron', sans-serif;
+                }
+
+                .road-line {
+                    flex: 1;
+                    height: 1px;
+                    background: repeating-linear-gradient(to right, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 5px, transparent 5px, transparent 10px);
+                }
+
+                .tactical-road::after {
+                    content: 'ACCESS ROAD';
+                    writing-mode: vertical-rl;
+                    font-size: 0.5rem;
+                    color: rgba(255,255,255,0.1);
+                    letter-spacing: 5px;
+                    text-transform: uppercase;
                 }
 
                 .tactical-cell {
                     aspect-ratio: 1;
+                    direction: ltr;
                     background: rgba(30, 41, 59, 0.3);
                     border: 1px solid rgba(255,255,255,0.05);
                     border-radius: 6px;
@@ -810,7 +985,7 @@ const EventDayAdmin = () => {
                 .top-left { top: 2px; left: 2px; border-right: 0; border-bottom: 0; }
                 .bottom-right { bottom: 2px; right: 2px; border-left: 0; border-top: 0; }
 
-                .cell-num { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: #475569; }
+                .cell-num { font-family: 'Orbitron', monospace; font-size: 0.85rem; font-weight: 700; color: #475569; }
                 
                 .cell-occupant { 
                     position: absolute; bottom: 0; left: 0; right: 0; 
@@ -930,15 +1105,28 @@ const EventDayAdmin = () => {
                 .form-item.span-2 { grid-column: span 2; }
                 .form-item label { font-size: 0.65rem; font-weight: 900; color: #94a3b8; letter-spacing: 1px; }
                 .form-item input, .tactical-select {
-                    background: rgba(255,255,255,0.03);
-                    border: 1px solid rgba(255,255,255,0.1);
+                    background: #111827;
+                    border: 1px solid rgba(255,255,255,0.15);
                     padding: 12px;
                     border-radius: 8px;
                     color: white;
                     font-size: 0.9rem;
-                    transition: border 0.3s;
+                    transition: all 0.3s;
+                    cursor: pointer;
                 }
-                .form-item input:focus { outline: none; border-color: var(--neon-blue); background: rgba(255,255,255,0.05); }
+
+                .tactical-select option {
+                    background-color: #111827;
+                    color: white;
+                    padding: 10px;
+                }
+
+                .form-item input:focus, .tactical-select:focus { 
+                    outline: none; 
+                    border-color: var(--neon-blue); 
+                    background: #1e293b;
+                    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+                }
 
                 .form-divider {
                     grid-column: span 2;

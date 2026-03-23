@@ -222,6 +222,17 @@ const teamMembers = [
         image: omDeshmukhImg,
     },
     {
+        id: 22,
+        name: "Shripad Ingle",
+        role: "Core Team Member",
+        subRole: "Final Year Advisor",
+        phone: "+91 98765 43210",
+        email: "shripad@example.com",
+        instagram: "#",
+        linkedin: "#",
+        image: shripadImg,
+    },
+    {
         id: 1,
         name: "Rutuja Deshmukh",
         role: "Core Team Member",

@@ -474,8 +474,8 @@ const EventDayAdmin = () => {
                                                 <label>OPERATIVE {idx + 2}</label>
                                                 <div className="section-actions">
                                                     {editingDetails.members.length > 0 && (
-                                                        <button type="button" 
-                                                            className="tactical-btn danger sm" 
+                                                        <button type="button"
+                                                            className="tactical-btn danger sm"
                                                             style={{ marginRight: '10px', padding: '4px 8px' }}
                                                             onClick={() => handleRemoveMember(idx)}
                                                         >
@@ -510,9 +510,9 @@ const EventDayAdmin = () => {
                                     ))}
 
                                     <div className="form-item span-2 add-member-container" style={{ textAlign: 'center', marginBottom: '10px' }}>
-                                        <button 
-                                            type="button" 
-                                            className="tactical-btn secondary sm" 
+                                        <button
+                                            type="button"
+                                            className="tactical-btn secondary sm"
                                             onClick={handleAddMember}
                                             style={{ width: '100%', padding: '12px', borderStyle: 'dashed', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.05)' }}
                                         >

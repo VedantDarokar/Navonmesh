@@ -92,16 +92,14 @@ const Conference = () => {
                     </div>
 
                     <div className="header-actions">
-                        <Link to="/register?event=udbhav" className="register-rocket-btn animate-float">
-                            <span className="reg-text">REGISTER FOR UDBHAV</span>
+                        <div className="register-rocket-btn registrations-closed-btn" style={{ cursor: 'not-allowed', opacity: 0.8, filter: 'grayscale(1)' }}>
+                            <span className="reg-text">REGISTRATIONS CLOSED</span>
                             <div className="reg-icon-circle">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                                    <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                    <path d="M18.36 6.64L5.64 19.36M18.36 19.36L5.64 6.64" />
                                 </svg>
                             </div>
-                            <div className="rocket-exhaust"></div>
-                        </Link>
+                        </div>
                     </div>
                 </div>
             </div>

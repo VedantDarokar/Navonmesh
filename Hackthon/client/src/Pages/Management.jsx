@@ -7,7 +7,8 @@ const Management = () => {
     const managementData = {
         "Final Year Advisors": [
             { "name": "Vikas Gawade", "class": "4N", "contact": "8999750764" },
-            { "name": "Om Deshmukh", "class": "4U1", "contact": "8149471804" }
+            { "name": "Om Deshmukh", "class": "4U1", "contact": "8149471804" },
+            { "name": "Shripad Ingle", "class": "4N", "contact": "9876543210" }
         ],
         "Overall Head": [
             { "name": "Nihal Kankal", "class": "3U1", "contact": "8766417815" },

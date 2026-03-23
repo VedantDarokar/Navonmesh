@@ -136,14 +136,14 @@ const EventShowcase = () => {
 
               {/* Rocket Register Button */}
               <div
-                className={`register-rocket-btn ${launchingId === i ? "launching" : ""} ${ev.registerParam === 'srijan' ? 'closed-btn' : ''}`}
+                className={`register-rocket-btn ${launchingId === i ? "launching" : ""} ${(ev.registerParam === 'srijan' || ev.registerParam === 'udbhav') ? 'closed-btn' : ''}`}
                 onClick={() => handleLaunch(i, ev.registerParam)}
               >
                 <span className="reg-text">
-                  {ev.registerParam === 'srijan' ? 'Registrations Closed' : 'Register Now'}
+                  {(ev.registerParam === 'srijan' || ev.registerParam === 'udbhav') ? 'Registrations Closed' : 'Register Now'}
                 </span>
                 <div className="reg-icon-circle">
-                  {ev.registerParam === 'srijan' ? (
+                  {(ev.registerParam === 'srijan' || ev.registerParam === 'udbhav') ? (
                     <span className="closed-icon" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>!</span>
                   ) : (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -39,6 +39,7 @@ const Footer = () => {
               <li><Link to="/accommodation" onClick={scrollToTop}>Accommodation</Link></li>
               <li><Link to="/cultural" onClick={scrollToTop}>Cultural</Link></li>
               <li><Link to="/gallery" onClick={scrollToTop}>Gallery</Link></li>
+              <li><Link to="/management" style={{ textDecoration: "underline double" }} onClick={scrollToTop}>Management Analysis</Link></li>
             </ul>
           </div>
 

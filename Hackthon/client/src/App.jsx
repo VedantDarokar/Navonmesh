@@ -23,6 +23,7 @@ import Cosmos from "./Pages/Cosmos";
 import Pursuit from "./Pages/Pursuit";
 import ScrollToTop from "./Components/ScrollToTop";
 import Admin from "./Pages/Admin";
+import Notes from "./Pages/Notes";
 import SupportQR from "./Pages/SupportQR";
 import AdminMaintenance from "./Pages/AdminMaintenance";
 import EventDayAdmin from "./Pages/EventDayAdmin";
@@ -58,6 +59,7 @@ function App() {
               <Route path="/event-journey" element={<EventJourney />} />
               <Route path="/cultural" element={<Cultural />} />
               <Route path="/cosmos" element={<Cosmos />} />
+              <Route path="/notes" element={<Notes />} />
             </Route>
 
             {/* Pages WITHOUT Navbar / Sidebar / Footer */}

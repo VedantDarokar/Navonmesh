@@ -1,8 +1,9 @@
+/* Popup overlay and container */
 .popup-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(2, 3, 8, 0.6);
-    backdrop-filter: blur(5px);
+    background: rgba(2, 3, 8, 0.85);
+    backdrop-filter: blur(8px);
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -13,25 +14,21 @@
 
 .popup-container {
     position: relative;
-    max-width: 800px;
-    max-height: 90vh;
+    max-width: 1150px;
     width: 100%;
-    background: #05060f;
-    border: 1px solid rgba(45, 212, 191, 0.3);
-    box-shadow: 0 0 100px rgba(0, 0, 0, 0.8), 0 0 30px rgba(45, 212, 191, 0.1);
+    background: #060813;
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 16px;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.2);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     animation: popupSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes popupFadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes popupSlideUp {
@@ -39,29 +36,30 @@
         opacity: 0;
         transform: translateY(30px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
+/* Close button on absolute top-right */
 .popup-close-btn {
     position: absolute;
     top: 15px;
     right: 15px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
     color: #fff;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
-    transition: 0.3s;
-    z-index: 10;
+    transition: all 0.3s ease;
+    z-index: 100;
     backdrop-filter: blur(5px);
 }
 
@@ -69,88 +67,225 @@
     background: #ff4444;
     border-color: #ff4444;
     color: #fff;
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
 }
 
-.popup-content {
+/* Popup Body */
+.popup-body {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 100%;
+}
+
+/* ----------------------------------------------------
+   Moving Saturation Image Blend
+   ---------------------------------------------------- */
+.popup-bg-image-wrapper {
     position: relative;
+    width: 100%;
+    height: 520px;
+    background: black;
     overflow: hidden;
 }
 
-.poster-image {
-    width: 100%;
-    height: auto;
-    max-height: 85vh;
-    display: block;
-    object-fit: contain;
-}
-
-.poster-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(2, 3, 8, 0.95), transparent);
-    padding: 40px;
-    text-align: center;
-}
-
-.tech-scan-line {
+.popup-bg-img {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 1px;
-    background: #2dd4bf;
-    box-shadow: 0 0 15px #2dd4bf;
-    opacity: 0.5;
-    animation: scanAnimation 3s linear infinite;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-@keyframes scanAnimation {
-    0% {
-        top: 0;
-    }
-
-    100% {
-        top: 100%;
-    }
+/* Base layer: Grayscale */
+.popup-bg-img.img-bw {
+    filter: grayscale(100%) brightness(0.6);
+    z-index: 1;
 }
 
-.poster-intel {
-    position: relative;
+/* Top layer: Color + Animated Mask for shifting/moving saturation */
+.popup-bg-img.img-color {
+    filter: grayscale(0%) brightness(0.7);
     z-index: 2;
+    /* Soft linear gradient mask that transitions over 200% width */
+    mask-image: linear-gradient(90deg, rgba(0,0,0,0) 15%, rgba(0,0,0,1) 85%);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0) 15%, rgba(0,0,0,1) 85%);
+    mask-size: 200% 100%;
+    -webkit-mask-size: 200% 100%;
+    animation: sweepSaturation 7s ease-in-out infinite alternate;
 }
 
-.intel-tag {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    color: #2dd4bf;
-    letter-spacing: 5px;
-    margin-bottom: 10px;
+@keyframes sweepSaturation {
+    0% {
+        mask-position: 0% 0%;
+        -webkit-mask-position: 0% 0%;
+    }
+    100% {
+        mask-position: 100% 0%;
+        -webkit-mask-position: 100% 0%;
+    }
 }
 
-.intel-title {
+/* Text & Button Overlay */
+.popup-text-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background: radial-gradient(circle, rgba(6, 8, 19, 0.4) 0%, rgba(6, 8, 19, 0.8) 100%);
+}
+
+.popup-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.8rem;
-    color: #fff;
-    margin: 5px 0;
+    font-weight: 800;
+    font-size: 3.5rem;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6), 0 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+.popup-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+    color: #cbd5e1;
+    margin-bottom: 30px;
+    max-width: 640px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.popup-explore-btn {
+    background: linear-gradient(90deg, #ffe066, #d4af37);
+    color: #060813;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.popup-explore-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.8), 0 0 10px #ffe066;
+    filter: brightness(1.1);
+}
+
+/* ----------------------------------------------------
+   Winners scrolling marquee
+   ---------------------------------------------------- */
+.popup-winners-section {
+    padding: 20px 0;
+    background: #04050d;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.popup-winners-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    color: #d4af37;
+    text-align: center;
     letter-spacing: 3px;
+    margin-bottom: 12px;
     text-transform: uppercase;
 }
 
+.popup-winners-marquee {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 5px 0;
+}
+
+/* Shadow fade effects on sides */
+.popup-winners-marquee::before,
+.popup-winners-marquee::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.popup-winners-marquee::before {
+    left: 0;
+    background: linear-gradient(to right, #04050d, transparent);
+}
+
+.popup-winners-marquee::after {
+    right: 0;
+    background: linear-gradient(to left, #04050d, transparent);
+}
+
+.popup-winners-track {
+    display: flex;
+    gap: 15px;
+    width: max-content;
+    animation: popupScrollWinners 22s linear infinite;
+}
+
+@keyframes popupScrollWinners {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.popup-winner-card {
+    width: 170px;
+    height: 170px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.popup-winner-card:hover {
+    transform: scale(1.05);
+    border-color: #d4af37;
+}
+
+.popup-winner-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Responsive adjust */
 @media (max-width: 768px) {
     .popup-container {
-        max-width: 95%;
+        max-width: 90%;
     }
-
-    .intel-title {
-        font-size: 1.3rem;
+    .popup-bg-image-wrapper {
+        height: 260px;
     }
-
-    .poster-overlay {
-        padding: 25px;
+    .popup-title {
+        font-size: 1.45rem;
+    }
+    .popup-subtitle {
+        font-size: 0.85rem;
+    }
+    .popup-winner-card {
+        width: 80px;
+        height: 80px;
     }
 }

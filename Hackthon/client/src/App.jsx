@@ -23,7 +23,6 @@ import Cosmos from "./Pages/Cosmos";
 import Pursuit from "./Pages/Pursuit";
 import ScrollToTop from "./Components/ScrollToTop";
 import Admin from "./Pages/Admin";
-import Notes from "./Pages/Notes";
 import SupportQR from "./Pages/SupportQR";
 import AdminMaintenance from "./Pages/AdminMaintenance";
 import EventDayAdmin from "./Pages/EventDayAdmin";
@@ -32,14 +31,26 @@ import BreakTimer from "./Pages/BreakTimer"; // Import BreakTimer
 function App() {
 
   const [loading, setLoading] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleLoaded = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (!loading) {
+      setShowPopup(true);
+    }
+  }, [loading]);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <>
       {loading && <Preloader onLoaded={handleLoaded} />}
+      {showPopup && <PopupPoster onClose={handleClosePopup} />}
       <HashRouter>
         <ScrollToTop />
         <div style={{ display: loading ? 'none' : 'block' }}> {/* Hide app content while loading to prevent flash */}
@@ -59,7 +70,6 @@ function App() {
               <Route path="/event-journey" element={<EventJourney />} />
               <Route path="/cultural" element={<Cultural />} />
               <Route path="/cosmos" element={<Cosmos />} />
-              <Route path="/notes" element={<Notes />} />
             </Route>
 
             {/* Pages WITHOUT Navbar / Sidebar / Footer */}

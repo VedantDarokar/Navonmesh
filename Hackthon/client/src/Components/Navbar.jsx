@@ -104,11 +104,7 @@ const Navbar = ({ onRegisterClick }) => {
             Cosmos 🚀
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/notes" className="nav-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-            Notes
-          </NavLink>
-        </li>
+
       </ul>
 
       {/* 🚀 FAR RIGHT: ACTION HUBS */}

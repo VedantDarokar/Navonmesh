@@ -202,17 +202,6 @@ const facultyAdvisors = [
 
 const teamMembers = [
     {
-        id: 1,
-        name: "Rutuja Deshmukh",
-        role: "Core Team Member",
-        subRole: "Overall Head",
-        phone: "+91 9022886503",
-        email: "rutujadeshmukh1512@gmail.com",
-        instagram: "https://www.instagram.com/rutujadeshmukh157?igsh=MXQwd2dwY21lazg5eA==",
-        linkedin: "https://www.linkedin.com/in/rutuja-deshmukh-3aa0a03aa?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-        image: rutujaImg,
-    },
-    {
         id: 2,
         name: "Nihal Kankal",
         role: "Core Team Member",
@@ -222,6 +211,17 @@ const teamMembers = [
         instagram: "https://www.instagram.com/nihal.kankal/",
         linkedin: "#",
         image: nihalImg,
+    },
+    {
+        id: 1,
+        name: "Rutuja Deshmukh",
+        role: "Core Team Member",
+        subRole: "Overall Head",
+        phone: "+91 9022886503",
+        email: "rutujadeshmukh1512@gmail.com",
+        instagram: "https://www.instagram.com/rutujadeshmukh157?igsh=MXQwd2dwY21lazg5eA==",
+        linkedin: "https://www.linkedin.com/in/rutuja-deshmukh-3aa0a03aa?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+        image: rutujaImg,
     },
     {
         id: 15,

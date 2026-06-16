@@ -23,6 +23,7 @@ const EventDayAdmin = () => {
         members: []
     });
     const [deploymentSuccess, setDeploymentSuccess] = useState(null);
+    const [totalStats, setTotalStats] = useState({ teams: 0, participants: 0 });
     const socketRef = useRef(null);
 
     useEffect(() => {
@@ -99,6 +100,16 @@ const EventDayAdmin = () => {
             if (res.ok) {
                 // Only Srijan (Hackathon) teams are displayed in the Event Day panel
                 setRegistrations(data.srijan.entries);
+                
+                // Calculate global counts for summary
+                const sParticipants = data.srijan.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 1), 0);
+                const aParticipants = data.ankur.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 1), 0);
+                const uParticipants = data.udbhav.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 1), 0);
+                
+                setTotalStats({
+                    teams: data.srijan.count + data.ankur.count + data.udbhav.count,
+                    participants: sParticipants + aParticipants + uParticipants
+                });
             }
 
         } catch (err) {
@@ -293,8 +304,18 @@ const EventDayAdmin = () => {
             <div className="admin-content tactical-content">
                 {/* Stats Dashboard Top Bar */}
                 <div className="tactical-stats-bar">
+                    <div className="t-stat highlighted" style={{ borderLeft: '3px solid #3b82f6' }}>
+                        <span className="t-label">TOTAL REGISTERED TEAMS</span>
+                        <span className="t-value">{totalStats.teams}</span>
+                        <div className="t-progress" style={{ width: '100%', background: '#3b82f6' }}></div>
+                    </div>
+                    <div className="t-stat highlighted" style={{ borderLeft: '3px solid #8b5cf6' }}>
+                        <span className="t-label">TOTAL PARTICIPANTS</span>
+                        <span className="t-value">{totalStats.participants}</span>
+                        <div className="t-progress" style={{ width: '100%', background: '#8b5cf6' }}></div>
+                    </div>
                     <div className="t-stat">
-                        <span className="t-label">TOTAL TEAMS</span>
+                        <span className="t-label">SRIJAN TEAMS</span>
                         <span className="t-value">{registrations.length}</span>
                         <div className="t-progress" style={{ width: '100%' }}></div>
                     </div>

@@ -31,14 +31,26 @@ import BreakTimer from "./Pages/BreakTimer"; // Import BreakTimer
 function App() {
 
   const [loading, setLoading] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleLoaded = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (!loading) {
+      setShowPopup(true);
+    }
+  }, [loading]);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <>
       {loading && <Preloader onLoaded={handleLoaded} />}
+      {showPopup && <PopupPoster onClose={handleClosePopup} />}
       <HashRouter>
         <ScrollToTop />
         <div style={{ display: loading ? 'none' : 'block' }}> {/* Hide app content while loading to prevent flash */}

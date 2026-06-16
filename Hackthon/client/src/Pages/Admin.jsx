@@ -674,7 +674,8 @@ const Admin = () => {
                                     <p className="stat-sub">Hackathon</p>
                                 </div>
                                 <div className="stat-main">
-                                    <div className="stat-number">{summary.srijan.count}</div>
+                                    <div className="stat-number">{summary.srijan.count} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Teams</span></div>
+                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.6 }}>Participants: {summary.srijan.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0)}</div>
                                     <div className="click-details">ACCESS STREAM</div>
                                 </div>
                             </div>
@@ -688,7 +689,8 @@ const Admin = () => {
                                     <p className="stat-sub">Project Expo</p>
                                 </div>
                                 <div className="stat-main">
-                                    <div className="stat-number">{summary.ankur.count}</div>
+                                    <div className="stat-number">{summary.ankur.count} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Teams</span></div>
+                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.6 }}>Participants: {summary.ankur.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0)}</div>
                                     <div className="click-details">ACCESS STREAM</div>
                                 </div>
                             </div>
@@ -702,7 +704,8 @@ const Admin = () => {
                                     <p className="stat-sub">Conference</p>
                                 </div>
                                 <div className="stat-main">
-                                    <div className="stat-number">{summary.udbhav.count}</div>
+                                    <div className="stat-number">{summary.udbhav.count} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Teams</span></div>
+                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.6 }}>Participants: {summary.udbhav.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0)}</div>
                                     <div className="click-details">ACCESS STREAM</div>
                                 </div>
                             </div>
@@ -901,6 +904,17 @@ const Admin = () => {
                                                 <div className="summary-pill">Total Teams: <span>{summary.ankur.entries.length}</span></div>
                                                 <div className="summary-pill">Degree: <span>{degreeTeams}</span></div>
                                                 <div className="summary-pill">Diploma: <span>{diplomaTeams}</span></div>
+                                            </div>
+                                        );
+                                    })()}
+
+                                    {activeEvent === 'udbhav' && (() => {
+                                        const totalParticipants = summary.udbhav.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0);
+
+                                        return (
+                                            <div className="pie-section stats-summary">
+                                                <div className="summary-pill highlight">Total Participants: <span>{totalParticipants}</span></div>
+                                                <div className="summary-pill">Total Teams: <span>{summary.udbhav.entries.length}</span></div>
                                             </div>
                                         );
                                     })()}

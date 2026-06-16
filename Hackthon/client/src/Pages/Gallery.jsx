@@ -1,13 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Styles/gallery.css';
-import gallery1 from '../assets/gallery1.png';
-import gallery2 from '../assets/gallery2.png';
-import gallery3 from '../assets/gallery3.png';
-import gallery4 from '../assets/gallery4.png';
-import gallery5 from '../assets/gallery5.png';
-import gallery6 from '../assets/gallery6.png';
-import gallery7 from '../assets/gallery7.png';
-import gallery8 from '../assets/gallery8.png';
+import gallery1 from '../assets/gallery/gallery_inovo_1.jpg';
+import gallery2 from '../assets/gallery/gallery_inovo_2.jpg';
+import gallery3 from '../assets/gallery/gallery_inovo_3.jpg';
+import gallery4 from '../assets/gallery/gallery_inovo_4.jpg';
+import gallery5 from '../assets/gallery/gallery_inovo_5.jpg';
+import gallery6 from '../assets/gallery/gallery_inovo_6.jpg';
+import gallery7 from '../assets/gallery/gallery_inovo_7.jpg';
+import gallery8 from '../assets/gallery/gallery_inovo_8.jpg';
+import gallery9 from '../assets/gallery/gallery_inovo_9.jpg';
+import gallery10 from '../assets/gallery/gallery_inovo_10.jpg';
+import gallery11 from '../assets/gallery/gallery_inovo_11.jpg';
+import gallery12 from '../assets/gallery/gallery_inovo_12.jpg';
+import gallery13 from '../assets/gallery/gallery_inovo_13.jpg';
+import gallery14 from '../assets/gallery/gallery_inovo_14.jpg';
+import gallery15 from '../assets/gallery/gallery_inovo_15.jpg';
+import gallery16 from '../assets/gallery/gallery_inovo_16.jpg';
+import gallery17 from '../assets/gallery/gallery_inovo_17.jpg';
+import gallery18 from '../assets/gallery/gallery_inovo_18.jpg';
+import gallery19 from '../assets/gallery/gallery_inovo_19.jpg';
+import gallery20 from '../assets/gallery/gallery_inovo_20.jpg';
+import gallery21 from '../assets/gallery/gallery_inovo_21.jpg';
+import gallery22 from '../assets/gallery/gallery_inovo_22.jpg';
+import gallery23 from '../assets/gallery/gallery_inovo_23.jpg';
+import gallery24 from '../assets/gallery/gallery_inovo_24.jpg';
+import gallery25 from '../assets/gallery/gallery_inovo_25.jpg';
 import { FaPlay } from 'react-icons/fa';
 
 const Gallery = () => {
@@ -16,10 +33,13 @@ const Gallery = () => {
     const galleryRef = useRef(null);
     const playerRef = useRef(null);
 
-    // Placeholder images for background scrolling
+    // New optimized gallery images for background scrolling
     const images = [
-        gallery1, gallery2, gallery3, gallery4,
-        gallery5, gallery6, gallery7, gallery8
+        gallery1, gallery2, gallery3, gallery4, gallery5,
+        gallery6, gallery7, gallery8, gallery9, gallery10,
+        gallery11, gallery12, gallery13, gallery14, gallery15,
+        gallery16, gallery17, gallery18, gallery19, gallery20,
+        gallery21, gallery22, gallery23, gallery24, gallery25
     ];
 
     // Intersection Observer to detect when gallery is in view
@@ -87,14 +107,23 @@ const Gallery = () => {
     };
 
     // Create unique shuffled orders for each row
-    const row1Images = [...images, ...images, ...images];
-    const row2Images = [...images.slice().reverse(), ...images.slice().reverse(), ...images.slice().reverse()];
-    const row3Images = [...[gallery4, gallery1, gallery7, gallery2, gallery8, gallery3, gallery6, gallery5], ...[gallery4, gallery1, gallery7, gallery2, gallery8, gallery3, gallery6, gallery5], ...[gallery4, gallery1, gallery7, gallery2, gallery8, gallery3, gallery6, gallery5]];
+    const row1Images = [...images, ...images];
+    const row2Images = [...images.slice().reverse(), ...images.slice().reverse()];
+    
+    // Shuffled version of all 25 images
+    const shuffled = [
+        gallery12, gallery3, gallery25, gallery7, gallery19,
+        gallery2, gallery14, gallery8, gallery21, gallery5,
+        gallery17, gallery9, gallery23, gallery11, gallery4,
+        gallery16, gallery1, gallery20, gallery13, gallery6,
+        gallery18, gallery10, gallery24, gallery15, gallery22
+    ];
+    const row3Images = [...shuffled, ...shuffled];
 
     // Video Sources
     // rel=0 stops related videos from other channels (mostly)
     // enablejsapi=1 is required for the YouTube API to control the iframe
-    const baseVideoUrl = "https://www.youtube.com/embed/08fySatSc2c?si=nZq1_yA3_J7vLBim&rel=0&enablejsapi=1";
+    const baseVideoUrl = "https://www.youtube.com/embed/7pBTM8srB-I?rel=0&enablejsapi=1";
     const autoPlayUrl = `${baseVideoUrl}&autoplay=1&mute=1`;
 
     return (
@@ -117,7 +146,7 @@ const Gallery = () => {
             {/* Row 2: Center Overlay */}
             <div className="gallery-row">
                 <div className="marquee-layer">
-                    <div className="marquee-track">
+                    <div className="marquee-track reverse">
                         {row2Images.map((src, index) => (
                             <div className="marquee-item" key={`r2-${index}`}>
                                 <img src={src} alt="Gallery Item" />

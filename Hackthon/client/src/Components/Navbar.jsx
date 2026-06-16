@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../Styles/navbar.css";
 import namonveshfont from "../assets/namonvesh-logo.png";
+import ecellLogo from "../assets/ecell-logo.png";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaChevronDown, FaBars, FaTimes } from "react-icons/fa"; // Import Icon
 
@@ -94,11 +95,7 @@ const Navbar = ({ onRegisterClick }) => {
         <li>
           <span onClick={() => scrollToSection("team")}>Team</span>
         </li>
-        <li>
-          <NavLink to="/management" className="nav-item-dropdown" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-            Management
-          </NavLink>
-        </li>
+
         <li>
           <span onClick={() => scrollToSection("sponsors")}>Sponsors</span>
         </li>
@@ -107,10 +104,21 @@ const Navbar = ({ onRegisterClick }) => {
             Cosmos 🚀
           </NavLink>
         </li>
+
       </ul>
 
       {/* 🚀 FAR RIGHT: ACTION HUBS */}
-      <div className="nav-actions">
+      <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <a
+          href="https://ecellssgmce.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="navbar-ecell-btn"
+          style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: '8px' }}
+        >
+          <img src={ecellLogo} alt="E-Cell Logo" style={{ height: '35px', width: 'auto' }} />
+          <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}>E-Cell Website</span>
+        </a>
         <a
           href="https://drive.google.com/file/d/1Xy_Jz-NlAByWw2A-z3rW4e8BvQ_rU7yJ/view?usp=sharing"
           target="_blank"

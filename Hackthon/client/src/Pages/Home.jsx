@@ -18,6 +18,8 @@ import Accommodation from "./Accommodation";
 import ProblemStatements from "../Components/ProblemStatements";
 import CampusMap from "../Components/CampusMap";
 import Podcast from "../Components/Podcast";
+import WinnersSection from "../Components/WinnersSection";
+import HighlightsSection from "../Components/HighlightsSection";
 
 const Home = () => {
   /* Rocket Launch Logic */
@@ -120,6 +122,12 @@ const Home = () => {
       <section id="gallery">
         <Gallery />
       </section>
+
+      {/* Highlights */}
+      <HighlightsSection />
+
+      {/* Winners */}
+      <WinnersSection />
 
       {/* Team */}
       <section id="team">

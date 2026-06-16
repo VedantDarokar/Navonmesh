@@ -236,6 +236,7 @@ const AdminMaintenance = () => {
                                 }} style={{ padding: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer' }}>
                                     <div style={{ fontWeight: 'bold' }}>{r.teamName}</div>
                                     <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>{r.leaderName}</div>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--neon-purple)', opacity: 0.8, fontStyle: 'italic' }}>PS: {r.problemStatement || 'N/A'}</div>
                                     <div className={`status-pill ${r.tableNo ? 'assigned' : 'pending'}`}>{r.tableNo ? `Station ${r.tableNo}` : 'Unassigned'}</div>
                                 </div>
                             ))}
@@ -245,6 +246,10 @@ const AdminMaintenance = () => {
                             <div className="current-operative-box" style={{ marginTop: '20px', padding: '15px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '12px', border: '1px solid var(--neon-purple)' }}>
                                 <div style={{ fontSize: '0.7rem', color: 'var(--neon-purple)', fontWeight: 'bold' }}>SELECTED TARGET</div>
                                 <div style={{ fontSize: '1.1rem', fontWeight: 'bold', margin: '5px 0' }}>{editingEntry.teamName}</div>
+                                <div style={{ fontSize: '0.85rem', color: '#fff', opacity: 0.9, marginTop: '5px', background: 'rgba(0,0,0,0.2)', padding: '5px 8px', borderRadius: '4px', borderLeft: '2px solid var(--neon-purple)' }}>
+                                    <span style={{ fontSize: '0.65rem', display: 'block', opacity: 0.6, textTransform: 'uppercase' }}>Current Query / PS</span>
+                                    {editingEntry.problemStatement || 'No Problem Statement Provided'}
+                                </div>
                                 
                                 <div className="verification-pill-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '10px' }}>
                                     <button onClick={() => handleTally('team')} className={`min-pill ${verifiedSections.team ? 'ok' : ''}`}>TEAM</button>
@@ -291,9 +296,10 @@ const AdminMaintenance = () => {
                                     >
                                         <span style={{ fontSize: '0.7rem', opacity: 0.5 }}>GP {num}</span>
                                         {occupant && <div style={{ fontSize: '0.55rem', textAlign: 'center', fontWeight: 'bold', color: '#10b981', overflow: 'hidden', maxWidth: '90%' }}>{occupant.teamName.substring(0, 10)}</div>}
+                                        {occupant && <div style={{ fontSize: '0.45rem', textAlign: 'center', color: 'rgba(255,255,255,0.6)', overflow: 'hidden', maxWidth: '90%', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{occupant.problemStatement || 'N/A'}</div>}
                                         {activeIssue && (
                                             <div className="alert-overlay" onClick={() => markResolved(activeIssue._id)} style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(239, 68, 68, 0.8)', color: '#fff', borderRadius: '8px', zIndex: 10 }}>
-                                                <div style={{ fontSize: '0.6rem', fontWeight: 'bold' }}>DISTRESS</div>
+                                                <div style={{ fontSize: '0.5rem', fontWeight: 'bold', textAlign: 'center', padding: '0 4px', lineHeight: '1.1' }}>{activeIssue.issueDescription.toUpperCase()}</div>
                                                 <button style={{ fontSize: '0.5rem', background: '#fff', color: '#000', border: 'none', padding: '2px 4px', borderRadius: '4px', marginTop: '2px' }}>ACK</button>
                                             </div>
                                         )}

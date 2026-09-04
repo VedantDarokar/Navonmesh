@@ -1,11 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const dns = require('dns');
 require('dotenv').config();
+
+// Configure DNS resolution for MongoDB Atlas SRV lookup compatibility
+try {
+    if (dns.setDefaultResultOrder) dns.setDefaultResultOrder('ipv4first');
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+    // Ignore DNS fallback errors if custom servers cannot be set
+}
 
 const app = express();
 
-// Middleware
+// Middleware setup (Express & CORS)
 app.use(cors());
 app.use(express.json());
 
@@ -19,11 +28,20 @@ app.use((req, res, next) => {
 });
 
 // Connect to MongoDB
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/navonmesh';
 
 mongoose.connect(MONGO_URI)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+    .then(() => console.log('✅ MongoDB Connected Successfully'))
+    .catch(async (err) => {
+        console.log(`⚠️ Primary MongoDB Connection Failed: ${err.message}`);
+        console.log('Attempting local MongoDB fallback (mongodb://127.0.0.1:27017/navonmesh)...');
+        try {
+            await mongoose.connect('mongodb://127.0.0.1:27017/navonmesh');
+            console.log('✅ Local MongoDB Connected Successfully');
+        } catch (fallbackErr) {
+            console.log('⚠️ Note: To save data to MongoDB, please update MONGO_URI in server/.env with valid credentials or start a local MongoDB service.');
+        }
+    });
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,12 +1,26 @@
 import "../Styles/footer.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaInstagram, FaLinkedin, FaYoutube, FaWhatsapp, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import namonveshLogo from "../assets/namonvesh-logo.png";
+import navonmeshTricolor from "../assets/navonmesh_tricolor.png";
 
 const Footer = () => {
+  const location = useLocation();
+  const isParchmentTheme = location.pathname === "/join" || location.pathname === "/joinus";
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  if (isParchmentTheme) {
+    return (
+      <footer className="join-minimal-footer">
+        <p className="join-dev-credit">
+          Developed by <span className="dev-name">Nihal Kankal</span>
+        </p>
+      </footer>
+    );
+  }
 
   return (
     <footer className="footer-container">
@@ -16,7 +30,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="footer-section brand-info">
             <div className="footer-logo" onClick={scrollToTop}>
-              <img src={namonveshLogo} alt="Navonmesh Logo" />
+              <img src={isParchmentTheme ? navonmeshTricolor : namonveshLogo} alt="Navonmesh Logo" />
               <h3>NAVONMESH '26</h3>
             </div>
             <p className="brand-motto">
@@ -35,10 +49,10 @@ const Footer = () => {
             <h4 className="footer-heading">Navigation</h4>
             <ul className="footer-links">
               <li><Link to="/" onClick={scrollToTop}>Home</Link></li>
-              <li><Link to="/cosmos" onClick={scrollToTop}>Cosmos</Link></li>
               <li><Link to="/accommodation" onClick={scrollToTop}>Accommodation</Link></li>
               <li><Link to="/cultural" onClick={scrollToTop}>Cultural</Link></li>
               <li><Link to="/gallery" onClick={scrollToTop}>Gallery</Link></li>
+              <li><Link to="/join" onClick={scrollToTop}>Join Us (Recruitment)</Link></li>
               <li><Link to="/management" style={{ textDecoration: "underline double" }} onClick={scrollToTop}>Management Analysis</Link></li>
             </ul>
           </div>

@@ -44,8 +44,10 @@ const Navbar = ({ onRegisterClick }) => {
     }
   };
 
+  const isParchmentPage = location.pathname === "/join" || location.pathname === "/joinus";
+
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isParchmentPage ? "navbar-parchment" : ""}`}>
       <div className="nav-logo" onClick={() => scrollToSection("home")} style={{ cursor: 'pointer' }}>
         <img src={namonveshfont} alt="Navonmesh Logo" />
       </div>
@@ -100,25 +102,14 @@ const Navbar = ({ onRegisterClick }) => {
           <span onClick={() => scrollToSection("sponsors")}>Sponsors</span>
         </li>
         <li>
-          <NavLink to="/cosmos" className="nav-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-            Cosmos 🚀
+          <NavLink to="/join" className="nav-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
+            Join Us
           </NavLink>
         </li>
-
       </ul>
 
       {/* 🚀 FAR RIGHT: ACTION HUBS */}
       <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <a
-          href="https://ecellssgmce.in/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="navbar-ecell-btn"
-          style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: '8px' }}
-        >
-          <img src={ecellLogo} alt="E-Cell Logo" style={{ height: '35px', width: 'auto' }} />
-          <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}>E-Cell Website</span>
-        </a>
         <a
           href="https://drive.google.com/file/d/1Xy_Jz-NlAByWw2A-z3rW4e8BvQ_rU7yJ/view?usp=sharing"
           target="_blank"

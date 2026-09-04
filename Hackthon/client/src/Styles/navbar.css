@@ -506,3 +506,80 @@
   transform: translateY(2px);
   color: #fff;
 }
+
+/* ============================================================ */
+/* PARCHMENT THEME NAVBAR (FOR JOIN US PAGE)                    */
+/* ============================================================ */
+.navbar.navbar-parchment {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* 📜 CIRCULAR RECTANGLE PILL AROUND HOME TO JOIN US */
+.navbar.navbar-parchment .nav-links {
+  background: linear-gradient(180deg, rgba(198, 163, 122, 0.95) 0%, rgba(166, 128, 86, 0.95) 100%) !important;
+  border: 1.5px solid rgba(105, 65, 33, 0.5) !important;
+  border-radius: 9999px !important;
+  padding: 8px 26px !important;
+  box-shadow: 
+    0 4px 18px rgba(35, 18, 9, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.navbar.navbar-parchment .nav-links li span,
+.navbar.navbar-parchment .nav-links li a {
+  color: #0c0806 !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+  transition: color 0.2s ease !important;
+}
+
+.navbar.navbar-parchment .nav-links li span:hover,
+.navbar.navbar-parchment .nav-links li a:hover,
+.navbar.navbar-parchment .dropdown-trigger:hover {
+  color: #631717 !important;
+}
+
+.navbar.navbar-parchment .dropdown-arrow {
+  color: #0c0806 !important;
+}
+
+.navbar.navbar-parchment .dropdown-menu {
+  background: rgba(234, 215, 190, 0.96) !important;
+  border: 1.5px solid #8a5732 !important;
+  box-shadow: 0 10px 25px rgba(25, 12, 5, 0.35) !important;
+}
+
+.navbar.navbar-parchment .dropdown-menu li a {
+  color: #2c160a !important;
+  font-family: 'Cormorant Garamond', 'Cinzel', serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+}
+
+.navbar.navbar-parchment .dropdown-menu li a:hover {
+  background: rgba(99, 23, 23, 0.12) !important;
+  color: #631717 !important;
+}
+
+.navbar.navbar-parchment .mobile-menu-icon {
+  color: #0c0806 !important;
+}
+
+.navbar.navbar-parchment .navbar-brochure-btn {
+  background: linear-gradient(180deg, #7b583f 0%, #563923 100%) !important;
+  border: 1.5px solid #3c2415 !important;
+  color: #faebd7 !important;
+  font-family: 'Cinzel', serif !important;
+  box-shadow: 0 4px 10px rgba(35, 18, 9, 0.3) !important;
+}
+
+.navbar.navbar-parchment .navbar-brochure-btn svg {
+  color: #faebd7 !important;
+}

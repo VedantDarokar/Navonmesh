@@ -19,8 +19,8 @@ import Accommodation from "./Pages/Accommodation";
 import EventJourney from "./Pages/EventJourney";
 import CulturalRegister from "./Pages/CulturalRegister";
 import Cultural from "./Pages/Cultural";
-import Cosmos from "./Pages/Cosmos";
 import Pursuit from "./Pages/Pursuit";
+import JoinUs from "./Pages/JoinUs";
 import ScrollToTop from "./Components/ScrollToTop";
 import Admin from "./Pages/Admin";
 import SupportQR from "./Pages/SupportQR";
@@ -69,7 +69,7 @@ function App() {
               <Route path="/management" element={<Management />} />
               <Route path="/event-journey" element={<EventJourney />} />
               <Route path="/cultural" element={<Cultural />} />
-              <Route path="/cosmos" element={<Cosmos />} />
+              <Route path="/join" element={<JoinUs />} />
             </Route>
 
             {/* Pages WITHOUT Navbar / Sidebar / Footer */}

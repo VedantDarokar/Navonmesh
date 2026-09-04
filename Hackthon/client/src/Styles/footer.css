@@ -322,3 +322,138 @@
         opacity: 0.8;
     }
 }
+
+/* ============================================================ */
+/* MINIMAL FOOTER FOR JOIN US PAGE - ONLY DEVELOPED BY IN WHITE */
+/* ============================================================ */
+.join-minimal-footer {
+  background: transparent !important;
+  text-align: center;
+  padding: 16px 0 20px;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.join-dev-credit {
+  font-family: 'Cinzel', 'Inter', serif;
+  font-size: 0.85rem;
+  color: #ffffff !important;
+  letter-spacing: 1.5px;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.join-dev-credit .dev-name {
+  font-weight: 800;
+  color: #ffffff !important;
+}
+
+/* ============================================================ */
+/* PARCHMENT THEME FOR JOIN US PAGE - TRANSPARENT & BLACK TEXT   */
+/* ============================================================ */
+.footer-container.footer-parchment-theme {
+    background: transparent !important;
+    color: #0c0806 !important;
+    font-family: 'Cinzel', 'Playfair Display', serif !important;
+    margin-top: 20px !important;
+    padding: 30px 0 20px !important;
+    position: relative;
+    z-index: 10;
+}
+
+.footer-container.footer-parchment-theme::before,
+.footer-container.footer-parchment-theme::after,
+.footer-container.footer-parchment-theme .footer-glow {
+    display: none !important;
+}
+
+.footer-container.footer-parchment-theme .footer-heading {
+    color: #0c0806 !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: 900 !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 2px !important;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+}
+
+.footer-container.footer-parchment-theme .brand-info h3 {
+    color: #0c0806 !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: 900 !important;
+    letter-spacing: 2px !important;
+}
+
+.footer-container.footer-parchment-theme .brand-motto {
+    color: #2b180d !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+}
+
+.footer-container.footer-parchment-theme .footer-socials a {
+    color: #1a0f07 !important;
+    background: rgba(43, 24, 13, 0.08) !important;
+    border: 1px solid rgba(43, 24, 13, 0.25) !important;
+}
+
+.footer-container.footer-parchment-theme .footer-socials a:hover {
+    color: #fff !important;
+    background: #0c0806 !important;
+    border-color: #0c0806 !important;
+}
+
+.footer-container.footer-parchment-theme .footer-links a {
+    color: #1a0f07 !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    transition: color 0.2s ease !important;
+}
+
+.footer-container.footer-parchment-theme .footer-links a:hover {
+    color: #631717 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.footer-container.footer-parchment-theme .contact-list li {
+    color: #1a0f07 !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.02rem !important;
+    font-weight: 700 !important;
+}
+
+.footer-container.footer-parchment-theme .contact-list li .c-icon {
+    color: #0c0806 !important;
+}
+
+.footer-container.footer-parchment-theme .contact-list a {
+    color: #1a0f07 !important;
+}
+
+.footer-container.footer-parchment-theme .footer-bottom {
+    border-top: 1px solid rgba(43, 24, 13, 0.25) !important;
+}
+
+.footer-container.footer-parchment-theme .copyright {
+    color: #2b180d !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+}
+
+.footer-container.footer-parchment-theme .dev-credit {
+    color: #0c0806 !important;
+    font-weight: 900 !important;
+}
+
+.footer-container.footer-parchment-theme .legal-links a {
+    color: #3b2210 !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.75rem !important;
+}
+
+.footer-container.footer-parchment-theme .legal-links a:hover {
+    color: #0c0806 !important;
+}

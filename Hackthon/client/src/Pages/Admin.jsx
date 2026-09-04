@@ -22,6 +22,9 @@ const Admin = () => {
     const [culturalSubFilter, setCulturalSubFilter] = useState('ALL');
     const [ankurFilter, setAnkurFilter] = useState('ALL');
     const [adminId, setAdminId] = useState('');
+    const [recruitment, setRecruitment] = useState({ count: 0, entries: [] });
+    const [recruitFilter, setRecruitFilter] = useState('ALL');
+    const [recruitSearch, setRecruitSearch] = useState('');
 
     // Management State
     const [activeManagementTab, setActiveManagementTab] = useState('Girls Accommodation');
@@ -199,6 +202,7 @@ const Admin = () => {
             if (res.ok) {
                 setSummary(data);
                 fetchCommittee();
+                fetchRecruitment(token);
             } else {
                 handleLogout();
             }
@@ -206,6 +210,72 @@ const Admin = () => {
             console.error(err);
         }
         setLoading(false);
+    };
+
+    const fetchRecruitment = async (token) => {
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const t = token || sessionStorage.getItem('adminToken');
+            const res = await fetch(`${API_URL}/api/recruitment`, {
+                headers: { 'Authorization': `Bearer ${t}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setRecruitment(data);
+            }
+        } catch (err) {
+            console.error('Recruitment fetch error:', err);
+        }
+    };
+
+    const handleDeleteRecruitment = async (id) => {
+        if (!window.confirm('Remove this application?')) return;
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/recruitment/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) fetchRecruitment(token);
+        } catch (err) { console.error(err); }
+    };
+
+    const handleSendRecruitmentMail = async (id, name, email) => {
+        if (!window.confirm(`Send acknowledgment email to ${name} (${email})?`)) return;
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/recruitment/${id}/send-mail`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                alert(`✅ ${data.message}`);
+            } else {
+                alert(`❌ ${data.error || 'Failed to send email'}`);
+            }
+        } catch (err) {
+            alert('Network error sending email');
+            console.error(err);
+        }
+    };
+
+    const downloadRecruitmentExcel = () => {
+        const exportData = recruitment.entries.map((e, i) => ({
+            '#': i + 1,
+            'Name': e.name,
+            'Contact No': e.contactNo,
+            'Email': e.email,
+            'Year': e.year,
+            'Designation': e.designation,
+            'Submitted At': new Date(e.submittedAt).toLocaleString('en-IN')
+        }));
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Recruitment');
+        XLSX.writeFile(wb, `recruitment_applications_${new Date().toISOString().split('T')[0]}.xlsx`);
     };
 
     const fetchCommittee = async () => {
@@ -644,6 +714,13 @@ const Admin = () => {
                     >
                         COMMUNICATION HUB
                     </button>
+                    <button
+                        className={`nav-mode-btn ${activeTab === 'recruitment' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('recruitment')}
+                        style={activeTab === 'recruitment' ? { borderColor: '#00f3ff', color: '#00f3ff' } : {}}
+                    >
+                        RECRUITMENT ({recruitment.count})
+                    </button>
                     <button className="refresh-btn" onClick={() => fetchData(sessionStorage.getItem('adminToken'))} title="Refresh Data">
                         <FaSync className={loading ? 'spin' : ''} />
                     </button>
@@ -660,7 +737,109 @@ const Admin = () => {
             {loading ? (
                 <div className="admin-loader">Synchronizing data...</div>
             ) : summary ? (
-                activeTab === 'dashboard' ? (
+                activeTab === 'recruitment' ? (
+                    <div className="admin-content">
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                            <div>
+                                <h2 style={{ fontFamily: 'Orbitron', color: '#00f3ff', margin: 0, fontSize: '1.2rem', letterSpacing: '3px' }}>RECRUITMENT APPLICATIONS</h2>
+                                <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '4px 0 0', letterSpacing: '1px' }}>NAVONMESH '27 — TEAM ASSEMBLY</p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Search name / designation..."
+                                    value={recruitSearch}
+                                    onChange={(e) => setRecruitSearch(e.target.value)}
+                                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,243,255,0.2)', color: '#fff', padding: '8px 14px', borderRadius: '4px', fontSize: '0.8rem', outline: 'none', width: '220px' }}
+                                />
+                                <select
+                                    value={recruitFilter}
+                                    onChange={(e) => setRecruitFilter(e.target.value)}
+                                    style={{ background: '#0f1623', border: '1px solid rgba(0,243,255,0.2)', color: '#00f3ff', padding: '8px 12px', borderRadius: '4px', fontSize: '0.8rem', outline: 'none' }}
+                                >
+                                    <option value="ALL">All Designations</option>
+                                    {['Overall Head','Srijan Head','Ankur Head','Udbhav Head','Drone Head','Management Co-Head','Publicity Co-Head','Accommodation Co-Head','Logistics Co-Head','Technical Co-Head','Event Co-Head','Discipline Co-Head','Graphics Co-Head','Videography Co-Head','Social Media Co-Head'].map(d => (
+                                        <option key={d} value={d}>{d}</option>
+                                    ))}
+                                </select>
+                                <button onClick={downloadRecruitmentExcel} style={{ background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.3)', color: '#00f3ff', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <FaDownload /> EXPORT
+                                </button>
+                                <button onClick={() => fetchRecruitment()} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}>
+                                    <FaSync />
+                                </button>
+                            </div>
+                        </div>
+
+                        {(() => {
+                            let filtered = recruitment.entries;
+                            if (recruitFilter !== 'ALL') filtered = filtered.filter(e => e.designation === recruitFilter);
+                            if (recruitSearch.trim()) {
+                                const s = recruitSearch.toLowerCase();
+                                filtered = filtered.filter(e =>
+                                    e.name.toLowerCase().includes(s) ||
+                                    e.designation.toLowerCase().includes(s) ||
+                                    e.email.toLowerCase().includes(s) ||
+                                    e.contactNo.includes(s)
+                                );
+                            }
+                            return (
+                                <>
+                                    <div style={{ color: '#64748b', fontSize: '0.75rem', letterSpacing: '2px', marginBottom: '12px' }}>
+                                        SHOWING {filtered.length} OF {recruitment.count} APPLICATIONS
+                                    </div>
+                                    <div style={{ overflowX: 'auto' }}>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, sans-serif', fontSize: '0.85rem' }}>
+                                            <thead>
+                                                <tr style={{ background: 'rgba(0,243,255,0.05)', borderBottom: '1px solid rgba(0,243,255,0.2)' }}>
+                                                    {['#','Name','Contact No','Email','Year','Designation','Submitted At','Action'].map(h => (
+                                                        <th key={h} style={{ padding: '12px 14px', color: '#00f3ff', fontFamily: 'Orbitron', fontSize: '0.65rem', letterSpacing: '2px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filtered.length === 0 ? (
+                                                    <tr><td colSpan={8} style={{ textAlign: 'center', padding: '40px', color: '#334155', letterSpacing: '2px', fontSize: '0.8rem' }}>NO APPLICATIONS FOUND</td></tr>
+                                                ) : filtered.map((e, i) => (
+                                                    <tr key={e._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.2s' }}
+                                                        onMouseEnter={ev => ev.currentTarget.style.background = 'rgba(0,243,255,0.03)'}
+                                                        onMouseLeave={ev => ev.currentTarget.style.background = 'transparent'}
+                                                    >
+                                                        <td style={{ padding: '12px 14px', color: '#475569' }}>{i + 1}</td>
+                                                        <td style={{ padding: '12px 14px', color: '#e2e8f0', fontWeight: 500 }}>{e.name}</td>
+                                                        <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.contactNo}</td>
+                                                        <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.email}</td>
+                                                        <td style={{ padding: '12px 14px' }}>
+                                                            <span style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>{e.year}</span>
+                                                        </td>
+                                                        <td style={{ padding: '12px 14px' }}>
+                                                            <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '2px', fontSize: '0.75rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>
+                                                        </td>
+                                                        <td style={{ padding: '12px 14px', color: '#475569', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>{new Date(e.submittedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                                                        <td style={{ padding: '12px 14px' }}>
+                                                            <div style={{ display: 'flex', gap: '6px' }}>
+                                                                <button
+                                                                    onClick={() => handleSendRecruitmentMail(e._id, e.name, e.email)}
+                                                                    title={`Send acknowledgment to ${e.email}`}
+                                                                    style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
+                                                                >
+                                                                    ✉ Mail
+                                                                </button>
+                                                                <button onClick={() => handleDeleteRecruitment(e._id)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                                                                    <FaTimes />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            );
+                        })()}
+                    </div>
+                ) : activeTab === 'dashboard' ? (
                     <div className="admin-content">
 
                         <div className="stats-grid">
@@ -734,6 +913,20 @@ const Admin = () => {
                                 </div>
                                 <div className="stat-main">
                                     <div className="stat-number">{summary.accommodation.count}</div>
+                                    <div className="click-details">ACCESS STREAM</div>
+                                </div>
+                            </div>
+                            <div className={`stat-card ${activeTab === 'recruitment' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('recruitment')}
+                                onMouseMove={handleMouseMove}>
+                                <div className="stat-card-scan"></div>
+                                <div className="stat-icon-bg"><FaChartPie /></div>
+                                <div className="stat-info">
+                                    <h3>Recruitment</h3>
+                                    <p className="stat-sub">Navonmesh '27</p>
+                                </div>
+                                <div className="stat-main">
+                                    <div className="stat-number">{recruitment.count} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Applied</span></div>
                                     <div className="click-details">ACCESS STREAM</div>
                                 </div>
                             </div>

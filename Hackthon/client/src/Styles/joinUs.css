@@ -1,0 +1,600 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500&display=swap');
+
+/* ============================================================ */
+/* ANCIENT PARCHMENT & BOSM '26 THEME - ONE SCREEN FIT          */
+/* ============================================================ */
+
+.join-ancient-page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  padding-top: 115px; /* Clear fixed navbar completely */
+  padding-bottom: 25px;
+  box-sizing: border-box;
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  color: #000000;
+  background-color: #2b1d14;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* 📜 FULL WALLPAPER BACKGROUND */
+.join-parchment-wallpaper {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.join-sepia-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 35%,
+    rgba(238, 222, 195, 0.1) 0%,
+    rgba(141, 98, 59, 0.42) 60%,
+    rgba(40, 22, 12, 0.85) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+.join-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 160px rgba(24, 13, 7, 0.9), inset 0 0 80px rgba(18, 9, 4, 0.85);
+}
+
+/* 🏛️ CORNER STUDENTS RELIEF (TRANSPARENT PNG) */
+.join-corner-students-container {
+  position: fixed;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+  width: clamp(200px, 21vw, 340px);
+  max-height: 48vh;
+  transition: opacity 0.3s ease;
+}
+
+.join-corner-students-container.left {
+  left: 0;
+}
+
+.join-corner-students-container.right {
+  right: 0;
+}
+
+.join-corner-students-img {
+  width: 100%;
+  height: auto;
+  max-height: 48vh;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 12px 28px rgba(25, 12, 5, 0.65)) contrast(1.05);
+}
+
+.join-corner-students-img.right-img {
+  transform: scaleX(-1); /* Symmetrical framing like BOSM athletes */
+}
+
+/* ═══ MAIN CONTAINER ═══ */
+.join-ancient-container {
+  position: relative;
+  z-index: 5;
+  max-width: 740px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* ═══ HERO SECTION ═══ */
+.join-ancient-hero {
+  text-align: center;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.join-logo-emblem {
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.join-ancient-logo {
+  height: 58px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+  transition: transform 0.25s ease;
+}
+
+.join-ancient-logo:hover {
+  transform: scale(1.04);
+}
+
+.join-ancient-title {
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  font-size: clamp(2.15rem, 3.8vw, 2.9rem) !important;
+  font-weight: 900 !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.35px rgba(255, 255, 255, 0.6) !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+  filter: none !important;
+  letter-spacing: 4.5px;
+  margin: 4px 0 2px 0;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.join-ornament-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #1a0f07;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.join-ornament-divider.mini {
+  font-size: 0.72rem;
+  gap: 6px;
+  margin: 2px 0;
+}
+
+.ornament-arrow {
+  color: #3b2210;
+  opacity: 0.9;
+}
+
+.ornament-symbol {
+  color: #000000;
+  font-size: 0.88rem;
+  letter-spacing: 3px;
+}
+
+/* ═══ PARCHMENT SCROLL CARD ═══ */
+.parchment-scroll-card {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 10px;
+  background-color: #ead7be;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.92) 0%, rgba(234, 214, 187, 0.95) 75%, rgba(197, 168, 131, 0.98) 100%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  
+  box-shadow: 
+    0 0 0 1px #8a5732,
+    0 0 0 3px #56331a,
+    0 0 0 6px #2e1a0d,
+    0 20px 50px rgba(15, 8, 4, 0.75),
+    inset 0 0 50px rgba(110, 65, 30, 0.3),
+    inset 0 0 20px rgba(60, 30, 10, 0.2);
+  padding: 8px;
+}
+
+/* Inner framed border matching the reference modal */
+.parchment-inner-frame {
+  border: 1px dashed rgba(141, 88, 50, 0.5);
+  border-radius: 6px;
+  padding: 20px 28px;
+  background: rgba(255, 252, 245, 0.4);
+  position: relative;
+}
+
+/* Header Group */
+.parchment-header-group {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.parchment-heading {
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+  filter: none !important;
+  letter-spacing: 2px;
+  margin: 0 0 2px 0;
+  line-height: 1.15;
+}
+
+.parchment-subtext {
+  font-family: 'Cinzel', 'Playfair Display', serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #1a0f07; /* Dark black-brown */
+  letter-spacing: 1.2px;
+  line-height: 1.4;
+  margin: 4px auto 0;
+  max-width: 520px;
+}
+
+/* ═══ FORM FIELDS & COMPACT 2-COLUMN GRID ═══ */
+.parchment-fields-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.parchment-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.parchment-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.parchment-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #3b2210;
+  letter-spacing: 1.2px;
+}
+
+/* Inputs styled like the query reference modal */
+.parchment-input {
+  width: 100%;
+  padding: 9px 12px;
+  background-color: #fbf8f0;
+  border: 1.5px solid #8c5b36;
+  border-radius: 4px;
+  color: #2c160a;
+  font-family: 'Cormorant Garamond', 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  outline: none;
+  box-shadow: inset 0 2px 5px rgba(110, 65, 30, 0.1);
+  transition: all 0.22s ease;
+  box-sizing: border-box;
+}
+
+.parchment-input::placeholder {
+  color: #a4866f;
+  font-style: italic;
+  font-size: 0.88rem;
+  letter-spacing: 0.8px;
+}
+
+.parchment-input:focus {
+  border-color: #631717;
+  background-color: #fffefb;
+  box-shadow: 
+    0 0 0 2.5px rgba(99, 23, 23, 0.14),
+    inset 0 2px 5px rgba(110, 65, 30, 0.1);
+}
+
+/* ═══ ANCIENT YEAR SELECTOR ═══ */
+.ancient-year-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.ancient-year-pill {
+  background-color: #fbf8f0;
+  border: 1.5px solid #8c5b36;
+  border-radius: 4px;
+  padding: 6px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(110, 65, 30, 0.1);
+}
+
+.ancient-year-pill:hover {
+  background-color: #fffaf0;
+  border-color: #631717;
+}
+
+.ancient-year-pill.active {
+  background-color: #631717;
+  border-color: #400d0d;
+  color: #fff8eb;
+  box-shadow: 0 3px 10px rgba(99, 23, 23, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.year-pill-roman {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #422614;
+}
+
+.ancient-year-pill.active .year-pill-roman {
+  color: #fff8eb;
+}
+
+.year-pill-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #724c31;
+}
+
+.ancient-year-pill.active .year-pill-label {
+  color: #f5dfc6;
+}
+
+/* ═══ DESIGNATION SELECT ═══ */
+.parchment-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.parchment-select {
+  width: 100%;
+  padding: 9px 38px 9px 12px;
+  background-color: #fbf8f0;
+  border: 1.5px solid #8c5b36;
+  border-radius: 4px;
+  color: #2c160a;
+  font-family: 'Cormorant Garamond', 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: inset 0 2px 5px rgba(110, 65, 30, 0.1);
+  transition: all 0.22s ease;
+  box-sizing: border-box;
+}
+
+.parchment-select:focus {
+  border-color: #631717;
+  background-color: #fffefb;
+  box-shadow: 
+    0 0 0 2.5px rgba(99, 23, 23, 0.14),
+    inset 0 2px 5px rgba(110, 65, 30, 0.1);
+}
+
+.parchment-select option {
+  background-color: #f7efe2;
+  color: #2c160a;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  padding: 8px;
+}
+
+.parchment-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7a4c28;
+  font-size: 0.82rem;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.parchment-select-wrapper:focus-within .parchment-chevron {
+  transform: translateY(-50%) rotate(180deg);
+  color: #631717;
+}
+
+/* ═══ ANCIENT CARVED SUBMIT BUTTON (STONE TABLET) ═══ */
+.parchment-submit-wrapper {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.ancient-carved-btn {
+  background: linear-gradient(180deg, #7b583f 0%, #563923 100%);
+  border: 1.5px solid #3c2415;
+  border-radius: 4px;
+  padding: 10px 30px;
+  color: #faebd7;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-shadow: 0 1.5px 2.5px rgba(0, 0, 0, 0.7);
+  box-shadow: 
+    0 4px 14px rgba(35, 18, 9, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.22s ease;
+  user-select: none;
+}
+
+.ancient-carved-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #8c6549 0%, #63432a 100%);
+  transform: translateY(-1.5px);
+  box-shadow: 
+    0 8px 20px rgba(35, 18, 9, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+.ancient-carved-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 6px rgba(35, 18, 9, 0.45),
+    inset 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+
+.ancient-carved-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-bracket-left,
+.btn-bracket-right {
+  color: #dfbe9f;
+  font-size: 0.95rem;
+}
+
+/* ═══ INSTRUCTION NOTICE BANNER ═══ */
+.parchment-notice-banner {
+  margin-top: 8px;
+  padding: 10px 18px;
+  background: rgba(110, 65, 30, 0.08);
+  border: 1px dashed rgba(141, 88, 50, 0.45);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.parchment-notice-text {
+  font-family: 'Cormorant Garamond', 'Cinzel', serif;
+  font-size: clamp(1.05rem, 1.4vw, 1.18rem);
+  font-weight: 700;
+  color: #2e160a;
+  line-height: 1.45;
+  margin: 0;
+  letter-spacing: 0.4px;
+}
+
+.parchment-notice-text strong {
+  color: #721616;
+  font-weight: 800;
+  font-family: 'Cinzel', serif;
+  font-size: 1.05em;
+  letter-spacing: 0.5px;
+}
+
+.notice-bullet {
+  color: #721616;
+  font-size: 1.05rem;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ═══ SUCCESS STATE ═══ */
+.parchment-success-state {
+  text-align: center;
+  padding: 14px 10px;
+}
+
+.ancient-success-seal {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(99, 23, 23, 0.12);
+  border: 2px solid #631717;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  box-shadow: 0 0 16px rgba(99, 23, 23, 0.2);
+}
+
+.ancient-seal-icon {
+  font-size: 2rem;
+  color: #631717;
+}
+
+.ancient-highlight {
+  color: #631717;
+  font-weight: 800;
+}
+
+.parchment-summary-box {
+  background: rgba(255, 252, 245, 0.85);
+  border: 1px solid #8c5b36;
+  border-radius: 5px;
+  padding: 12px 18px;
+  max-width: 440px;
+  margin: 14px auto;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: inset 0 1px 3px rgba(110, 65, 30, 0.1);
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+}
+
+.s-label {
+  color: #6c472b;
+  font-weight: 700;
+}
+
+.s-val {
+  color: #2c160a;
+  font-weight: 800;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 900px) {
+  .join-corner-students-container {
+    width: 180px;
+    opacity: 0.6;
+  }
+  .parchment-inner-frame {
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 680px) {
+  .join-ancient-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    padding-top: 80px;
+    padding-bottom: 40px;
+  }
+
+  .join-corner-students-container {
+    display: none; /* Hide in mobile view so it doesn't crowd */
+  }
+
+  .parchment-row-2col {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .ancient-year-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .ancient-carved-btn {
+    width: 100%;
+  }
+}

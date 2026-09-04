@@ -175,6 +175,18 @@ const JoinUs = () => {
                   <span className="btn-text">SUBMIT ANOTHER ENTRY</span>
                   <span className="btn-bracket-right">⚜ ]</span>
                 </button>
+
+                <a
+                  href="https://chat.whatsapp.com/GkUgvDm7GCjIXBTC9Yc1lL"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ancient-carved-btn whatsapp-join-btn"
+                  style={{ marginTop: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
+                >
+                  <span className="btn-bracket-left">[ 📲</span>
+                  <span className="btn-text">JOIN WHATSAPP GROUP</span>
+                  <span className="btn-bracket-right">📲 ]</span>
+                </a>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="parchment-form">

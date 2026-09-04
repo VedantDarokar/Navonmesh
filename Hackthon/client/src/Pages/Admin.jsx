@@ -253,6 +253,13 @@ const Admin = () => {
             const data = await res.json();
             if (res.ok && data.success) {
                 alert(`✅ ${data.message}`);
+                // Update local state directly so button reflects "Sent" immediately
+                setRecruitment(prev => ({
+                    ...prev,
+                    entries: prev.entries.map(entry =>
+                        entry._id === id ? { ...entry, mailSent: true } : entry
+                    )
+                }));
             } else {
                 alert(`❌ ${data.error || 'Failed to send email'}`);
             }
@@ -260,6 +267,45 @@ const Admin = () => {
             alert('Network error sending email');
             console.error(err);
         }
+    };
+
+    const handleSendAllRecruitmentMail = async () => {
+        const unsent = recruitment.entries.filter(e => !e.mailSent);
+        if (unsent.length === 0) {
+            alert('All applicants have already been mailed!');
+            return;
+        }
+        if (!window.confirm(`Send acknowledgment emails to all ${unsent.length} unsent applicant(s)?`)) return;
+        const token = sessionStorage.getItem('adminToken');
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        let successIds = [];
+        let failCount = 0;
+        for (const entry of unsent) {
+            try {
+                const res = await fetch(`${API_URL}/api/recruitment/${entry._id}/send-mail`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    successIds.push(entry._id);
+                } else {
+                    failCount++;
+                }
+            } catch {
+                failCount++;
+            }
+        }
+        // Update local state for all successfully sent entries
+        if (successIds.length > 0) {
+            setRecruitment(prev => ({
+                ...prev,
+                entries: prev.entries.map(entry =>
+                    successIds.includes(entry._id) ? { ...entry, mailSent: true } : entry
+                )
+            }));
+        }
+        alert(`✅ Sent: ${successIds.length}  ❌ Failed: ${failCount}`);
     };
 
     const downloadRecruitmentExcel = () => {
@@ -765,6 +811,13 @@ const Admin = () => {
                                 <button onClick={downloadRecruitmentExcel} style={{ background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.3)', color: '#00f3ff', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                     <FaDownload /> EXPORT
                                 </button>
+                                <button
+                                    onClick={handleSendAllRecruitmentMail}
+                                    style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.35)', color: '#22c55e', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+                                    title="Send acknowledgment email to all unsent applicants"
+                                >
+                                    ✉ SEND ALL
+                                </button>
                                 <button onClick={() => fetchRecruitment()} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}>
                                     <FaSync />
                                 </button>
@@ -789,11 +842,11 @@ const Admin = () => {
                                         SHOWING {filtered.length} OF {recruitment.count} APPLICATIONS
                                     </div>
                                     <div style={{ overflowX: 'auto' }}>
-                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, sans-serif', fontSize: '0.85rem' }}>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, sans-serif', fontSize: '1rem' }}>
                                             <thead>
                                                 <tr style={{ background: 'rgba(0,243,255,0.05)', borderBottom: '1px solid rgba(0,243,255,0.2)' }}>
-                                                    {['#','Name','Contact No','Email','Year','Designation','Submitted At','Action'].map(h => (
-                                                        <th key={h} style={{ padding: '12px 14px', color: '#00f3ff', fontFamily: 'Orbitron', fontSize: '0.65rem', letterSpacing: '2px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                                                    {['#','Name','Contact No','Email','Year','Designation','Action'].map(h => (
+                                                        <th key={h} style={{ padding: '12px 14px', color: '#00f3ff', fontFamily: 'Orbitron', fontSize: '0.8rem', letterSpacing: '2px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
                                                     ))}
                                                 </tr>
                                             </thead>
@@ -810,20 +863,19 @@ const Admin = () => {
                                                         <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.contactNo}</td>
                                                         <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.email}</td>
                                                         <td style={{ padding: '12px 14px' }}>
-                                                            <span style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>{e.year}</span>
+                                                            <span style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>{e.year}</span>
                                                         </td>
                                                         <td style={{ padding: '12px 14px' }}>
-                                                            <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '2px', fontSize: '0.75rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>
+                                                            <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '2px', fontSize: '0.9rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>
                                                         </td>
-                                                        <td style={{ padding: '12px 14px', color: '#475569', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>{new Date(e.submittedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                                                         <td style={{ padding: '12px 14px' }}>
                                                             <div style={{ display: 'flex', gap: '6px' }}>
                                                                 <button
                                                                     onClick={() => handleSendRecruitmentMail(e._id, e.name, e.email)}
                                                                     title={`Send acknowledgment to ${e.email}`}
-                                                                    style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
+                                                                    style={{ background: e.mailSent ? 'rgba(34,197,94,0.18)' : 'rgba(34,197,94,0.08)', border: `1px solid ${e.mailSent ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.3)'}`, color: '#22c55e', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
                                                                 >
-                                                                    ✉ Mail
+                                                                    {e.mailSent ? '✉ Sent' : '✉ Mail'}
                                                                 </button>
                                                                 <button onClick={() => handleDeleteRecruitment(e._id)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
                                                                     <FaTimes />

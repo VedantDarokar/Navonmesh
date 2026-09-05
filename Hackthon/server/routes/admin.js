@@ -11,9 +11,7 @@ router.post('/login', (req, res) => {
     const { id, password } = req.body;
     const admins = [
         { id: 'nihal1512', password: 'rutuja1512', name: 'Nihal', subRole: 'Overall Head' },
-        { id: 'vedu1510', password: 'Vedant@15', name: 'Vedant', subRole: 'Overall Head' },
-        { id: 'chakradhar@khamgaon', password: 'khamgaonking', name: 'Chakradhar', subRole: 'Treasurer' },
-        { id: 'faculty01', password: 'faculty@01', name: 'Dr. S.S.Jadhao', subRole: 'Convener' }
+        { id: 'vedant1510', password: 'Vedant@15', name: 'Vedant', subRole: 'Overall Head' }
     ];
 
     const cleanId = (id || '').trim();
@@ -616,7 +614,7 @@ router.get('/committee', async (req, res) => {
 router.post('/committee/add', async (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = req.headers['x-admin-id']; // Special header to check who is performing the action
-    
+
     if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal1512') {
         return res.status(401).json({ error: 'Unauthorized Access. Only Nihal can add members.' });
     }
@@ -634,7 +632,7 @@ router.post('/committee/add', async (req, res) => {
 router.delete('/committee/:id', async (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = req.headers['x-admin-id'];
-    
+
     if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal1512') {
         return res.status(401).json({ error: 'Unauthorized Access. Only Nihal can remove members.' });
     }
@@ -670,7 +668,7 @@ router.post('/timer/update', async (req, res) => {
     try {
         const { isActive, endTime, pausedAt } = req.body;
         let timer = await Timer.findOne({ eventId: 'global_break_timer' });
-        
+
         if (!timer) {
             timer = new Timer({ eventId: 'global_break_timer' });
         }

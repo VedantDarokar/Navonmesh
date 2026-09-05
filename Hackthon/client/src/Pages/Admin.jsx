@@ -315,6 +315,7 @@ const Admin = () => {
             'Contact No': e.contactNo,
             'Email': e.email,
             'Year': e.year,
+            'Branch': e.branch || 'N/A',
             'Designation': e.designation,
             'Submitted At': new Date(e.submittedAt).toLocaleString('en-IN')
         }));
@@ -832,6 +833,7 @@ const Admin = () => {
                                 filtered = filtered.filter(e =>
                                     e.name.toLowerCase().includes(s) ||
                                     e.designation.toLowerCase().includes(s) ||
+                                    (e.branch && e.branch.toLowerCase().includes(s)) ||
                                     e.email.toLowerCase().includes(s) ||
                                     e.contactNo.includes(s)
                                 );
@@ -845,7 +847,7 @@ const Admin = () => {
                                         <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, sans-serif', fontSize: '1rem' }}>
                                             <thead>
                                                 <tr style={{ background: 'rgba(0,243,255,0.05)', borderBottom: '1px solid rgba(0,243,255,0.2)' }}>
-                                                    {['#','Name','Contact No','Email','Year','Designation','Action'].map(h => (
+                                                    {['#','Name','Contact No','Email','Year','Branch','Designation','Action'].map(h => (
                                                         <th key={h} style={{ padding: '12px 14px', color: '#00f3ff', fontFamily: 'Orbitron', fontSize: '0.8rem', letterSpacing: '2px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
                                                     ))}
                                                 </tr>
@@ -864,6 +866,9 @@ const Admin = () => {
                                                         <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.email}</td>
                                                         <td style={{ padding: '12px 14px' }}>
                                                             <span style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>{e.year}</span>
+                                                        </td>
+                                                        <td style={{ padding: '12px 14px' }}>
+                                                            <span style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>{e.branch || 'N/A'}</span>
                                                         </td>
                                                         <td style={{ padding: '12px 14px' }}>
                                                             <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '2px', fontSize: '0.9rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>

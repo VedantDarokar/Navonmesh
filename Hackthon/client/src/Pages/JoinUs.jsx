@@ -15,12 +15,15 @@ const JoinUs = () => {
     contactNo: '',
     email: '',
     year: '2nd year',
+    branch: 'CSE',
     designation: 'Overall Head'
   });
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lastSubmittedData, setLastSubmittedData] = useState(null);
+
+  const branches = ['CSE', 'IT', 'EXTC', 'Elpo', 'Mech'];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,7 +35,7 @@ const JoinUs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.contactNo.trim() || !formData.email.trim() || !formData.year) {
+    if (!formData.name.trim() || !formData.contactNo.trim() || !formData.email.trim() || !formData.year || !formData.branch) {
       alert('Please fill in all mandatory fields.');
       return;
     }
@@ -64,6 +67,7 @@ const JoinUs = () => {
       contactNo: '',
       email: '',
       year: '2nd year',
+      branch: 'CSE',
       designation: 'Overall Head'
     });
     setSubmitted(false);
@@ -153,6 +157,10 @@ const JoinUs = () => {
                     <span className="s-val">{lastSubmittedData?.name}</span>
                   </div>
                   <div className="summary-line">
+                    <span className="s-label">BRANCH:</span>
+                    <span className="s-val">{lastSubmittedData?.branch}</span>
+                  </div>
+                  <div className="summary-line">
                     <span className="s-label">DESIGNATION:</span>
                     <span className="s-val">{lastSubmittedData?.designation}</span>
                   </div>
@@ -238,7 +246,7 @@ const JoinUs = () => {
                     </div>
                   </div>
 
-                  {/* ROW 2: EMAIL & DESIGNATION */}
+                  {/* ROW 2: EMAIL & BRANCH */}
                   <div className="parchment-row-2col">
                     <div className="parchment-field">
                       <label className="parchment-label" htmlFor="anc-email">
@@ -257,26 +265,50 @@ const JoinUs = () => {
                     </div>
 
                     <div className="parchment-field">
-                      <label className="parchment-label" htmlFor="anc-designation">
-                        SELECT DESIGNATION *
+                      <label className="parchment-label" htmlFor="anc-branch">
+                        BRANCH *
                       </label>
                       <div className="parchment-select-wrapper">
                         <select
-                          id="anc-designation"
-                          name="designation"
+                          id="anc-branch"
+                          name="branch"
                           className="parchment-select"
-                          value={formData.designation}
+                          value={formData.branch}
                           onChange={handleChange}
                           required
                         >
-                          {designations.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
+                          {branches.map((b) => (
+                            <option key={b} value={b}>
+                              {b}
                             </option>
                           ))}
                         </select>
                         <FaChevronDown className="parchment-chevron" />
                       </div>
+                    </div>
+                  </div>
+
+                  {/* ROW 3: DESIGNATION */}
+                  <div className="parchment-field">
+                    <label className="parchment-label" htmlFor="anc-designation">
+                      SELECT DESIGNATION *
+                    </label>
+                    <div className="parchment-select-wrapper">
+                      <select
+                        id="anc-designation"
+                        name="designation"
+                        className="parchment-select"
+                        value={formData.designation}
+                        onChange={handleChange}
+                        required
+                      >
+                        {designations.map((d) => (
+                          <option key={d} value={d}>
+                            {d}
+                          </option>
+                        ))}
+                      </select>
+                      <FaChevronDown className="parchment-chevron" />
                     </div>
                   </div>
 

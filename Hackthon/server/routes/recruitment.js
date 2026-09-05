@@ -3,14 +3,21 @@ const router = express.Router();
 const Recruitment = require('../models/Recruitment');
 const sendEmail = require('../utils/email');
 
-// POST — submit a recruitment application
+// POST â€” submit a recruitment application
 router.post('/', async (req, res) => {
   try {
-    const { name, contactNo, email, year, designation } = req.body;
+    const { name, contactNo, email, year, branch, designation } = req.body;
     if (!name || !contactNo || !email || !year || !designation) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
-    const application = new Recruitment({ name, contactNo, email, year, designation });
+    const application = new Recruitment({
+      name,
+      contactNo,
+      email,
+      year,
+      branch: branch || 'CSE',
+      designation
+    });
     await application.save();
     res.status(201).json({ success: true, message: 'Application submitted successfully.' });
   } catch (err) {
@@ -19,7 +26,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET — fetch all recruitment applications (admin protected)
+// GET â€” fetch all recruitment applications (admin protected)
 router.get('/', async (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
@@ -34,7 +41,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// DELETE — delete a single recruitment application (admin only)
+// DELETE â€” delete a single recruitment application (admin only)
 router.delete('/:id', async (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
@@ -48,7 +55,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// POST — send acknowledgment email to applicant (admin only)
+// POST â€” send acknowledgment email to applicant (admin only)
 router.post('/:id/send-mail', async (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
@@ -112,6 +119,10 @@ router.post('/:id/send-mail', async (req, res) => {
       <tr style="background:#fff9ef;">
         <td style="padding:11px 18px;color:#7a1a28;font-size:11px;letter-spacing:3px;font-family:Georgia,serif;border-top:1px solid #ead99a;">YEAR</td>
         <td style="padding:11px 18px;color:#3d1a00;font-size:13px;font-family:Georgia,serif;border-top:1px solid #ead99a;">${application.year}</td>
+      </tr>
+      <tr style="background:#fdf6e3;">
+        <td style="padding:11px 18px;color:#7a1a28;font-size:11px;letter-spacing:3px;font-family:Georgia,serif;border-top:1px solid #ead99a;">BRANCH</td>
+        <td style="padding:11px 18px;color:#3d1a00;font-size:13px;font-weight:bold;font-family:Georgia,serif;border-top:1px solid #ead99a;">${application.branch || 'CSE'}</td>
       </tr>
       <tr style="background:#fdf6e3;">
         <td style="padding:11px 18px;color:#7a1a28;font-size:11px;letter-spacing:3px;font-family:Georgia,serif;border-top:1px solid #ead99a;">CONTACT</td>

@@ -74,6 +74,7 @@ const JoinUs = () => {
   };
 
   const designations = [
+    'Coordinator',
     'Overall Head',
     'Srijan Head',
     'Ankur Head',

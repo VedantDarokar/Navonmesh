@@ -805,7 +805,7 @@ const Admin = () => {
                                     style={{ background: '#0f1623', border: '1px solid rgba(0,243,255,0.2)', color: '#00f3ff', padding: '8px 12px', borderRadius: '4px', fontSize: '0.8rem', outline: 'none' }}
                                 >
                                     <option value="ALL">All Designations</option>
-                                    {['Overall Head','Srijan Head','Ankur Head','Udbhav Head','Drone Head','Management Co-Head','Publicity Co-Head','Accommodation Co-Head','Logistics Co-Head','Technical Co-Head','Event Co-Head','Discipline Co-Head','Graphics Co-Head','Videography Co-Head','Social Media Co-Head'].map(d => (
+                                    {['Coordinator','Overall Head','Srijan Head','Ankur Head','Udbhav Head','Drone Head','Management Co-Head','Publicity Co-Head','Accommodation Co-Head','Logistics Co-Head','Technical Co-Head','Event Co-Head','Discipline Co-Head','Graphics Co-Head','Videography Co-Head','Social Media Co-Head'].map(d => (
                                         <option key={d} value={d}>{d}</option>
                                     ))}
                                 </select>

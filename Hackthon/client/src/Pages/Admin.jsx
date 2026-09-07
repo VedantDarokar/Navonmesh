@@ -925,34 +925,37 @@ const Admin = () => {
                     </div>
                 </div>
                 <div className="admin-actions">
-                    <button
-                        className={`nav-mode-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('dashboard')}
-                    >
-                        DASHBOARD
-                    </button>
-                    <button
-                        className={`nav-mode-btn ${activeTab === 'messages' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('messages')}
-                    >
-                        COMMUNICATION HUB
-                    </button>
-                    <button
-                        className={`nav-mode-btn ${activeTab === 'recruitment' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('recruitment')}
-                        style={activeTab === 'recruitment' ? { borderColor: '#00f3ff', color: '#00f3ff' } : {}}
-                    >
-                        RECRUITMENT ({recruitment.count})
-                    </button>
-                    <button className="refresh-btn" onClick={() => fetchData(sessionStorage.getItem('adminToken'))} title="Refresh Data">
-                        <FaSync className={loading ? 'spin' : ''} />
-                    </button>
-                    <button className="maintenance-btn" onClick={() => window.open('/#/admin/maintenance', '_blank')}>Maintenance</button>
-                    <button className="event-day-btn" onClick={() => window.open('/#/admin/event-day', '_blank')} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.8rem' }}>Event Day</button>
-                    <button className="timer-btn-admin" onClick={() => window.open('/#/admin/break-timer', '_blank')} style={{ background: 'linear-gradient(135deg, #00f3ff 0%, #00d4ff 100%)', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.8rem', fontWeight: 'bold' }}>Timer</button>
-                    <button className="management-btn-admin" onClick={() => setManagementAuth({ ...managementAuth, open: true })} style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.8rem', fontWeight: 'bold' }}>Management</button>
-                    <button className="logout-btn" onClick={handleLogout}>Abort Mission</button>
-
+                    <div className="admin-nav-tabs">
+                        <button
+                            className={`nav-mode-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('dashboard')}
+                        >
+                            DASHBOARD
+                        </button>
+                        <button
+                            className={`nav-mode-btn ${activeTab === 'messages' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('messages')}
+                        >
+                            COMMUNICATION HUB
+                        </button>
+                        <button
+                            className={`nav-mode-btn ${activeTab === 'recruitment' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('recruitment')}
+                            style={activeTab === 'recruitment' ? { borderColor: '#00f3ff', color: '#00f3ff' } : {}}
+                        >
+                            RECRUITMENT ({recruitment.count})
+                        </button>
+                    </div>
+                    <div className="admin-quick-actions">
+                        <button className="refresh-btn" onClick={() => fetchData(sessionStorage.getItem('adminToken'))} title="Refresh Data">
+                            <FaSync className={loading ? 'spin' : ''} />
+                        </button>
+                        <button className="maintenance-btn" onClick={() => window.open('/#/admin/maintenance', '_blank')}>Maintenance</button>
+                        <button className="event-day-btn" onClick={() => window.open('/#/admin/event-day', '_blank')}>Event Day</button>
+                        <button className="timer-btn-admin" onClick={() => window.open('/#/admin/break-timer', '_blank')}>Timer</button>
+                        <button className="management-btn-admin" onClick={() => setManagementAuth({ ...managementAuth, open: true })}>Management</button>
+                        <button className="logout-btn" onClick={handleLogout}>Abort Mission</button>
+                    </div>
                 </div>
             </header>
 
@@ -962,40 +965,40 @@ const Admin = () => {
             ) : summary ? (
                 activeTab === 'recruitment' ? (
                     <div className="admin-content">
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                        <div className="recruitment-header-row">
                             <div>
                                 <h2 style={{ fontFamily: 'Orbitron', color: '#00f3ff', margin: 0, fontSize: '1.2rem', letterSpacing: '3px' }}>RECRUITMENT APPLICATIONS</h2>
                                 <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '4px 0 0', letterSpacing: '1px' }}>NAVONMESH '27 — TEAM ASSEMBLY</p>
                             </div>
-                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div className="recruitment-toolbar">
                                 <input
                                     type="text"
+                                    className="recruit-search-input"
                                     placeholder="Search name / designation..."
                                     value={recruitSearch}
                                     onChange={(e) => setRecruitSearch(e.target.value)}
-                                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(0,243,255,0.2)', color: '#fff', padding: '8px 14px', borderRadius: '4px', fontSize: '0.8rem', outline: 'none', width: '220px' }}
                                 />
                                 <select
+                                    className="recruit-filter-select"
                                     value={recruitFilter}
                                     onChange={(e) => setRecruitFilter(e.target.value)}
-                                    style={{ background: '#0f1623', border: '1px solid rgba(0,243,255,0.2)', color: '#00f3ff', padding: '8px 12px', borderRadius: '4px', fontSize: '0.8rem', outline: 'none' }}
                                 >
                                     <option value="ALL">All Designations</option>
                                     {['Coordinator','Overall Head','Srijan Head','Ankur Head','Udbhav Head','Drone Head','Management Co-Head','Publicity Co-Head','Accommodation Co-Head','Logistics Co-Head','Technical Co-Head','Event Co-Head','Discipline Co-Head','Graphics Co-Head','Videography Co-Head','Social Media Co-Head'].map(d => (
                                         <option key={d} value={d}>{d}</option>
                                     ))}
                                 </select>
-                                <button onClick={downloadRecruitmentPDF} style={{ background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.3)', color: '#00f3ff', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <button className="recruit-action-btn pdf" onClick={downloadRecruitmentPDF}>
                                     <FaDownload /> EXPORT PDF
                                 </button>
                                 <button
+                                    className="recruit-action-btn send-all"
                                     onClick={handleSendAllRecruitmentMail}
-                                    style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.35)', color: '#22c55e', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
                                     title="Send acknowledgment email to all unsent applicants"
                                 >
                                     ✉ SEND ALL
                                 </button>
-                                <button onClick={() => fetchRecruitment()} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer' }}>
+                                <button className="recruit-action-btn refresh" onClick={() => fetchRecruitment()}>
                                     <FaSync />
                                 </button>
                             </div>
@@ -1019,46 +1022,44 @@ const Admin = () => {
                                     <div style={{ color: '#64748b', fontSize: '0.75rem', letterSpacing: '2px', marginBottom: '12px' }}>
                                         SHOWING {filtered.length} OF {recruitment.count} APPLICATIONS
                                     </div>
-                                    <div style={{ overflowX: 'auto' }}>
-                                        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, sans-serif', fontSize: '1rem' }}>
+                                    <div className="data-table-container">
+                                        <table className="data-table">
                                             <thead>
-                                                <tr style={{ background: 'rgba(0,243,255,0.05)', borderBottom: '1px solid rgba(0,243,255,0.2)' }}>
+                                                <tr>
                                                     {['#','Name','Contact No','Email','Year','Branch','Designation','Action'].map(h => (
-                                                        <th key={h} style={{ padding: '12px 14px', color: '#00f3ff', fontFamily: 'Orbitron', fontSize: '0.8rem', letterSpacing: '2px', textAlign: 'left', whiteSpace: 'nowrap' }}>{h}</th>
+                                                        <th key={h}>{h}</th>
                                                     ))}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {filtered.length === 0 ? (
-                                                    <tr><td colSpan={8} style={{ textAlign: 'center', padding: '40px', color: '#334155', letterSpacing: '2px', fontSize: '0.8rem' }}>NO APPLICATIONS FOUND</td></tr>
+                                                    <tr><td colSpan={8} className="empty-row">NO APPLICATIONS FOUND</td></tr>
                                                 ) : filtered.map((e, i) => (
-                                                    <tr key={e._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.2s' }}
-                                                        onMouseEnter={ev => ev.currentTarget.style.background = 'rgba(0,243,255,0.03)'}
-                                                        onMouseLeave={ev => ev.currentTarget.style.background = 'transparent'}
-                                                    >
-                                                        <td style={{ padding: '12px 14px', color: '#475569' }}>{i + 1}</td>
-                                                        <td style={{ padding: '12px 14px', color: '#e2e8f0', fontWeight: 500 }}>{e.name}</td>
-                                                        <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.contactNo}</td>
-                                                        <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{e.email}</td>
-                                                        <td style={{ padding: '12px 14px' }}>
-                                                            <span style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>{e.year}</span>
+                                                    <tr key={e._id}>
+                                                        <td style={{ color: '#475569' }}>{i + 1}</td>
+                                                        <td style={{ fontWeight: 600, color: '#e2e8f0' }}>{e.name}</td>
+                                                        <td style={{ color: '#94a3b8' }}>{e.contactNo}</td>
+                                                        <td style={{ color: '#94a3b8' }}>{e.email}</td>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>{e.year}</span>
                                                         </td>
-                                                        <td style={{ padding: '12px 14px' }}>
-                                                            <span style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.9rem', whiteSpace: 'nowrap' }}>{e.branch || 'N/A'}</span>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa', padding: '3px 10px', borderRadius: '20px', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>{e.branch || 'N/A'}</span>
                                                         </td>
-                                                        <td style={{ padding: '12px 14px' }}>
-                                                            <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '2px', fontSize: '0.9rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '4px', fontSize: '0.85rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>
                                                         </td>
-                                                        <td style={{ padding: '12px 14px' }}>
-                                                            <div style={{ display: 'flex', gap: '6px' }}>
+                                                        <td>
+                                                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                                                                 <button
                                                                     onClick={() => handleSendRecruitmentMail(e._id, e.name, e.email)}
-                                                                    title={`Send acknowledgment to ${e.email}`}
-                                                                    style={{ background: e.mailSent ? 'rgba(34,197,94,0.18)' : 'rgba(34,197,94,0.08)', border: `1px solid ${e.mailSent ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.3)'}`, color: '#22c55e', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
+                                                                    disabled={e.mailSent}
+                                                                    style={{ background: e.mailSent ? 'rgba(34,197,94,0.18)' : 'rgba(34,197,94,0.08)', border: `1px solid ${e.mailSent ? 'rgba(34,197,94,0.6)' : 'rgba(34,197,94,0.3)'}`, color: '#22c55e', padding: '5px 10px', borderRadius: '4px', cursor: e.mailSent ? 'default' : 'pointer', fontSize: '0.78rem', whiteSpace: 'nowrap', fontFamily: 'Orbitron', fontWeight: 'bold' }}
+                                                                    title={e.mailSent ? 'Acknowledgment email already sent' : 'Send acknowledgment email'}
                                                                 >
-                                                                    {e.mailSent ? '✉ Sent' : '✉ Mail'}
+                                                                    {e.mailSent ? '✓ Sent' : '✉ Mail'}
                                                                 </button>
-                                                                <button onClick={() => handleDeleteRecruitment(e._id)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                                                                <button onClick={() => handleDeleteRecruitment(e._id)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }} title="Delete application">
                                                                     <FaTimes />
                                                                 </button>
                                                             </div>
@@ -1183,32 +1184,31 @@ const Admin = () => {
                                                 setAnkurFilter('ALL');
                                             }}>Total</button>
 
-                                            <div className="search-box-admin" style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '0 10px', border: '1px solid rgba(255,255,255,0.1)', marginLeft: '10px' }}>
+                                            <div className="search-box-admin">
                                                 <input
                                                     type="text"
                                                     placeholder="Search Teams/Leads/UTR..."
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                                    style={{ background: 'transparent', border: 'none', color: '#fff', padding: '8px', fontSize: '0.8rem', outline: 'none', width: '200px' }}
                                                 />
                                             </div>
 
-                                            <div className="revised-filters" style={{ display: 'flex', gap: '5px', marginLeft: '10px' }}>
+                                            <div className="revised-filters">
                                                 <button
                                                     onClick={() => setRevisedFilter('ALL')}
-                                                    style={{ background: revisedFilter === 'ALL' ? '#7c3aed' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '0.7rem', cursor: 'pointer', transition: '0.3s' }}
+                                                    className={`revised-filter-btn ${revisedFilter === 'ALL' ? 'active-all' : ''}`}
                                                 >
                                                     All Status
                                                 </button>
                                                 <button
                                                     onClick={() => setRevisedFilter('REVISED')}
-                                                    style={{ background: revisedFilter === 'REVISED' ? '#22c55e' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '0.7rem', cursor: 'pointer', transition: '0.3s' }}
+                                                    className={`revised-filter-btn ${revisedFilter === 'REVISED' ? 'active-revised' : ''}`}
                                                 >
                                                     Revised Only
                                                 </button>
                                                 <button
                                                     onClick={() => setRevisedFilter('PENDING')}
-                                                    style={{ background: revisedFilter === 'PENDING' ? '#ef4444' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '0.7rem', cursor: 'pointer', transition: '0.3s' }}
+                                                    className={`revised-filter-btn ${revisedFilter === 'PENDING' ? 'active-pending' : ''}`}
                                                 >
                                                     Pending Only
                                                 </button>
@@ -1613,80 +1613,67 @@ const Admin = () => {
                         )}
                     </div>
                 ) : activeTab === 'management' ? (
-                    <div className="management-section animate-fade-in" style={{ padding: '40px', color: '#fff' }}>
-                        <div className="management-header" style={{ marginBottom: '40px', borderBottom: '1px solid rgba(245, 158, 11, 0.3)', paddingBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="management-section animate-fade-in">
+                        <div className="management-header">
                             <div>
-                                <h1 style={{ fontFamily: 'Orbitron', color: '#f59e0b', margin: 0 }}>COMMITTEE MANAGEMENT</h1>
-                                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>Personnel Deployment Registry</p>
+                                <h1>COMMITTEE MANAGEMENT</h1>
+                                <p>Personnel Deployment Registry</p>
                             </div>
-                            <button onClick={() => setActiveTab('dashboard')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' }}>CLOSE</button>
+                            <button className="management-close-btn" onClick={() => setActiveTab('dashboard')}>CLOSE</button>
                         </div>
 
-                        <div className="management-tabs" style={{ display: 'flex', gap: '15px', marginBottom: '40px', flexWrap: 'wrap' }}>
+                        <div className="management-tabs">
                             {departments.map(dept => (
                                 <button
                                     key={dept}
                                     onClick={() => setActiveManagementTab(dept)}
-                                    style={{
-                                        padding: '12px 24px',
-                                        background: activeManagementTab === dept ? '#f59e0b' : 'rgba(255,255,255,0.05)',
-                                        color: activeManagementTab === dept ? '#000' : '#fff',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        fontFamily: 'Orbitron',
-                                        fontSize: '0.8rem',
-                                        fontWeight: 'bold',
-                                        transition: '0.3s'
-                                    }}
+                                    className={`management-dept-btn ${activeManagementTab === dept ? 'active' : ''}`}
                                 >{dept}</button>
                             ))}
                         </div>
 
-                        <div className="management-content-grid" style={{ display: 'grid', gridTemplateColumns: adminId === 'nihal1512' ? '1fr 1fr' : '1fr', gap: '40px' }}>
+                        <div className={`management-content-grid ${adminId === 'nihal1512' ? 'has-admin-form' : ''}`}>
                             {adminId === 'nihal1512' && (
-                                <div className="add-member-form" style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '30px', borderRadius: '15px' }}>
-                                    <h3 style={{ color: '#f59e0b', marginBottom: '20px', fontFamily: 'Orbitron' }}>Add to {activeManagementTab}</h3>
+                                <div className="add-member-form">
+                                    <h3>Add to {activeManagementTab}</h3>
                                     <form onSubmit={handleAddMember}>
-                                        <div style={{ marginBottom: '20px' }}>
-                                            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Member Name</label>
+                                        <div style={{ marginBottom: '18px' }}>
+                                            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)' }}>Member Name</label>
                                             <input
                                                 type="text"
                                                 value={newMember.name}
                                                 onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
                                                 placeholder="Enter Full Name"
-                                                style={{ width: '100%', padding: '12px', background: '#000', border: '1px solid #333', color: '#fff', borderRadius: '5px' }}
                                             />
                                         </div>
-                                        <div style={{ marginBottom: '30px' }}>
-                                            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Phone Number</label>
+                                        <div style={{ marginBottom: '24px' }}>
+                                            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)' }}>Phone Number</label>
                                             <input
                                                 type="text"
                                                 value={newMember.phone}
                                                 onChange={(e) => setNewMember({ ...newMember, phone: e.target.value })}
                                                 placeholder="+91 00000 00000"
-                                                style={{ width: '100%', padding: '12px', background: '#000', border: '1px solid #333', color: '#fff', borderRadius: '5px' }}
                                             />
                                         </div>
-                                        <button type="submit" style={{ width: '100%', padding: '15px', background: '#f59e0b', color: '#000', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: 'pointer' }}>ENGAGE RECRUIT</button>
+                                        <button type="submit">ENGAGE RECRUIT</button>
                                     </form>
                                 </div>
                             )}
 
                             <div className="members-list-container">
-                                <h3 style={{ marginBottom: '20px', fontFamily: 'Orbitron' }}>Active Units: {activeManagementTab}</h3>
-                                <div className="members-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <h3 style={{ marginBottom: '18px', fontFamily: 'Orbitron', fontSize: '1.05rem', color: '#f59e0b' }}>Active Units: {activeManagementTab}</h3>
+                                <div className="members-list">
                                     {committeeMembers.filter(m => m.department === activeManagementTab).length === 0 ? (
-                                        <p style={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: '40px' }}>No units deployed in this sector.</p>
+                                        <p style={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', padding: '40px 20px', letterSpacing: '1px', fontSize: '0.85rem' }}>No units deployed in this sector.</p>
                                     ) : (
                                         committeeMembers.filter(m => m.department === activeManagementTab).map(member => (
-                                            <div key={member._id} style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div key={member._id} className="member-card-item">
                                                 <div>
-                                                    <h4 style={{ margin: '0 0 5px 0' }}>{member.name}</h4>
-                                                    <p style={{ margin: 0, color: '#00f3ff', fontSize: '0.9rem' }}>{member.phone}</p>
+                                                    <h4 style={{ margin: '0 0 4px 0', fontSize: '0.95rem' }}>{member.name}</h4>
+                                                    <p style={{ margin: 0, color: '#00f3ff', fontSize: '0.85rem', fontFamily: 'Orbitron' }}>{member.phone}</p>
                                                 </div>
                                                 {adminId === 'nihal1512' && (
-                                                    <button onClick={() => handleDeleteMember(member._id)} style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: 'none', padding: '8px', borderRadius: '5px', cursor: 'pointer' }}>
+                                                    <button onClick={() => handleDeleteMember(member._id)} style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} title="Remove unit">
                                                         <FaTimes />
                                                     </button>
                                                 )}

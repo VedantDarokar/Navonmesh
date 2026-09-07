@@ -3,6 +3,10 @@ import '../Styles/admin.css';
 import bgVideo from '../assets/bg.mp4';
 import { FaMusic, FaUsers, FaHotel, FaProjectDiagram, FaDesktop, FaChartPie, FaTable, FaSync, FaDownload, FaEye, FaTimes, FaCheckCircle } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import navonmeshLogo from '../assets/navonmesh_tricolor.png';
+import ssgmceLogo from '../assets/SSGMCE-Colour-Logomark-01 2.png';
 
 const Admin = () => {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -323,6 +327,178 @@ const Admin = () => {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Recruitment');
         XLSX.writeFile(wb, `recruitment_applications_${new Date().toISOString().split('T')[0]}.xlsx`);
+    };
+
+    const downloadRecruitmentPDF = async () => {
+        // Apply same filters as the table view
+        let filtered = recruitment.entries;
+        if (recruitFilter !== 'ALL') filtered = filtered.filter(e => e.designation === recruitFilter);
+        if (recruitSearch.trim()) {
+            const s = recruitSearch.toLowerCase();
+            filtered = filtered.filter(e =>
+                e.name.toLowerCase().includes(s) ||
+                e.designation.toLowerCase().includes(s)
+            );
+        }
+
+        // ── Helper: load image and return aspect-ratio-safe dimensions ───
+        // Fits the image inside a maxW × maxH box without stretching.
+        const fitLogo = (src, maxW, maxH) =>
+            new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const ratio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+                    resolve({ src, w: img.naturalWidth * ratio, h: img.naturalHeight * ratio });
+                };
+                img.onerror = () => resolve(null);
+                img.src = src;
+            });
+
+        const MAX_LOGO_W = 36;  // maximum allowed width (mm)
+        const LOGO_H     = 22;  // fixed max height (mm)
+
+        // Load both logos in parallel, preserving aspect ratio
+        const [ssgmce, navonmesh] = await Promise.all([
+            fitLogo(ssgmceLogo,   MAX_LOGO_W, LOGO_H),
+            fitLogo(navonmeshLogo, MAX_LOGO_W, LOGO_H),
+        ]);
+
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();   // 297mm
+        const pageH = doc.internal.pageSize.getHeight();  // 210mm
+        const marginX = 12;
+
+        // ── Layout constants ────────────────────────────────────────────
+        const LOGO_Y        = 7;                          // top margin for logos
+        const HEADER_BOTTOM = LOGO_Y + LOGO_H + 4;       // ~33mm — divider line
+        const TABLE_START_Y = HEADER_BOTTOM + 2;          // ~35mm — table starts
+        const CENTER_X      = pageW / 2;
+
+        // Helper: draw full header (page 1 only)
+        const drawHeader = () => {
+            // ── SSGMCE logo — TOP LEFT (vertically centred in logo zone) ─
+            if (ssgmce) {
+                const ly = LOGO_Y + (LOGO_H - ssgmce.h) / 2;  // vertically center
+                try { doc.addImage(ssgmce.src, 'PNG', marginX, ly, ssgmce.w, ssgmce.h); } catch (_) {}
+            }
+
+            // ── Navonmesh logo — TOP RIGHT (vertically centred) ──────────
+            if (navonmesh) {
+                const ly = LOGO_Y + (LOGO_H - navonmesh.h) / 2;
+                const lx = pageW - marginX - navonmesh.w;
+                try { doc.addImage(navonmesh.src, 'PNG', lx, ly, navonmesh.w, navonmesh.h); } catch (_) {}
+            }
+
+            // ── Center title text ────────────────────────────────────────
+            const textY1 = LOGO_Y + 7;   // "Navonmesh'27"
+            const textY2 = textY1 + 7;   // College name
+            const textY3 = textY2 + 6;   // (Evaluation Sheet)
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(20, 20, 80);
+            doc.text("Navonmesh'27", CENTER_X, textY1, { align: 'center' });
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(50, 50, 50);
+            doc.text('Shri Sant Gajanan Maharaj College of Engineering, Shegaon', CENTER_X, textY2, { align: 'center' });
+
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(9);
+            doc.setTextColor(90, 90, 90);
+            doc.text('(Evaluation Sheet)', CENTER_X, textY3, { align: 'center' });
+
+            // ── Divider line ─────────────────────────────────────────────
+            doc.setDrawColor(20, 20, 80);
+            doc.setLineWidth(0.6);
+            doc.line(marginX, HEADER_BOTTOM, pageW - marginX, HEADER_BOTTOM);
+        };
+
+        // Draw header on page 1 only
+        drawHeader();
+
+        // ── Table ────────────────────────────────────────────────────────
+        const head = [[
+            { content: 'Sr. No.', styles: { halign: 'center' } },
+            { content: 'Name',    styles: { halign: 'center' } },
+            { content: 'Year',   styles: { halign: 'center' } },
+            { content: 'Branch', styles: { halign: 'center' } },
+            { content: 'Designation', styles: { halign: 'center' } },
+            { content: 'Communication', styles: { halign: 'center' } },
+            { content: 'Attitude',  styles: { halign: 'center' } },
+            { content: 'Teamwork',  styles: { halign: 'center' } },
+            { content: 'Technical', styles: { halign: 'center' } },
+            { content: 'Planning',  styles: { halign: 'center' } },
+        ]];
+
+        const body = filtered.map((e, i) => [
+            { content: i + 1, styles: { halign: 'center' } },
+            e.name || '',
+            { content: e.year || '', styles: { halign: 'center' } },
+            e.branch || 'N/A',
+            e.designation || '',
+            '', '', '', '', ''
+        ]);
+
+        // Total column widths: 11+48+13+30+36+27+21+21+21+21 = 249mm
+        // Center on 297mm page: (297 - 249) / 2 = 24mm each side
+        const totalTableW = 249;
+        const centeredMargin = (pageW - totalTableW) / 2;
+
+        autoTable(doc, {
+            head,
+            body,
+            startY: TABLE_START_Y,
+            margin: { left: centeredMargin, right: centeredMargin },
+            tableWidth: totalTableW,
+            styles: {
+                fontSize: 8,
+                cellPadding: { top: 3, bottom: 3, left: 2, right: 2 },
+                lineColor: [160, 160, 200],
+                lineWidth: 0.3,
+                textColor: [20, 20, 20],
+                valign: 'middle',
+                overflow: 'linebreak',
+            },
+            headStyles: {
+                fillColor: [20, 20, 80],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 8,
+                halign: 'center',
+                cellPadding: { top: 4, bottom: 4, left: 2, right: 2 },
+            },
+            alternateRowStyles: { fillColor: [238, 242, 255] },
+            columnStyles: {
+                0: { cellWidth: 11, halign: 'center' },
+                1: { cellWidth: 48 },
+                2: { cellWidth: 13, halign: 'center' },
+                3: { cellWidth: 30 },
+                4: { cellWidth: 36 },
+                5: { cellWidth: 27, halign: 'center' },
+                6: { cellWidth: 21, halign: 'center' },
+                7: { cellWidth: 21, halign: 'center' },
+                8: { cellWidth: 21, halign: 'center' },
+                9: { cellWidth: 21, halign: 'center' },
+            },
+            didDrawPage: (data) => {
+                // Page 2+ onwards: only table continues — no header, no logos
+                // Just add page number footer on every page
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7);
+                doc.setTextColor(160, 160, 160);
+                doc.text(
+                    `Page ${data.pageNumber}`,
+                    pageW - marginX,
+                    pageH - 4,
+                    { align: 'right' }
+                );
+            }
+        });
+
+        const dateStr = new Date().toISOString().split('T')[0];
+        doc.save(`navonmesh27_evaluation_${dateStr}.pdf`);
     };
 
     const fetchCommittee = async () => {
@@ -809,8 +985,8 @@ const Admin = () => {
                                         <option key={d} value={d}>{d}</option>
                                     ))}
                                 </select>
-                                <button onClick={downloadRecruitmentExcel} style={{ background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.3)', color: '#00f3ff', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <FaDownload /> EXPORT
+                                <button onClick={downloadRecruitmentPDF} style={{ background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.3)', color: '#00f3ff', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <FaDownload /> EXPORT PDF
                                 </button>
                                 <button
                                     onClick={handleSendAllRecruitmentMail}

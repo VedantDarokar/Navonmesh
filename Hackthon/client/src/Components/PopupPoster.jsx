@@ -1,6 +1,8 @@
 import React from 'react';
 import '../Styles/popupPoster.css';
 import { IoClose } from 'react-icons/io5';
+import { FaArrowRight } from 'react-icons/fa';
+import recruitmentPoster from '../assets/popup/recruitment_poster.jpg';
 import popupBg from '../assets/popup/popup_bg.jpg';
 
 // Import winner images
@@ -16,7 +18,18 @@ import winner9 from '../assets/winners/winner_9.jpg';
 import winner10 from '../assets/winners/winner_10.jpg';
 import winner11 from '../assets/winners/winner_11.jpg';
 
+// Recruitment poster is active until end of September 12, 2026 (12/09/2026 23:59:59)
+const POSTER_EXPIRY_DATE = new Date(2026, 8, 12, 23, 59, 59);
+
 const PopupPoster = ({ onClose }) => {
+    // Check if current date is within the recruitment period (till 12/09/2026)
+    const isRecruitmentActive = new Date() <= POSTER_EXPIRY_DATE;
+
+    const handleApply = () => {
+        onClose();
+        window.location.hash = '#/join';
+    };
+
     const winners = [
         winner1, winner2, winner3, winner4, winner5,
         winner6, winner7, winner8, winner9, winner10, winner11
@@ -35,6 +48,38 @@ const PopupPoster = ({ onClose }) => {
         }, 150);
     };
 
+    // If within recruitment period (till 12/09/2026), show the uploaded recruitment poster
+    if (isRecruitmentActive) {
+        return (
+            <div className="popup-overlay" onClick={onClose}>
+                <div className="popup-poster-card" onClick={(e) => e.stopPropagation()}>
+                    {/* Close Button */}
+                    <button className="popup-poster-close-btn" onClick={onClose} aria-label="Close Popup">
+                        <IoClose />
+                    </button>
+
+                    {/* Recruitment Poster Image (Clicking navigates to recruitment registration) */}
+                    <div className="popup-poster-img-wrapper" onClick={handleApply} title="Click to Register for Recruitment">
+                        <img 
+                            src={recruitmentPoster} 
+                            alt="Navonmesh'27 Recruitment Poster" 
+                            className="popup-poster-img" 
+                        />
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="popup-poster-action-bar">
+                        <button className="popup-poster-cta-btn" onClick={handleApply}>
+                            <span>Register for Recruitment</span>
+                            <FaArrowRight />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // After 12/09/2026, reverts back to original highlights popup
     return (
         <div className="popup-overlay" onClick={onClose}>
             <div className="popup-container" onClick={(e) => e.stopPropagation()}>

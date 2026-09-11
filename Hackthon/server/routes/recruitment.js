@@ -55,6 +55,31 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// PATCH — update attendance status (admin only)
+router.patch('/:id/attendance', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    return res.status(401).json({ error: 'Unauthorized Access' });
+  }
+  try {
+    const { attendance } = req.body;
+    if (!['Present', 'Absent', 'Pending'].includes(attendance)) {
+      return res.status(400).json({ error: 'Invalid attendance status. Must be Present, Absent, or Pending.' });
+    }
+    const application = await Recruitment.findByIdAndUpdate(
+      req.params.id,
+      { attendance },
+      { new: true }
+    );
+    if (!application) return res.status(404).json({ error: 'Application not found' });
+    res.json({ success: true, message: `Attendance marked as ${attendance}`, application });
+  } catch (err) {
+    console.error('Update attendance error:', err);
+    res.status(500).json({ error: 'Failed to update attendance' });
+  }
+});
+
+
 // POST — send acknowledgment email to applicant (admin only)
 router.post('/:id/send-mail', async (req, res) => {
   const authHeader = req.headers.authorization;

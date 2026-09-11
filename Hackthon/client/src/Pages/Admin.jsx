@@ -29,6 +29,12 @@ const Admin = () => {
     const [recruitment, setRecruitment] = useState({ count: 0, entries: [] });
     const [recruitFilter, setRecruitFilter] = useState('ALL');
     const [recruitSearch, setRecruitSearch] = useState('');
+    const [recruitAttendanceFilter, setRecruitAttendanceFilter] = useState('ALL');
+    const [coreMembers, setCoreMembers] = useState([]);
+    const [coreMemberSearch, setCoreMemberSearch] = useState('');
+    const [coreMemberYearFilter, setCoreMemberYearFilter] = useState('ALL');
+    const [showCorePasswords, setShowCorePasswords] = useState(false);
+    const coreFileInputRef = useRef(null);
 
     // Management State
     const [activeManagementTab, setActiveManagementTab] = useState('Girls Accommodation');
@@ -127,6 +133,8 @@ const Admin = () => {
         sessionStorage.removeItem('adminToken');
         sessionStorage.removeItem('adminName');
         sessionStorage.removeItem('adminSubRole');
+        sessionStorage.removeItem('adminId');
+        setAdminId('');
         setLoggedIn(false);
         setSummary(null);
         setActiveEvent(null);
@@ -183,9 +191,9 @@ const Admin = () => {
                 'Leader Name': e.leaderName || 'N/A',
                 'College': e.college || 'N/A',
                 'Group Size': e.teamSize || 'N/A',
-                'UTR Number': e.utrNumber || 'N/A',
-                ...(activeEvent === 'ankur' ? { 'Category': e.category || 'N/A' } : {}),
-                ...(activeEvent === 'srijan' ? { 'Problem Statement': e.problemStatement || 'N/A' } : {})
+                'Category': e.category || e.problemStatement || 'N/A',
+                'UTR': e.utrNumber || 'N/A',
+                'Status': e.paymentVerified ? 'Verified' : 'Pending'
             }));
         }
 
@@ -207,6 +215,7 @@ const Admin = () => {
                 setSummary(data);
                 fetchCommittee();
                 fetchRecruitment(token);
+                fetchCoreMembers(token);
             } else {
                 handleLogout();
             }
@@ -230,6 +239,188 @@ const Admin = () => {
         } catch (err) {
             console.error('Recruitment fetch error:', err);
         }
+    };
+
+    const fetchCoreMembers = async (token) => {
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const t = token || sessionStorage.getItem('adminToken');
+            const aid = adminId || sessionStorage.getItem('adminId') || '';
+            const res = await fetch(`${API_URL}/api/admin/core-members`, {
+                headers: { 
+                    'Authorization': `Bearer ${t}`,
+                    'x-admin-id': aid
+                }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.entries) setCoreMembers(data.entries);
+            }
+        } catch (err) {
+            console.error('Core members fetch error:', err);
+        }
+    };
+
+    const handleCoreMembersFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (evt) => {
+            try {
+                const buffer = evt.target.result;
+                const workbook = XLSX.read(buffer, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+                
+                if (!rawRows || rawRows.length === 0) {
+                    alert('Uploaded file contains no data rows');
+                    return;
+                }
+
+                const mappedMembers = rawRows.map((row) => {
+                    const keys = Object.keys(row);
+                    const getVal = (keywords) => {
+                        const key = keys.find(k => keywords.some(kw => k.toLowerCase().replace(/[^a-z0-9]/g, '').includes(kw)));
+                        return key ? String(row[key]).trim() : '';
+                    };
+
+                    const name = getVal(['name', 'studentname', 'membername', 'fullname']) || Object.values(row)[0] || '';
+                    const contactNo = getVal(['contact', 'phone', 'mobile', 'cell', 'whatsapp']) || '';
+                    const email = getVal(['email', 'mail', 'emailaddress']) || '';
+                    const dob = getVal(['dob', 'birth', 'dateofbirth', 'birthdate']) || '';
+                    const sisId = getVal(['sis', 'sisid', 'enroll', 'reg', 'roll', 'id']) || '';
+                    const className = getVal(['class', 'branch', 'dept', 'department']) || '';
+                    const year = getVal(['year', 'yr', 'academic']) || '';
+
+                    return {
+                        name,
+                        contactNo,
+                        email,
+                        dob,
+                        sisId,
+                        class: className,
+                        year
+                    };
+                }).filter(m => m.name && m.name.length > 1 && !m.name.includes('PK\u0003'));
+
+                if (mappedMembers.length === 0) {
+                    alert('Could not find valid member rows with names in the uploaded file');
+                    return;
+                }
+
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                const res = await fetch(`${API_URL}/api/admin/core-members/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify({ members: mappedMembers })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(`✅ Successfully loaded ${data.count} core members!`);
+                    fetchCoreMembers();
+                } else {
+                    alert(data.error || 'Upload failed');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error uploading/parsing Excel or CSV file. Please make sure it is a valid file.');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    };
+
+    const handleClearCoreMembers = async () => {
+        if (!window.confirm('Are you sure you want to reset and clear the core members roster?')) return;
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        try {
+            const res = await fetch(`${API_URL}/api/admin/core-members/clear`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                }
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('Core members roster cleared.');
+                setCoreMembers([]);
+            } else {
+                alert(data.error || 'Failed to clear');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Network error');
+        }
+    };
+
+    const isPasswordAuthorized = ['nihal.ssgmce', 'nihal1512'].includes((adminId || sessionStorage.getItem('adminId') || '').toLowerCase().trim());
+
+    const downloadCoreMembersExcel = () => {
+        if (!coreMembers || coreMembers.length === 0) {
+            alert('No core members to export');
+            return;
+        }
+        const exportData = coreMembers.map((e, i) => ({
+            '#': i + 1,
+            'Name': e.name,
+            'Login ID': e.loginId,
+            'Password': isPasswordAuthorized ? e.password : '••••••••',
+            'Contact No': e.contactNo,
+            'Email': e.email,
+            'Date of Birth': e.dob,
+            'SIS ID': e.sisId,
+            'Class': e.class,
+            'Year': e.year
+        }));
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Core Members');
+        XLSX.writeFile(wb, `core_members_${new Date().toISOString().split('T')[0]}.xlsx`);
+    };
+
+    const downloadCoreMembersPDF = () => {
+        if (!coreMembers || coreMembers.length === 0) {
+            alert('No core members to export');
+            return;
+        }
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        doc.setFontSize(16);
+        doc.text("Navonmesh '27 - Core Members Roster", 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, 14, 22);
+
+        const tableData = coreMembers.map((e, i) => [
+            i + 1,
+            e.name,
+            e.loginId,
+            isPasswordAuthorized ? e.password : '••••••••',
+            e.contactNo,
+            e.email,
+            e.dob,
+            e.sisId,
+            e.class,
+            e.year
+        ]);
+
+        autoTable(doc, {
+            startY: 28,
+            head: [['#', 'Name', 'Login ID', 'Password', 'Contact No', 'Email', 'DOB', 'SIS ID', 'Class', 'Year']],
+            body: tableData,
+            theme: 'grid',
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [245, 158, 11] }
+        });
+
+        doc.save(`navonmesh27_core_members_${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    const copyToClipboard = (text, label) => {
+        navigator.clipboard.writeText(text);
+        alert(`${label || 'Value'} copied to clipboard: ${text}`);
     };
 
     const handleDeleteRecruitment = async (id) => {
@@ -312,6 +503,36 @@ const Admin = () => {
         alert(`✅ Sent: ${successIds.length}  ❌ Failed: ${failCount}`);
     };
 
+    const handleUpdateAttendance = async (id, newStatus) => {
+        // Optimistic UI update
+        setRecruitment(prev => ({
+            ...prev,
+            entries: prev.entries.map(entry =>
+                entry._id === id ? { ...entry, attendance: newStatus } : entry
+            )
+        }));
+
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/recruitment/${id}/attendance`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ attendance: newStatus })
+            });
+            if (!res.ok) {
+                console.error('Attendance update failed on server');
+                fetchRecruitment(token);
+            }
+        } catch (err) {
+            console.error('Attendance network error:', err);
+            fetchRecruitment(token);
+        }
+    };
+
     const downloadRecruitmentExcel = () => {
         const exportData = recruitment.entries.map((e, i) => ({
             '#': i + 1,
@@ -321,6 +542,7 @@ const Admin = () => {
             'Year': e.year,
             'Branch': e.branch || 'N/A',
             'Designation': e.designation,
+            'Attendance': e.attendance || 'Pending',
             'Submitted At': new Date(e.submittedAt).toLocaleString('en-IN')
         }));
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -333,6 +555,7 @@ const Admin = () => {
         // Apply same filters as the table view
         let filtered = recruitment.entries;
         if (recruitFilter !== 'ALL') filtered = filtered.filter(e => e.designation === recruitFilter);
+        if (recruitAttendanceFilter !== 'ALL') filtered = filtered.filter(e => (e.attendance || 'Pending') === recruitAttendanceFilter);
         if (recruitSearch.trim()) {
             const s = recruitSearch.toLowerCase();
             filtered = filtered.filter(e =>
@@ -586,7 +809,20 @@ const Admin = () => {
             // Better to send specific recipient list to avoid any confusion
             const recipientsToSend = getAllAvailableRecipients()
                 .filter(r => selectedRecipientIds.includes(r.id))
-                .map(r => ({ id: r.id, email: r.email, name: r.name, team: r.team, type: r.type }));
+                .map(r => ({ 
+                    id: r.id, 
+                    email: r.email, 
+                    name: r.name, 
+                    team: r.team, 
+                    designation: r.designation || '',
+                    loginId: r.loginId || '',
+                    password: r.password || '',
+                    sisId: r.sisId || '',
+                    class: r.class || '',
+                    dob: r.dob || '',
+                    year: r.year || '',
+                    type: r.type 
+                }));
 
             const res = await fetch(`${API_URL}/api/admin/send-bulk-email`, {
                 method: 'POST',
@@ -618,26 +854,59 @@ const Admin = () => {
     };
 
     const getAllAvailableRecipients = () => {
-        if (!summary) return [];
         let list = [];
 
         const targets = broadcastData.targetEvents;
         const isAll = targets.includes('ALL');
 
-        if (isAll || targets.includes('Srijan (Hackathon)')) {
-            summary.srijan.entries.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
+        if (summary) {
+            if (isAll || targets.includes('Srijan (Hackathon)')) {
+                summary.srijan?.entries?.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
+            }
+            if (isAll || targets.includes('Ankur (Project Expo)')) {
+                summary.ankur?.entries?.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
+            }
+            if (isAll || targets.includes('Udbhav (Conference)')) {
+                summary.udbhav?.entries?.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
+            }
+            if (isAll || targets.includes('Cultural')) {
+                summary.cultural?.entries?.forEach(e => list.push({ id: e._id, name: e.participantName, email: e.email || 'N/A', team: 'Cultural Team', type: 'Cultural' }));
+            }
+            if (isAll || targets.includes('Accommodation')) {
+                summary.accommodation?.entries?.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Accommodation' }));
+            }
         }
-        if (isAll || targets.includes('Ankur (Project Expo)')) {
-            summary.ankur.entries.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
+
+        if (isAll || targets.includes('Recruitment')) {
+            if (recruitment && recruitment.entries) {
+                recruitment.entries.forEach(e => list.push({
+                    id: e._id,
+                    name: e.name,
+                    email: e.email || 'N/A',
+                    team: `Recruitment (${e.designation || 'Applicant'})`,
+                    designation: e.designation || 'Applicant',
+                    type: 'Recruitment'
+                }));
+            }
         }
-        if (isAll || targets.includes('Udbhav (Conference)')) {
-            summary.udbhav.entries.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
-        }
-        if (isAll || targets.includes('Cultural')) {
-            summary.cultural.entries.forEach(e => list.push({ id: e._id, name: e.participantName, email: e.email || 'N/A', team: 'Cultural Team', type: 'Cultural' }));
-        }
-        if (isAll || targets.includes('Accommodation')) {
-            summary.accommodation.entries.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Accommodation' }));
+
+        if (isAll || targets.includes('Core Members')) {
+            if (coreMembers && coreMembers.length > 0) {
+                coreMembers.forEach((m, idx) => list.push({
+                    id: m.id || m.sisId || m.loginId || `core_${idx}`,
+                    name: m.name,
+                    email: m.email || 'N/A',
+                    team: `Core Member - ${m.class || m.year || 'SSGMCE'}`,
+                    designation: 'Core Member',
+                    loginId: m.loginId || '',
+                    password: m.password || '',
+                    sisId: m.sisId || '',
+                    class: m.class || '',
+                    dob: m.dob || '',
+                    year: m.year || '',
+                    type: 'Core Member'
+                }));
+            }
         }
 
         return list;
@@ -945,6 +1214,13 @@ const Admin = () => {
                         >
                             RECRUITMENT ({recruitment.count})
                         </button>
+                        <button
+                            className={`nav-mode-btn ${activeTab === 'core-members' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('core-members')}
+                            style={activeTab === 'core-members' ? { borderColor: '#f59e0b', color: '#f59e0b' } : {}}
+                        >
+                            CORE MEMBERS ({coreMembers.length})
+                        </button>
                     </div>
                     <div className="admin-quick-actions">
                         <button className="refresh-btn" onClick={() => fetchData(sessionStorage.getItem('adminToken'))} title="Refresh Data">
@@ -963,7 +1239,198 @@ const Admin = () => {
             {loading ? (
                 <div className="admin-loader">Synchronizing data...</div>
             ) : summary ? (
-                activeTab === 'recruitment' ? (
+                activeTab === 'core-members' ? (
+                    <div className="admin-content">
+                        <div className="recruitment-header-row">
+                            <div>
+                                <h2 style={{ fontFamily: 'Orbitron', color: '#f59e0b', margin: 0, fontSize: '1.2rem', letterSpacing: '3px' }}>CORE MEMBERS INTEL & ROSTER</h2>
+                                <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '4px 0 0', letterSpacing: '1px' }}>SSGMCE COUNCIL & OPERATIVE LOGINS</p>
+                            </div>
+                            <div className="recruitment-toolbar">
+                                <input
+                                    type="text"
+                                    className="recruit-search-input"
+                                    placeholder="Search name, login ID, SIS ID, email..."
+                                    value={coreMemberSearch}
+                                    onChange={(e) => setCoreMemberSearch(e.target.value)}
+                                    style={{ borderColor: 'rgba(245, 158, 11, 0.3)' }}
+                                />
+                                <select
+                                    className="recruit-filter-select"
+                                    value={coreMemberYearFilter}
+                                    onChange={(e) => setCoreMemberYearFilter(e.target.value)}
+                                    style={{ borderColor: 'rgba(245, 158, 11, 0.3)', color: '#f59e0b' }}
+                                >
+                                    <option value="ALL">All Years</option>
+                                    <option value="1st">1st Year</option>
+                                    <option value="2nd">2nd Year</option>
+                                    <option value="3rd">3rd Year</option>
+                                    <option value="4th">4th Year</option>
+                                </select>
+                                
+                                <input
+                                    type="file"
+                                    ref={coreFileInputRef}
+                                    accept=".csv,.xlsx,.xls,.txt"
+                                    onChange={handleCoreMembersFileUpload}
+                                    style={{ display: 'none' }}
+                                />
+                                <button
+                                    className="recruit-action-btn"
+                                    onClick={() => coreFileInputRef.current?.click()}
+                                    style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.75rem', padding: '8px 14px', borderRadius: '6px' }}
+                                >
+                                    📥 IMPORT / UPLOAD CSV
+                                </button>
+                                {isPasswordAuthorized && (
+                                    <button
+                                        className="recruit-action-btn"
+                                        onClick={() => setShowCorePasswords(!showCorePasswords)}
+                                        style={{ background: 'rgba(255, 255, 255, 0.08)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.2)', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.75rem', padding: '8px 14px', borderRadius: '6px' }}
+                                    >
+                                        <FaEye style={{ marginRight: '6px' }} /> {showCorePasswords ? 'HIDE PASSWORDS' : 'SHOW PASSWORDS'}
+                                    </button>
+                                )}
+                                <button
+                                    className="recruit-action-btn"
+                                    onClick={downloadCoreMembersExcel}
+                                    style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e', border: '1px solid rgba(34, 197, 94, 0.3)', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.75rem', padding: '8px 14px', borderRadius: '6px' }}
+                                >
+                                    <FaDownload style={{ marginRight: '4px' }} /> EXCEL
+                                </button>
+                                <button
+                                    className="recruit-action-btn"
+                                    onClick={downloadCoreMembersPDF}
+                                    style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.75rem', padding: '8px 14px', borderRadius: '6px' }}
+                                >
+                                    <FaDownload style={{ marginRight: '4px' }} /> PDF
+                                </button>
+                                <button
+                                    className="recruit-action-btn"
+                                    onClick={handleClearCoreMembers}
+                                    style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '0.75rem', padding: '8px 14px', borderRadius: '6px' }}
+                                    title="Clear all core members"
+                                >
+                                    🗑 RESET ROSTER
+                                </button>
+                                <button
+                                    className="recruit-action-btn"
+                                    onClick={() => fetchCoreMembers()}
+                                    style={{ background: 'rgba(255, 255, 255, 0.05)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.2)', cursor: 'pointer', padding: '8px 14px', borderRadius: '6px' }}
+                                    title="Reload members"
+                                >
+                                    <FaSync />
+                                </button>
+                            </div>
+                        </div>
+
+                        {(() => {
+                            let filtered = coreMembers;
+                            if (coreMemberYearFilter !== 'ALL') {
+                                filtered = filtered.filter(e => (e.year || '').toLowerCase().includes(coreMemberYearFilter.toLowerCase()));
+                            }
+                            if (coreMemberSearch.trim()) {
+                                const s = coreMemberSearch.toLowerCase();
+                                filtered = filtered.filter(e =>
+                                    (e.name && e.name.toLowerCase().includes(s)) ||
+                                    (e.loginId && e.loginId.toLowerCase().includes(s)) ||
+                                    (e.sisId && e.sisId.toLowerCase().includes(s)) ||
+                                    (e.email && e.email.toLowerCase().includes(s)) ||
+                                    (e.contactNo && e.contactNo.includes(s)) ||
+                                    (e.class && e.class.toLowerCase().includes(s))
+                                );
+                            }
+
+                            return (
+                                <>
+                                    <div style={{ color: '#64748b', fontSize: '0.75rem', letterSpacing: '2px', marginBottom: '12px' }}>
+                                        SHOWING {filtered.length} OF {coreMembers.length} CORE MEMBERS
+                                    </div>
+                                    <div className="data-table-container">
+                                        <table className="data-table">
+                                            <thead>
+                                                <tr>
+                                                    {['#', 'Name', 'Login ID', 'Password', 'Contact No', 'Email', 'DOB', 'SIS ID', 'Class', 'Year', 'Quick Copy'].map(h => (
+                                                        <th key={h}>{h}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filtered.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan={11} className="empty-row" style={{ padding: '50px 20px', textAlign: 'center' }}>
+                                                            <div style={{ color: '#f59e0b', fontFamily: 'Orbitron', fontSize: '1.1rem', marginBottom: '8px' }}>NO CORE MEMBERS LOADED YET</div>
+                                                            <p style={{ color: '#94a3b8', fontSize: '0.85rem', maxWidth: '500px', margin: '0 auto 16px' }}>
+                                                                Click <strong>"IMPORT / UPLOAD CSV"</strong> above to upload your core members CSV file, or place <code>core_members.csv</code> in <code>Hackthon/server/</code>.
+                                                            </p>
+                                                            <button
+                                                                onClick={() => coreFileInputRef.current?.click()}
+                                                                style={{ background: '#f59e0b', color: '#000', border: 'none', padding: '10px 24px', borderRadius: '8px', fontFamily: 'Orbitron', fontWeight: 'bold', cursor: 'pointer' }}
+                                                            >
+                                                                SELECT CSV FILE NOW
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ) : filtered.map((e, i) => (
+                                                    <tr key={e.id || i}>
+                                                        <td style={{ color: '#475569' }}>{i + 1}</td>
+                                                        <td style={{ fontWeight: 600, color: '#e2e8f0', whiteSpace: 'nowrap' }}>{e.name}</td>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '3px 8px', borderRadius: '4px', fontFamily: 'Orbitron', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                                                                {e.loginId}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(139, 92, 246, 0.12)', color: '#c084fc', border: '1px solid rgba(139, 92, 246, 0.3)', padding: '3px 8px', borderRadius: '4px', fontFamily: 'monospace', fontSize: '0.82rem', whiteSpace: 'nowrap' }}>
+                                                                {isPasswordAuthorized && showCorePasswords ? e.password : '••••••••'}
+                                                            </span>
+                                                        </td>
+                                                        <td style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{e.contactNo || 'N/A'}</td>
+                                                        <td style={{ color: '#94a3b8' }}>{e.email || 'N/A'}</td>
+                                                        <td style={{ color: '#e2e8f0', whiteSpace: 'nowrap' }}>{e.dob || 'N/A'}</td>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px', fontSize: '0.78rem', fontFamily: 'Orbitron', whiteSpace: 'nowrap' }}>
+                                                                {e.sisId || 'N/A'}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span style={{ color: '#cbd5e1', fontSize: '0.82rem' }}>{e.class || 'N/A'}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span style={{ background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '2px 8px', borderRadius: '12px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                                                                {e.year || 'N/A'}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div style={{ display: 'flex', gap: '6px' }}>
+                                                                <button
+                                                                    onClick={() => copyToClipboard(e.loginId, 'Login ID')}
+                                                                    style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#f59e0b', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontFamily: 'Orbitron' }}
+                                                                    title="Copy Login ID"
+                                                                >
+                                                                    ID
+                                                                </button>
+                                                                {isPasswordAuthorized && (
+                                                                    <button
+                                                                        onClick={() => copyToClipboard(e.password, 'Password')}
+                                                                        style={{ background: 'rgba(139, 92, 246, 0.15)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#c084fc', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', fontFamily: 'Orbitron' }}
+                                                                        title="Copy Password"
+                                                                    >
+                                                                        PASS
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            );
+                        })()}
+                    </div>
+                ) : activeTab === 'recruitment' ? (
                     <div className="admin-content">
                         <div className="recruitment-header-row">
                             <div>
@@ -988,6 +1455,17 @@ const Admin = () => {
                                         <option key={d} value={d}>{d}</option>
                                     ))}
                                 </select>
+                                <select
+                                    className="recruit-filter-select"
+                                    value={recruitAttendanceFilter}
+                                    onChange={(e) => setRecruitAttendanceFilter(e.target.value)}
+                                    style={recruitAttendanceFilter !== 'ALL' ? { borderColor: '#00f3ff', color: '#00f3ff' } : {}}
+                                >
+                                    <option value="ALL">All Attendance</option>
+                                    <option value="Present">Present Only</option>
+                                    <option value="Absent">Absent Only</option>
+                                    <option value="Pending">Pending Only</option>
+                                </select>
                                 <button className="recruit-action-btn pdf" onClick={downloadRecruitmentPDF}>
                                     <FaDownload /> EXPORT PDF
                                 </button>
@@ -1007,6 +1485,9 @@ const Admin = () => {
                         {(() => {
                             let filtered = recruitment.entries;
                             if (recruitFilter !== 'ALL') filtered = filtered.filter(e => e.designation === recruitFilter);
+                            if (recruitAttendanceFilter !== 'ALL') {
+                                filtered = filtered.filter(e => (e.attendance || 'Pending') === recruitAttendanceFilter);
+                            }
                             if (recruitSearch.trim()) {
                                 const s = recruitSearch.toLowerCase();
                                 filtered = filtered.filter(e =>
@@ -1019,21 +1500,34 @@ const Admin = () => {
                             }
                             return (
                                 <>
-                                    <div style={{ color: '#64748b', fontSize: '0.75rem', letterSpacing: '2px', marginBottom: '12px' }}>
-                                        SHOWING {filtered.length} OF {recruitment.count} APPLICATIONS
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '14px' }}>
+                                        <div style={{ color: '#64748b', fontSize: '0.75rem', letterSpacing: '2px' }}>
+                                            SHOWING {filtered.length} OF {recruitment.count} APPLICATIONS
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '10px', fontSize: '0.72rem', fontFamily: 'Orbitron, sans-serif', flexWrap: 'wrap' }}>
+                                            <span style={{ color: '#4ade80', background: 'rgba(34,197,94,0.1)', padding: '4px 9px', borderRadius: '4px', border: '1px solid rgba(34,197,94,0.25)' }}>
+                                                ✓ PRESENT: {recruitment.entries.filter(e => e.attendance === 'Present').length}
+                                            </span>
+                                            <span style={{ color: '#f87171', background: 'rgba(239,68,68,0.1)', padding: '4px 9px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.25)' }}>
+                                                ✗ ABSENT: {recruitment.entries.filter(e => e.attendance === 'Absent').length}
+                                            </span>
+                                            <span style={{ color: '#94a3b8', background: 'rgba(255,255,255,0.05)', padding: '4px 9px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                                ⏳ PENDING: {recruitment.entries.filter(e => !e.attendance || e.attendance === 'Pending').length}
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="data-table-container">
                                         <table className="data-table">
                                             <thead>
                                                 <tr>
-                                                    {['#','Name','Contact No','Email','Year','Branch','Designation','Action'].map(h => (
-                                                        <th key={h}>{h}</th>
+                                                    {['#','Name','Contact No','Email','Year','Branch','Designation','Attendance','Action'].map(h => (
+                                                        <th key={h} style={h === 'Attendance' ? { textAlign: 'center' } : {}}>{h}</th>
                                                     ))}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {filtered.length === 0 ? (
-                                                    <tr><td colSpan={8} className="empty-row">NO APPLICATIONS FOUND</td></tr>
+                                                    <tr><td colSpan={9} className="empty-row">NO APPLICATIONS FOUND</td></tr>
                                                 ) : filtered.map((e, i) => (
                                                     <tr key={e._id}>
                                                         <td style={{ color: '#475569' }}>{i + 1}</td>
@@ -1048,6 +1542,26 @@ const Admin = () => {
                                                         </td>
                                                         <td>
                                                             <span style={{ background: 'rgba(0,243,255,0.08)', color: '#00f3ff', padding: '3px 10px', borderRadius: '4px', fontSize: '0.85rem', whiteSpace: 'nowrap', border: '1px solid rgba(0,243,255,0.2)' }}>{e.designation}</span>
+                                                        </td>
+                                                        <td style={{ textAlign: 'center' }}>
+                                                            <div className="attendance-toggle-group">
+                                                                <button
+                                                                    type="button"
+                                                                    className={`attendance-btn present ${e.attendance === 'Present' ? 'active' : ''}`}
+                                                                    onClick={() => handleUpdateAttendance(e._id, e.attendance === 'Present' ? 'Pending' : 'Present')}
+                                                                    title={e.attendance === 'Present' ? 'Present (Click to unmark)' : 'Mark as Present'}
+                                                                >
+                                                                    ✓ Present
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className={`attendance-btn absent ${e.attendance === 'Absent' ? 'active' : ''}`}
+                                                                    onClick={() => handleUpdateAttendance(e._id, e.attendance === 'Absent' ? 'Pending' : 'Absent')}
+                                                                    title={e.attendance === 'Absent' ? 'Absent (Click to unmark)' : 'Mark as Absent'}
+                                                                >
+                                                                    ✗ Absent
+                                                                </button>
+                                                            </div>
                                                         </td>
                                                         <td>
                                                             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -1161,6 +1675,21 @@ const Admin = () => {
                                 </div>
                                 <div className="stat-main">
                                     <div className="stat-number">{recruitment.count} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Applied</span></div>
+                                    <div className="click-details">ACCESS STREAM</div>
+                                </div>
+                            </div>
+                            <div className={`stat-card ${activeTab === 'core-members' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('core-members')}
+                                onMouseMove={handleMouseMove}
+                                style={activeTab === 'core-members' ? { borderColor: '#f59e0b' } : {}}>
+                                <div className="stat-card-scan"></div>
+                                <div className="stat-icon-bg"><FaUsers style={{ color: '#f59e0b' }} /></div>
+                                <div className="stat-info">
+                                    <h3 style={{ color: '#f59e0b' }}>Core Members</h3>
+                                    <p className="stat-sub">SSGMCE Council</p>
+                                </div>
+                                <div className="stat-main">
+                                    <div className="stat-number" style={{ color: '#f59e0b' }}>{coreMembers.length} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Members</span></div>
                                     <div className="click-details">ACCESS STREAM</div>
                                 </div>
                             </div>
@@ -1745,15 +2274,158 @@ const Admin = () => {
                                         </div>
 
                                         <div className="form-group" style={{ marginBottom: '20px' }}>
-                                            <label style={{ display: 'block', marginBottom: '8px', color: '#c084fc', fontFamily: 'Orbitron' }}>Message Content</label>
-                                            <div className="template-tips" style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '10px' }}>
-                                                Use <code>{'{{teamName}}'}</code> or <code>{'{{leaderName}}'}</code> for personalization.
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                                <label style={{ color: '#c084fc', fontFamily: 'Orbitron', margin: 0, fontSize: '0.9rem' }}>Message Content</label>
+                                                <span style={{ fontSize: '0.72rem', color: '#00f3ff', fontFamily: 'Orbitron' }}>Click tag to insert</span>
                                             </div>
+                                            
+                                            {/* Interactive Personalization Tag Chips */}
+                                            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                                                {[
+                                                    { tag: '{{participantName}}', label: 'Participant' },
+                                                    { tag: '{{designation}}', label: 'Designation' },
+                                                    { tag: '{{teamName}}', label: 'Team / Dept' },
+                                                    { tag: '{{leaderName}}', label: 'Leader' },
+                                                    { tag: '{{loginId}}', label: 'Login ID' },
+                                                    { tag: '{{password}}', label: 'Password' },
+                                                    { tag: '{{sisId}}', label: 'SIS ID' },
+                                                    { tag: '{{class}}', label: 'Class' }
+                                                ].map(item => (
+                                                    <button
+                                                        key={item.tag}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setBroadcastData(prev => ({
+                                                                ...prev,
+                                                                body: prev.body ? `${prev.body} ${item.tag}` : item.tag
+                                                            }));
+                                                        }}
+                                                        style={{
+                                                            background: item.tag.includes('login') || item.tag.includes('pass') ? 'rgba(245, 158, 11, 0.15)' : 'rgba(139, 92, 246, 0.15)',
+                                                            border: item.tag.includes('login') || item.tag.includes('pass') ? '1px solid rgba(245, 158, 11, 0.45)' : '1px solid rgba(139, 92, 246, 0.4)',
+                                                            color: item.tag.includes('login') || item.tag.includes('pass') ? '#fcd34d' : '#e9d5ff',
+                                                            padding: '4px 10px',
+                                                            borderRadius: '6px',
+                                                            fontSize: '0.75rem',
+                                                            cursor: 'pointer',
+                                                            fontFamily: 'Inter',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '4px',
+                                                            transition: '0.2s'
+                                                        }}
+                                                        title={`Click to insert ${item.tag}`}
+                                                    >
+                                                        <code style={{ color: item.tag.includes('login') || item.tag.includes('pass') ? '#f59e0b' : '#00f3ff', fontWeight: 'bold' }}>{item.tag}</code>
+                                                        <span style={{ opacity: 0.65, fontSize: '0.68rem' }}>({item.label})</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {/* Quick Preset Buttons */}
+                                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setBroadcastData(prev => ({
+                                                            ...prev,
+                                                            subject: "Exclusive Invitation: Executive Interview Panel | Navonmesh '27",
+                                                            body: `📍 VENUE : Mechanical Seminar Hall, SSGMCE\n⏰ TIME  : 11:00 AM Onwards (Tomorrow)\n🎯 AGENDA: Junior Recruits & Aspirants Assessment Drive\n\n───────────────────────────────────────────────────\n\nDear {{participantName}},\n\nGreetings from the Navonmesh '27 Organizing Directorate.\n\nTomorrow, our organizing council has officially scheduled the comprehensive candidate interview drive to assess, evaluate, and induct promising junior cohorts into our distinguished symposium committees.\n\nGiven your proven leadership acumen, organizational proficiency, and discerning judgment, you are formally invited to convene as an esteemed evaluator on the Executive Interview Panel. Your expertise will be pivotal in evaluating talent, assessing technical and creative proficiencies, and curating an elite team destined to orchestrate this grand edition.\n\n📌 Special Advisory Regarding POD.AI Assessment:\nWe are fully cognizant that tomorrow coincides with the POD.AI internship assessment test. All committee members who are free, or who conclude their assessment early, are earnestly requested to report to the venue and assist in conducting the interviews.\n\nLet us collaborate to sculpt the finest organizing cadre for Navonmesh '27.\n\nWith Highest Regard & Respect,\nNavonmesh '27 Organizing Directorate\nShri Sant Gajanan Maharaj College of Engineering (SSGMCE), Shegaon`
+                                                        }));
+                                                    }}
+                                                    style={{
+                                                        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.32) 100%)',
+                                                        border: '1px solid rgba(245, 158, 11, 0.65)',
+                                                        color: '#fef08a',
+                                                        padding: '5px 12px',
+                                                        borderRadius: '6px',
+                                                        fontSize: '0.7rem',
+                                                        cursor: 'pointer',
+                                                        fontFamily: 'Orbitron',
+                                                        letterSpacing: '1px',
+                                                        fontWeight: 'bold',
+                                                        boxShadow: '0 0 12px rgba(245, 158, 11, 0.18)'
+                                                    }}
+                                                >
+                                                    ★ + INTERVIEW INVITATION
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setBroadcastData(prev => ({
+                                                            ...prev,
+                                                            subject: prev.subject || "Navonmesh '27 - Core Member Credentials & Briefing",
+                                                            body: `Dear {{participantName}},\n\nCongratulations on your appointment as an official Core Committee Member for Navonmesh '27 at Shri Sant Gajanan Maharaj College of Engineering (SSGMCE), Shegaon.\n\nHere are your confidential portal credentials for coordination and committee access:\n\n• Login ID: {{loginId}}\n• Password: {{password}}\n• SIS ID: {{sisId}}\n• Class: {{class}}\n\nPlease keep these credentials secure and do not share them. You can use this ID and password to log in to the administrative portal.\n\nFurther committee briefing and operational duties will be dispatched shortly.\n\nWarm regards,\nNavonmesh '27 Organizing Directorate\nSSGMCE Shegaon`
+                                                        }));
+                                                    }}
+                                                    style={{
+                                                        background: 'rgba(245, 158, 11, 0.12)',
+                                                        border: '1px solid rgba(245, 158, 11, 0.4)',
+                                                        color: '#f59e0b',
+                                                        padding: '5px 12px',
+                                                        borderRadius: '6px',
+                                                        fontSize: '0.7rem',
+                                                        cursor: 'pointer',
+                                                        fontFamily: 'Orbitron',
+                                                        letterSpacing: '1px'
+                                                    }}
+                                                >
+                                                    + CORE CREDENTIALS TEMPLATE
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setBroadcastData(prev => ({
+                                                            ...prev,
+                                                            subject: prev.subject || "Recruitment Drive - Navonmesh '27",
+                                                            body: `You are cordially invited to participate in the prestigious recruitment drive for Navonmesh '27 at Shri Sant Gajanan Maharaj College of Engineering (SSGMCE), Shegaon.\n\nDear {{participantName}},\n\nYour application for the role of {{designation}} has been duly acknowledged by the Navonmesh '27 Organizing Council.\n\nAs one of our foremost technical and cultural symposiums, Navonmesh represents innovation, leadership, and student brilliance. Our organizing council welcomes dedicated student leaders and creators to take part in orchestrating this grand edition.\n\nFurther briefing, interview schedule, and venue details will be communicated to you shortly.`
+                                                        }));
+                                                    }}
+                                                    style={{
+                                                        background: 'rgba(0, 243, 255, 0.1)',
+                                                        border: '1px solid rgba(0, 243, 255, 0.3)',
+                                                        color: '#00f3ff',
+                                                        padding: '5px 12px',
+                                                        borderRadius: '6px',
+                                                        fontSize: '0.7rem',
+                                                        cursor: 'pointer',
+                                                        fontFamily: 'Orbitron',
+                                                        letterSpacing: '1px'
+                                                    }}
+                                                >
+                                                    + RECRUITMENT TEMPLATE
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setBroadcastData(prev => ({
+                                                            ...prev,
+                                                            subject: prev.subject || "Official Dispatch - Navonmesh '27",
+                                                            body: `Greeting, {{leaderName}} of {{teamName}}!\n\nWelcome to Navonmesh '27 at SSGMCE Shegaon. We are pleased to share this official communication regarding your event participation.\n\nPlease review your team mission briefing and stay tuned for further notifications.`
+                                                        }));
+                                                    }}
+                                                    style={{
+                                                        background: 'rgba(168, 85, 247, 0.1)',
+                                                        border: '1px solid rgba(168, 85, 247, 0.3)',
+                                                        color: '#c084fc',
+                                                        padding: '5px 12px',
+                                                        borderRadius: '6px',
+                                                        fontSize: '0.7rem',
+                                                        cursor: 'pointer',
+                                                        fontFamily: 'Orbitron',
+                                                        letterSpacing: '1px'
+                                                    }}
+                                                >
+                                                    + GENERAL TEMPLATE
+                                                </button>
+                                            </div>
+
                                             <textarea
                                                 rows="8"
-                                                placeholder={`Greeting, {{leaderName}} of {{teamName}}! 
-
-Welcome to the command hub. Your mission details are as follows...`}
+                                                placeholder={`Greeting, {{participantName}}! Regarding your role as {{designation}} in Navonmesh '27...`}
                                                 value={broadcastData.body}
                                                 onChange={(e) => setBroadcastData({ ...broadcastData, body: e.target.value })}
                                                 style={{ width: '100%', padding: '15px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#fff', borderRadius: '8px', fontFamily: 'Inter', lineHeight: '1.6' }}
@@ -1777,7 +2449,7 @@ Welcome to the command hub. Your mission details are as follows...`}
                                                 width: '100%',
                                                 opacity: (broadcasting || selectedRecipientIds.length === 0) ? 0.6 : 1
                                             }}>
-                                                {broadcasting ? 'TRANSMITTING...' : `INITIATE BROADCAST TO ${selectedRecipientIds.length} ${broadcastData.recipientScope === 'ALL' ? 'TEAMS (ALL MEMBERS)' : 'TEAM LEADERS'}`}
+                                                {broadcasting ? 'TRANSMITTING...' : `INITIATE BROADCAST TO ${selectedRecipientIds.length} ${broadcastData.recipientScope === 'ALL' ? 'TEAMS / RECIPIENTS (ALL MEMBERS)' : 'TEAM LEADERS / RECIPIENTS'}`}
                                             </button>
                                         </div>
                                     </form>
@@ -1800,7 +2472,7 @@ Welcome to the command hub. Your mission details are as follows...`}
 
                                     <div className="broadcast-targets" style={{ marginTop: '15px' }}>
                                         <div className="target-options">
-                                            {['ALL', 'Srijan (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)', 'Cultural', 'Accommodation'].map(ev => (
+                                            {['ALL', 'Srijan (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)', 'Cultural', 'Accommodation', 'Recruitment', 'Core Members'].map(ev => (
                                                 <button
                                                     key={ev}
                                                     type="button"
@@ -1815,8 +2487,9 @@ Welcome to the command hub. Your mission details are as follows...`}
                                                             setBroadcastData({ ...broadcastData, targetEvents: newTargets.length ? newTargets : ['ALL'] });
                                                         }
                                                     }}
+                                                    style={ev === 'Core Members' ? { borderColor: 'rgba(245, 158, 11, 0.4)' } : {}}
                                                 >
-                                                    {ev === 'ALL' ? 'Total' : ev.split(' ')[0]}
+                                                    {ev === 'ALL' ? 'Total' : (ev === 'Core Members' ? 'Core Members' : ev.split(' ')[0])}
                                                 </button>
                                             ))}
                                         </div>
@@ -1835,8 +2508,24 @@ Welcome to the command hub. Your mission details are as follows...`}
                                                 <div className="recipient-info">
                                                     <div className="recipient-name">{recipient.team}</div>
                                                     <div className="recipient-leader">{recipient.name}</div>
+                                                    {recipient.type === 'Core Member' && recipient.loginId && (
+                                                        <div style={{ fontSize: '0.7rem', color: '#f59e0b', fontFamily: 'monospace', marginTop: '2px' }}>
+                                                            ID: {recipient.loginId}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <div className="recipient-type-badge">{recipient.type.charAt(0)}</div>
+                                                <div 
+                                                    className="recipient-type-badge"
+                                                    style={
+                                                        recipient.type === 'Recruitment'
+                                                            ? { background: 'rgba(0, 243, 255, 0.15)', color: '#00f3ff', border: '1px solid rgba(0, 243, 255, 0.3)' }
+                                                            : recipient.type === 'Core Member'
+                                                            ? { background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }
+                                                            : {}
+                                                    }
+                                                >
+                                                    {recipient.type === 'Recruitment' ? 'REC' : (recipient.type === 'Core Member' ? 'CORE' : recipient.type.charAt(0))}
+                                                </div>
                                             </div>
                                         ))}
                                         {getAllAvailableRecipients().length === 0 && (

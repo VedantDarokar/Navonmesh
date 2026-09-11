@@ -8,6 +8,7 @@ const RecruitmentSchema = new mongoose.Schema({
     branch: { type: String, default: 'CSE' },
     designation: { type: String, required: true },
     mailSent: { type: Boolean, default: false },
+    attendance: { type: String, enum: ['Present', 'Absent', 'Pending'], default: 'Pending' },
     submittedAt: { type: Date, default: Date.now }
 });
 

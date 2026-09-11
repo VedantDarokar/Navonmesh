@@ -1,29 +1,51 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const Registration = require('../models/Registration');
 const Accommodation = require('../models/Accommodation');
 const Cultural = require('../models/Cultural');
 const sendEmail = require('../utils/email');
 const Timer = require('../models/Timer');
 const CommitteeMember = require('../models/CommitteeMember');
+const Recruitment = require('../models/Recruitment');
+
+const coreMembersUtil = require('../utils/coreMembers');
 
 router.post('/login', (req, res) => {
     const { id, password } = req.body;
+    const cleanId = (id || '').trim().toLowerCase();
+    const cleanPassword = (password || '').trim();
+
     const admins = [
         { id: 'nihal1512', password: 'rutuja1512', name: 'Nihal', subRole: 'Overall Head' },
         { id: 'vedant1510', password: 'Vedant@15', name: 'Vedant', subRole: 'Overall Head' }
     ];
 
-    const cleanId = (id || '').trim();
-    const cleanPassword = (password || '').trim();
+    let adminUser = admins.find(a => a.id.toLowerCase() === cleanId && a.password === cleanPassword);
 
-    const adminUser = admins.find(a => a.id === cleanId && a.password === cleanPassword);
+    // Also check core members
+    if (!adminUser) {
+        const coreMembers = coreMembersUtil.getCoreMembers();
+        const member = coreMembers.find(m => 
+            (m.loginId && m.loginId.toLowerCase() === cleanId) || 
+            (m.email && m.email.toLowerCase() === cleanId) ||
+            (m.sisId && m.sisId.toLowerCase() === cleanId)
+        );
+
+        if (member && member.password === cleanPassword) {
+            adminUser = {
+                name: member.name,
+                subRole: `Core Member (${member.class || member.year || 'SSGMCE'})`
+            };
+        }
+    }
 
     if (adminUser) {
         return res.json({
             success: true,
             token: 'admin_secret_token_navonmesh',
             adminInfo: {
+                id: adminUser.id || cleanId,
                 name: adminUser.name,
                 subRole: adminUser.subRole
             }
@@ -31,6 +53,70 @@ router.post('/login', (req, res) => {
     } else {
         return res.status(401).json({ success: false, message: 'Invalid Admin Credentials' });
     }
+});
+
+// GET Core Members (Only nihal.ssgmce has clearance to view cleartext passwords)
+router.get('/core-members', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+        return res.status(401).json({ error: 'Unauthorized Access' });
+    }
+    const requesterId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
+    const isAuthorized = ['nihal.ssgmce', 'nihal1512'].includes(requesterId);
+    const members = coreMembersUtil.getCoreMembers();
+
+    const formattedMembers = members.map(m => ({
+        ...m,
+        password: isAuthorized ? m.password : '••••••••'
+    }));
+
+    res.json({ success: true, count: formattedMembers.length, entries: formattedMembers });
+});
+
+// POST Core Members Upload / Update
+router.post('/core-members/upload', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+        return res.status(401).json({ error: 'Unauthorized Access' });
+    }
+
+    const { csvContent, members } = req.body;
+
+    let parsedMembers = [];
+    if (csvContent) {
+        parsedMembers = coreMembersUtil.parseCSV(csvContent);
+    } else if (Array.isArray(members)) {
+        parsedMembers = members.map(m => {
+            const creds = coreMembersUtil.generateCredentials(m.name, m.dob);
+            return {
+                ...m,
+                loginId: m.loginId || creds.loginId,
+                password: m.password || creds.password
+            };
+        });
+    }
+
+    if (parsedMembers.length > 0) {
+        coreMembersUtil.saveCoreMembers(parsedMembers);
+        return res.json({ 
+            success: true, 
+            message: `Successfully loaded ${parsedMembers.length} core members`, 
+            count: parsedMembers.length, 
+            entries: parsedMembers 
+        });
+    } else {
+        return res.status(400).json({ error: 'No valid member rows found in upload' });
+    }
+});
+
+// DELETE Core Members Clear
+router.delete('/core-members/clear', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+        return res.status(401).json({ error: 'Unauthorized Access' });
+    }
+    coreMembersUtil.saveCoreMembers([]);
+    res.json({ success: true, message: 'Core members cleared' });
 });
 
 // Fetch all entries count and data
@@ -393,6 +479,93 @@ router.post('/accommodation/send-confirmation/:id', async (req, res) => {
     }
 });
 
+function formatEmailBodyHtml(rawText) {
+    if (!rawText) return '';
+
+    const lines = rawText.split(/\r?\n/);
+    let scheduleItems = [];
+    let contentLines = [];
+    let inSchedule = true;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (inSchedule && (
+            line.toUpperCase().includes('VENUE') ||
+            line.toUpperCase().includes('TIME') ||
+            line.toUpperCase().includes('AGENDA') ||
+            line.toUpperCase().includes('DATE') ||
+            line.startsWith('📍') ||
+            line.startsWith('⏰') ||
+            line.startsWith('🎯') ||
+            line.startsWith('🏛')
+        )) {
+            scheduleItems.push(line);
+        } else if (inSchedule && (line.startsWith('───') || line.startsWith('═══') || line === '')) {
+            if (scheduleItems.length > 0 && (line.startsWith('───') || line.startsWith('═══'))) {
+                inSchedule = false;
+            }
+        } else {
+            inSchedule = false;
+            contentLines.push(lines[i]);
+        }
+    }
+
+    let html = '';
+
+    if (scheduleItems.length > 0) {
+        html += `
+        <!-- High-Priority Schedule & Venue Banner -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px; background:linear-gradient(135deg,#240810 0%,#160e11 100%); border:1.5px solid #c9a84c; border-radius:8px; box-shadow:0 6px 22px rgba(0,0,0,0.65);">
+          <tr>
+            <td style="padding:18px 22px;">
+              <div style="font-size:11px; letter-spacing:3px; color:#f0d060; font-family:Georgia,serif; text-transform:uppercase; margin-bottom:12px; font-weight:bold; border-bottom:1px solid rgba(201,168,76,0.35); padding-bottom:8px;">
+                &#10022; &nbsp; OFFICIAL VENUE &amp; TIME DIRECTIVE &nbsp; &#10022;
+              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                ${scheduleItems.map(item => {
+                    const cleaned = item.replace(/^[📍⏰🎯🏛️📋\s]+/, '');
+                    const parts = cleaned.split(/[:：](.*)/s);
+                    const label = parts[0] ? parts[0].trim() : cleaned;
+                    const value = parts[1] ? parts[1].trim() : '';
+                    return `
+                    <tr>
+                      <td style="padding:6px 0; font-family:Georgia,serif; font-size:14px; vertical-align:top;">
+                        <span style="color:#f5df9e; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">&#10022; ${label}${value ? ':' : ''}</span>
+                        ${value ? `<span style="color:#FFFDF5; margin-left:8px; font-weight:600; font-size:14.5px;">${value}</span>` : ''}
+                      </td>
+                    </tr>`;
+                }).join('')}
+              </table>
+            </td>
+          </tr>
+        </table>`;
+    }
+
+    const remainingText = contentLines.join('\n').trim();
+
+    if (remainingText.includes('POD.AI') || remainingText.includes('POD AI') || remainingText.includes('Advisory') || remainingText.includes('ADVISORY')) {
+        const paragraphs = remainingText.split(/\n\s*\n/);
+        const formattedParagraphs = paragraphs.map(p => {
+            const trimmed = p.trim();
+            if (trimmed.toUpperCase().includes('POD.AI') || trimmed.toUpperCase().includes('POD AI') || trimmed.toUpperCase().includes('ADVISORY')) {
+                return `
+                <div style="background:rgba(245,158,11,0.09); border-left:4px solid #f59e0b; border:1px solid rgba(245,158,11,0.3); border-left-width:4px; border-radius:0 8px 8px 0; padding:16px 20px; margin:24px 0; color:#fef3c7; font-size:14.5px; line-height:1.8; font-family:Georgia,serif;">
+                  ${trimmed.replace(/\n/g, '<br>')}
+                </div>`;
+            } else if (trimmed.startsWith('Dear ')) {
+                return `<p style="font-size:17.5px; color:#f5df9e; font-weight:bold; margin:0 0 16px; font-family:Georgia,serif; letter-spacing:0.5px;">${trimmed}</p>`;
+            } else {
+                return `<p style="margin:0 0 16px; color:#ede5d8; font-size:15px; line-height:1.9; font-family:Georgia,serif;">${trimmed.replace(/\n/g, '<br>')}</p>`;
+            }
+        });
+        html += formattedParagraphs.join('');
+    } else {
+        html += `<div style="font-family:Georgia,'Times New Roman',serif;font-size:15.5px;line-height:1.9;color:#ede5d8;white-space:pre-wrap;word-break:break-word;">${remainingText}</div>`;
+    }
+
+    return html;
+}
+
 // Bulk Email Broadcasting Route
 router.post('/send-bulk-email', async (req, res) => {
     // Auth Check
@@ -415,12 +588,17 @@ router.post('/send-bulk-email', async (req, res) => {
             if (recipientScope === 'ALL') {
                 // Fetch full documents to expand recipients to include all team members
                 const ids = selectedRecipients.map(r => r.id);
+                const validMongoIds = ids.filter(id => id && mongoose.Types.ObjectId.isValid(id));
 
-                const [regs, accs, cults] = await Promise.all([
-                    Registration.find({ _id: { $in: ids } }),
-                    Accommodation.find({ _id: { $in: ids } }),
-                    Cultural.find({ _id: { $in: ids } })
-                ]);
+                let regs = [], accs = [], cults = [], recruits = [];
+                if (validMongoIds.length > 0) {
+                    [regs, accs, cults, recruits] = await Promise.all([
+                        Registration.find({ _id: { $in: validMongoIds } }),
+                        Accommodation.find({ _id: { $in: validMongoIds } }),
+                        Cultural.find({ _id: { $in: validMongoIds } }),
+                        Recruitment.find({ _id: { $in: validMongoIds } })
+                    ]);
+                }
 
                 let expandedRecipients = [];
 
@@ -449,10 +627,69 @@ router.post('/send-bulk-email', async (req, res) => {
                     expandedRecipients.push({ name: c.participantName, email: c.email, team: 'Cultural Performance' });
                 });
 
+                // Expanded logic for Recruitment
+                recruits.forEach(rc => {
+                    expandedRecipients.push({
+                        name: rc.name,
+                        email: rc.email,
+                        team: `Recruitment (${rc.designation || 'Applicant'})`,
+                        designation: rc.designation || 'Applicant'
+                    });
+                });
+
+                // Expanded logic for Core Members
+                const allCores = coreMembersUtil.getCoreMembers();
+                const matchedCores = allCores.filter(c => ids.includes(c.id) || ids.includes(c.sisId) || ids.includes(c.loginId) || ids.includes(`core_${c.name}`));
+                matchedCores.forEach(cm => {
+                    expandedRecipients.push({
+                        name: cm.name,
+                        email: cm.email,
+                        team: `Core Member - ${cm.class || cm.year || 'SSGMCE'}`,
+                        designation: 'Core Member',
+                        loginId: cm.loginId || '',
+                        password: cm.password || '',
+                        sisId: cm.sisId || '',
+                        class: cm.class || '',
+                        dob: cm.dob || '',
+                        year: cm.year || '',
+                        type: 'Core Member'
+                    });
+                });
+
+                // Preserve any directly selected Core Members who already carry credentials
+                selectedRecipients.filter(r => r.type === 'Core Member' || r.loginId).forEach(cm => {
+                    if (!expandedRecipients.some(x => x.email && x.email.toLowerCase() === (cm.email || '').toLowerCase())) {
+                        expandedRecipients.push(cm);
+                    }
+                });
+
                 recipients = expandedRecipients;
             } else {
-                // Leaders only (default)
-                recipients = selectedRecipients;
+                // Leaders only / direct selected recipients
+                const allCores = coreMembersUtil.getCoreMembers();
+                recipients = selectedRecipients.map(r => {
+                    if (r.type === 'Core Member' || r.loginId) {
+                        const matched = allCores.find(c =>
+                            c.id === r.id ||
+                            c.sisId === r.id ||
+                            c.loginId === r.id ||
+                            (r.loginId && c.loginId && c.loginId.toLowerCase() === r.loginId.toLowerCase()) ||
+                            (c.email && r.email && c.email.toLowerCase() === r.email.toLowerCase())
+                        );
+                        if (matched) {
+                            return {
+                                ...r,
+                                loginId: matched.loginId,
+                                password: matched.password, // Server holds the true password
+                                sisId: matched.sisId,
+                                class: matched.class,
+                                dob: matched.dob,
+                                year: matched.year
+                            };
+                        }
+                    }
+                    return r;
+                });
             }
         } else {
             // Fallback to legacy behavior: fetch based on targetEvents
@@ -509,10 +746,43 @@ router.post('/send-bulk-email', async (req, res) => {
                 });
             }
 
+            // 4. Fetch from Recruitment
+            if (isAll || targets.includes('Recruitment')) {
+                const recruits = await Recruitment.find();
+                recruits.forEach(rc => {
+                    allRecipients.push({
+                        name: rc.name,
+                        email: rc.email,
+                        team: `Recruitment (${rc.designation || 'Applicant'})`,
+                        designation: rc.designation || 'Applicant'
+                    });
+                });
+            }
+
+            // 5. Fetch from Core Members
+            if (isAll || targets.includes('Core Members')) {
+                const cores = coreMembersUtil.getCoreMembers();
+                cores.forEach(cm => {
+                    allRecipients.push({
+                        name: cm.name,
+                        email: cm.email,
+                        team: `Core Member - ${cm.class || cm.year || 'SSGMCE'}`,
+                        designation: 'Core Member',
+                        loginId: cm.loginId || '',
+                        password: cm.password || '',
+                        sisId: cm.sisId || '',
+                        class: cm.class || '',
+                        dob: cm.dob || '',
+                        year: cm.year || '',
+                        type: 'Core Member'
+                    });
+                });
+            }
+
             // Remove duplicates if any (same email in multiple collections)
             const uniqueRecipientsMap = new Map();
             allRecipients.forEach(r => {
-                if (!uniqueRecipientsMap.has(r.email.toLowerCase())) {
+                if (r.email && !uniqueRecipientsMap.has(r.email.toLowerCase())) {
                     uniqueRecipientsMap.set(r.email.toLowerCase(), r);
                 }
             });
@@ -528,29 +798,132 @@ router.post('/send-bulk-email', async (req, res) => {
 
         for (const recipient of recipients) {
             try {
-                const personalizedBody = body.replace(/{{teamName}}/g, recipient.team || 'Team')
-                    .replace(/{{leaderName}}/g, recipient.name || 'Participant');
+                const displayName = recipient.name || 'Participant';
+                const displayTeam = recipient.team || 'Team';
+                const displayDesignation = recipient.designation || (recipient.type === 'Recruitment' ? 'Applicant' : 'Participant');
+                const displayLoginId = recipient.loginId || '';
+                const displayPassword = recipient.password || '';
+                const displaySisId = recipient.sisId || '';
+                const displayClass = recipient.class || '';
+                const displayDob = recipient.dob || '';
+                const displayYear = recipient.year || '';
 
-                const htmlContent = `
-                <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e0e0e0;">
-                    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">Navonmesh '26</h1>
-                        <p style="color: #94a3b8; margin: 10px 0 0 0; font-size: 16px;">General Communication Hub</p>
-                    </div>
-                    <div style="padding: 40px 30px; color: #333333;">
-                        <div style="font-size: 16px; line-height: 1.8; color: #334155; white-space: pre-wrap;">
-${personalizedBody}
-                        </div>
-                        <div style="margin-top: 40px; text-align: center; border-top: 1px solid #eee; padding-top: 30px;">
-                            <p style="font-size: 14px; color: #64748b; margin: 0;">- Navonmesh '26 Organizing Committee</p>
-                        </div>
-                    </div>
-                </div>
-                `;
+                const personalizedSubject = (subject || '')
+                    .replace(/{{participantName}}/gi, displayName)
+                    .replace(/{{leaderName}}/gi, displayName)
+                    .replace(/{{name}}/gi, displayName)
+                    .replace(/{{teamName}}/gi, displayTeam)
+                    .replace(/{{designation}}/gi, displayDesignation)
+                    .replace(/{{loginId}}/gi, displayLoginId)
+                    .replace(/{{login_id}}/gi, displayLoginId)
+                    .replace(/{{loginid}}/gi, displayLoginId)
+                    .replace(/{{username}}/gi, displayLoginId)
+                    .replace(/{{password}}/gi, displayPassword)
+                    .replace(/{{pass}}/gi, displayPassword);
+
+                const personalizedBody = body
+                    .replace(/{{participantName}}/gi, displayName)
+                    .replace(/{{leaderName}}/gi, displayName)
+                    .replace(/{{name}}/gi, displayName)
+                    .replace(/{{teamName}}/gi, displayTeam)
+                    .replace(/{{designation}}/gi, displayDesignation)
+                    .replace(/{{loginId}}/gi, displayLoginId)
+                    .replace(/{{login_id}}/gi, displayLoginId)
+                    .replace(/{{loginid}}/gi, displayLoginId)
+                    .replace(/{{username}}/gi, displayLoginId)
+                    .replace(/{{id}}/gi, displayLoginId)
+                    .replace(/{{password}}/gi, displayPassword)
+                    .replace(/{{pass}}/gi, displayPassword)
+                    .replace(/{{sisId}}/gi, displaySisId)
+                    .replace(/{{sis_id}}/gi, displaySisId)
+                    .replace(/{{class}}/gi, displayClass)
+                    .replace(/{{dob}}/gi, displayDob)
+                    .replace(/{{year}}/gi, displayYear);
+
+                const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Navonmesh '27 - Official Communication</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0d0b09;font-family:Georgia,'Times New Roman',serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:linear-gradient(180deg,#120e0a 0%,#090705 100%);padding:36px 12px;">
+  <tr>
+    <td align="center">
+      <table width="620" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;width:100%;border-radius:10px;overflow:hidden;border:1px solid #483921;box-shadow:0 18px 60px rgba(0,0,0,0.85);background-color:#161411;">
+        <!-- Top Gold Accent Bar -->
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#2d1200,#c9a84c,#f5d77f,#c9a84c,#2d1200);"></td>
+        </tr>
+        <!-- Burgundy Header -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#4d0b1a 0%,#701529 50%,#4d0b1a 100%);padding:38px 30px 30px;text-align:center;">
+            <p style="margin:0 0 10px;font-size:11px;letter-spacing:8px;color:#f0d060;font-family:Georgia,'Times New Roman',serif;text-transform:uppercase;">&#10022; &nbsp; N A V O N M E S H &nbsp; ' 2 7 &nbsp; &#10022;</p>
+            <h1 style="margin:0;font-size:34px;font-weight:900;color:#FFFDF5;font-family:Georgia,'Times New Roman',serif;letter-spacing:4px;line-height:1.15;text-shadow:0 3px 12px rgba(0,0,0,0.6);text-transform:uppercase;">NAVONMESH '27</h1>
+            <p style="margin:8px 0 14px;font-size:11px;letter-spacing:7px;color:#e8c87a;font-family:Georgia,'Times New Roman',serif;text-transform:uppercase;">S S G M C E &nbsp;&nbsp; S H E G A O N</p>
+            <p style="margin:0;font-size:13px;color:rgba(240,208,96,0.6);letter-spacing:6px;">&#10022; &nbsp; ─────── &nbsp; &#10022; &nbsp; ─────── &nbsp; &#10022;</p>
+          </td>
+        </tr>
+        <!-- Gold Trim Line -->
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#2d1200,#c9a84c,#f5d77f,#c9a84c,#2d1200);"></td>
+        </tr>
+        <!-- Main Message Area -->
+        <tr>
+          <td style="background:#171512;padding:36px 42px 28px;">
+            ${personalizedSubject ? `
+            <div style="text-align:center;margin-bottom:26px;">
+              <span style="display:inline-block;background:rgba(112,21,41,0.35);border:1px solid rgba(201,168,76,0.45);border-radius:20px;padding:6px 20px;color:#f5d77f;font-size:12px;letter-spacing:2px;font-family:Georgia,serif;font-weight:bold;text-transform:uppercase;">
+                ${personalizedSubject}
+              </span>
+            </div>` : ''}
+            
+            ${formatEmailBodyHtml(personalizedBody)}
+
+            <!-- Official Dispatch Ribbon -->
+            <div style="margin:34px 0 16px;text-align:center;">
+              <span style="display:inline-block;background:linear-gradient(135deg,#5b1121 0%,#7d1b30 100%);border:1px solid #c9a84c;border-radius:5px;padding:10px 28px;color:#f5df9e;font-size:11px;letter-spacing:4px;font-family:Georgia,serif;font-weight:bold;text-transform:uppercase;box-shadow:0 4px 15px rgba(0,0,0,0.45);">
+                &#10022; &nbsp; OFFICIAL DISPATCH &nbsp; &#10022;
+              </span>
+            </div>
+
+            <!-- Signature block -->
+            <div style="border-top:1px solid #3c301d;margin-top:30px;padding-top:22px;">
+              <p style="margin:0 0 5px;font-size:13.5px;color:#c9a84c;font-style:italic;font-family:Georgia,serif;">With Warm Regards,</p>
+              <p style="margin:0;font-size:16px;color:#FFFDF5;font-weight:bold;font-family:Georgia,serif;letter-spacing:1px;">Navonmesh '27 Organizing Council</p>
+              <p style="margin:4px 0 0;font-size:12px;color:#9c8a70;font-family:Georgia,serif;">Shri Sant Gajanan Maharaj College of Engineering (SSGMCE), Shegaon</p>
+            </div>
+          </td>
+        </tr>
+        <!-- Footer Bottom Gold Trim -->
+        <tr>
+          <td style="height:3px;background:linear-gradient(90deg,#2d1200,#c9a84c,#f5d77f,#c9a84c,#2d1200);"></td>
+        </tr>
+        <!-- Burgundy Footer -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#4d0b1a 0%,#701529 50%,#4d0b1a 100%);padding:22px 30px;text-align:center;">
+            <p style="margin:0 0 6px;font-size:11px;letter-spacing:5px;color:#f0d060;font-family:Georgia,serif;">&#10022; &nbsp; ───────── &nbsp; &#10022; &nbsp; ───────── &nbsp; &#10022;</p>
+            <p style="margin:0;font-size:10px;letter-spacing:4px;color:rgba(240,208,96,0.75);font-family:Georgia,serif;text-transform:uppercase;">NAVONMESH '27 &nbsp;&#8212;&nbsp; SSGMCE SHEGAON</p>
+            <p style="margin:6px 0 0;font-size:9px;letter-spacing:2px;color:rgba(255,253,245,0.45);font-family:Georgia,serif;">INNOVATION &bull; LEADERSHIP &bull; STUDENT BRILLIANCE</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
+
+                if (!recipient.email || recipient.email === 'N/A' || !recipient.email.includes('@')) {
+                    console.log(`Skipping invalid or placeholder email: ${recipient.email} for ${recipient.name}`);
+                    failCount++;
+                    continue;
+                }
 
                 const mailSuccess = await sendEmail({
                     to: recipient.email,
-                    subject: subject,
+                    subject: personalizedSubject || subject,
                     htmlContent
                 });
 
@@ -572,7 +945,7 @@ ${personalizedBody}
 
     } catch (err) {
         console.error('Bulk Email error:', err);
-        res.status(500).json({ error: 'Server error during broadcast' });
+        res.status(500).json({ error: err.message || 'Server error during broadcast' });
     }
 });
 

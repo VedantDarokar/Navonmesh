@@ -99,6 +99,9 @@ const PopupPoster = ({ onClose }) => {
                         
                         {/* Text Overlay on top of background */}
                         <div className="popup-text-overlay">
+                            <span className="popup-coming-soon-badge">
+                                NAVONMESH 2027 COMING SOON !!
+                            </span>
                             <h1 className="popup-title">EXPLORE THE HIGHLIGHTS</h1>
                             <p className="popup-subtitle">Relive the extraordinary moments of innovation & glory</p>
                             <button className="popup-explore-btn" onClick={handleExplore}>

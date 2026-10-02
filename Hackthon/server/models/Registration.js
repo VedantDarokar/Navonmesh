@@ -2,13 +2,39 @@ const mongoose = require('mongoose');
 
 const MemberSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String },
     phone: { type: String },
     college: { type: String }
 });
 
 const RegistrationSchema = new mongoose.Schema({
+    teamId: { 
+        type: String, 
+        unique: true, 
+        sparse: true, 
+        index: true 
+    }, // e.g. SQUAD001
+    teamPassword: { 
+        type: String 
+    }, // Unique password shared via Gmail
+    psChangeCount: { 
+        type: Number, 
+        default: 0 
+    }, // Track problem statement edits (max 1)
+    originalProblemStatement: { 
+        type: String 
+    },
+    
+    // OTP fields for Forgot Password
+    otp: { 
+        type: String 
+    },
+    otpExpiry: { 
+        type: Date 
+    },
+
     event: { type: String, required: true },
+    edition: { type: String, default: '2026' }, // Default '2026' for previous teams
     teamName: { type: String, required: true },
     studentCategory: { type: String }, // Optional, mostly for Ankur
     problemStatement: { type: String }, // Optional, mostly for Srijan

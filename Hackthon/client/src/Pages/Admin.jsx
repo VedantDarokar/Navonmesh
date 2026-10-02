@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Styles/admin.css';
 import bgVideo from '../assets/bg.mp4';
-import { FaMusic, FaUsers, FaHotel, FaProjectDiagram, FaDesktop, FaChartPie, FaTable, FaSync, FaDownload, FaEye, FaTimes, FaCheckCircle } from 'react-icons/fa';
+import { FaMusic, FaUsers, FaHotel, FaProjectDiagram, FaDesktop, FaChartPie, FaTable, FaSync, FaDownload, FaEye, FaTimes, FaCheckCircle, FaUtensils, FaQrcode } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import navonmeshLogo from '../assets/navonmesh_tricolor.png';
 import ssgmceLogo from '../assets/SSGMCE-Colour-Logomark-01 2.png';
+import AdminQRScanner from '../Components/AdminQRScanner';
 
 const Admin = () => {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -22,6 +23,7 @@ const Admin = () => {
     const [adminInfo, setAdminInfo] = useState({ name: '', subRole: '' });
     const [accFilter, setAccFilter] = useState('ALL');
     const [srijanFilter, setSrijanFilter] = useState('ALL');
+    const [srijanEditionFolder, setSrijanEditionFolder] = useState('2027'); // '2027' | '2026' | 'ALL'
     const [culturalActivityFilter, setCulturalActivityFilter] = useState('ALL');
     const [culturalSubFilter, setCulturalSubFilter] = useState('ALL');
     const [ankurFilter, setAnkurFilter] = useState('ALL');
@@ -148,8 +150,13 @@ const Admin = () => {
 
         if (activeEvent === 'accommodation' && accFilter !== 'ALL') {
             displayEntries = displayEntries.filter(e => e.event === accFilter);
-        } else if (activeEvent === 'srijan' && srijanFilter !== 'ALL') {
-            displayEntries = displayEntries.filter(e => e.problemStatement === srijanFilter);
+        } else if (activeEvent === 'srijan') {
+            if (srijanEditionFolder !== 'ALL') {
+                displayEntries = displayEntries.filter(e => (e.edition || '2026') === srijanEditionFolder);
+            }
+            if (srijanFilter !== 'ALL') {
+                displayEntries = displayEntries.filter(e => e.problemStatement === srijanFilter);
+            }
         } else if (activeEvent === 'cultural' && culturalActivityFilter !== 'ALL') {
             displayEntries = displayEntries.filter(e => e.activity.toLowerCase().includes(culturalActivityFilter));
             if (culturalSubFilter !== 'ALL') {
@@ -188,6 +195,7 @@ const Admin = () => {
             exportData = displayEntries.map((e, i) => ({
                 '#': i + 1,
                 'Group Name': e.teamName,
+                ...(activeEvent === 'srijan' ? { 'Edition': e.edition === '2027' ? 'Navonmesh 2027' : 'Navonmesh 2026 (Archive)' } : {}),
                 'Leader Name': e.leaderName || 'N/A',
                 'College': e.college || 'N/A',
                 'Group Size': e.teamSize || 'N/A',
@@ -199,8 +207,10 @@ const Admin = () => {
 
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, activeEvent.toUpperCase());
-        XLSX.writeFile(wb, `${activeEvent}_data_${new Date().toISOString().split('T')[0]}.xlsx`);
+        const sheetName = activeEvent === 'srijan' ? (srijanEditionFolder === '2027' ? 'NAVONMESH 2027' : srijanEditionFolder === '2026' ? 'NAVONMESH 2026' : 'SRIJAN ALL') : activeEvent.toUpperCase();
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+        const filePrefix = activeEvent === 'srijan' ? (srijanEditionFolder === '2027' ? 'Navonmesh_2027' : srijanEditionFolder === '2026' ? 'Navonmesh_2026_Archive' : 'Srijan_All') : activeEvent;
+        XLSX.writeFile(wb, `${filePrefix}_data_${new Date().toISOString().split('T')[0]}.xlsx`);
     };
 
     const fetchData = async (token) => {
@@ -860,7 +870,7 @@ const Admin = () => {
         const isAll = targets.includes('ALL');
 
         if (summary) {
-            if (isAll || targets.includes('Srijan (Hackathon)')) {
+            if (isAll || targets.includes('Srijan 2027 (Hackathon)') || targets.includes('Srijan (Hackathon)')) {
                 summary.srijan?.entries?.forEach(e => list.push({ id: e._id, name: e.leaderName, email: e.leaderEmail || 'N/A', team: e.teamName, type: 'Registration' }));
             }
             if (isAll || targets.includes('Ankur (Project Expo)')) {
@@ -962,6 +972,43 @@ const Admin = () => {
         }
     };
 
+    const handleSendMealPasses = async (teamId) => {
+        if (!teamId) return;
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/food/email-passes/${teamId}`, {
+                method: 'POST'
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                alert('✅ ' + data.message);
+            } else {
+                alert('⚠️ ' + (data.error || 'Failed to email passes'));
+            }
+        } catch (e) {
+            alert('Server connection error sending meal passes');
+        }
+    };
+
+    const handleResendCredentials = async (teamMongoId) => {
+        if (!teamMongoId) return;
+        if (!window.confirm("Send team credentials email with Team ID & Password to the team leader and members?")) return;
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/team/resend-credentials/${teamMongoId}`, {
+                method: 'POST'
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                alert(`✅ ${data.message} (Team ID: ${data.teamId})`);
+            } else {
+                alert('⚠️ ' + (data.error || 'Failed to dispatch credentials'));
+            }
+        } catch (e) {
+            alert('Server connection error sending team credentials');
+        }
+    };
+
     const handleVerifyRemaining = async () => {
         if (!summary || !activeEvent) return;
 
@@ -970,8 +1017,13 @@ const Admin = () => {
         // Apply any active filters (same logic as table rendering)
         if (activeEvent === 'accommodation' && accFilter !== 'ALL') {
             displayEntries = displayEntries.filter(e => e.event === accFilter);
-        } else if (activeEvent === 'srijan' && srijanFilter !== 'ALL') {
-            displayEntries = displayEntries.filter(e => e.problemStatement === srijanFilter);
+        } else if (activeEvent === 'srijan') {
+            if (srijanEditionFolder !== 'ALL') {
+                displayEntries = displayEntries.filter(e => (e.edition || '2026') === srijanEditionFolder);
+            }
+            if (srijanFilter !== 'ALL') {
+                displayEntries = displayEntries.filter(e => e.problemStatement === srijanFilter);
+            }
         } else if (activeEvent === 'cultural' && culturalActivityFilter !== 'ALL') {
             displayEntries = displayEntries.filter(e => e.activity.toLowerCase().includes(culturalActivityFilter));
             if (culturalSubFilter !== 'ALL') {
@@ -1220,6 +1272,13 @@ const Admin = () => {
                             style={activeTab === 'core-members' ? { borderColor: '#f59e0b', color: '#f59e0b' } : {}}
                         >
                             CORE MEMBERS ({coreMembers.length})
+                        </button>
+                        <button
+                            className={`nav-mode-btn ${activeTab === 'qr-scanner' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('qr-scanner')}
+                            style={activeTab === 'qr-scanner' ? { borderColor: '#10b981', color: '#10b981', background: 'rgba(16, 185, 129, 0.15)' } : {}}
+                        >
+                            <FaQrcode style={{ marginRight: '6px' }} /> QR SCANNER (MESS)
                         </button>
                     </div>
                     <div className="admin-quick-actions">
@@ -1587,23 +1646,52 @@ const Admin = () => {
                             );
                         })()}
                     </div>
+                ) : activeTab === 'qr-scanner' ? (
+                    <div className="admin-content" style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px' }}>
+                        <div style={{ marginBottom: '20px' }}>
+                            <h2 style={{ fontFamily: 'Orbitron', color: '#10b981', margin: 0, fontSize: '1.4rem', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <FaUtensils /> NAVONMESH MESS & CANTEEN QR SCANNER
+                            </h2>
+                            <p style={{ color: '#94a3b8', fontSize: '0.85rem', margin: '6px 0 0' }}>
+                                10 Coordinators verification stream • Single dynamic QR code per participant with auto meal-window single-use lock
+                            </p>
+                        </div>
+                        <AdminQRScanner />
+                    </div>
                 ) : activeTab === 'dashboard' ? (
                     <div className="admin-content">
 
                         <div className="stats-grid">
-                            <div className={`stat-card ${activeEvent === 'srijan' ? 'active' : ''}`}
-                                onClick={() => setActiveEvent('srijan')}
-                                onMouseMove={handleMouseMove}>
+                            <div className={`stat-card ${activeEvent === 'srijan' && srijanEditionFolder === '2027' ? 'active' : ''}`}
+                                onClick={() => { setActiveEvent('srijan'); setSrijanEditionFolder('2027'); }}
+                                onMouseMove={handleMouseMove}
+                                style={{ borderColor: 'rgba(56, 189, 248, 0.5)' }}>
                                 <div className="stat-card-scan"></div>
-                                <div className="stat-icon-bg"><FaDesktop /></div>
+                                <div className="stat-icon-bg"><FaDesktop style={{ color: '#38bdf8' }} /></div>
                                 <div className="stat-info">
-                                    <h3>Srijan</h3>
-                                    <p className="stat-sub">Hackathon</p>
+                                    <h3 style={{ color: '#38bdf8' }}>Navonmesh 2027</h3>
+                                    <p className="stat-sub">Srijan (From Today)</p>
                                 </div>
                                 <div className="stat-main">
-                                    <div className="stat-number">{summary.srijan.count} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Teams</span></div>
-                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.6 }}>Participants: {summary.srijan.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0)}</div>
-                                    <div className="click-details">ACCESS STREAM</div>
+                                    <div className="stat-number" style={{ color: '#38bdf8' }}>{summary.srijan?.count2027 ?? 0} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Teams</span></div>
+                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.7, color: '#22c55e' }}>⚡ New Registrations</div>
+                                    <div className="click-details">OPEN 2027 STREAM</div>
+                                </div>
+                            </div>
+                            <div className={`stat-card ${activeEvent === 'srijan' && srijanEditionFolder === '2026' ? 'active' : ''}`}
+                                onClick={() => { setActiveEvent('srijan'); setSrijanEditionFolder('2026'); }}
+                                onMouseMove={handleMouseMove}
+                                style={{ borderColor: 'rgba(245, 158, 11, 0.5)' }}>
+                                <div className="stat-card-scan"></div>
+                                <div className="stat-icon-bg"><FaTable style={{ color: '#f59e0b' }} /></div>
+                                <div className="stat-info">
+                                    <h3 style={{ color: '#f59e0b' }}>Navonmesh 2026</h3>
+                                    <p className="stat-sub">📁 Archive Folder</p>
+                                </div>
+                                <div className="stat-main">
+                                    <div className="stat-number" style={{ color: '#f59e0b' }}>{summary.srijan?.count2026 ?? 114} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>Teams</span></div>
+                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.7, color: '#f59e0b' }}>Earlier 114-115 Teams</div>
+                                    <div className="click-details">OPEN 2026 ARCHIVE</div>
                                 </div>
                             </div>
                             <div className={`stat-card ${activeEvent === 'ankur' ? 'active' : ''}`}
@@ -1693,13 +1781,68 @@ const Admin = () => {
                                     <div className="click-details">ACCESS STREAM</div>
                                 </div>
                             </div>
+                            <div className={`stat-card ${activeTab === 'qr-scanner' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('qr-scanner')}
+                                onMouseMove={handleMouseMove}
+                                style={{ borderColor: 'rgba(16, 185, 129, 0.5)' }}>
+                                <div className="stat-card-scan"></div>
+                                <div className="stat-icon-bg"><FaUtensils style={{ color: '#10b981' }} /></div>
+                                <div className="stat-info">
+                                    <h3 style={{ color: '#10b981' }}>Mess QR Scanner</h3>
+                                    <p className="stat-sub">10 Coordinators</p>
+                                </div>
+                                <div className="stat-main">
+                                    <div className="stat-number" style={{ color: '#10b981', fontSize: '1.25rem' }}>Mess & Canteen</div>
+                                    <div className="stat-sub" style={{ fontSize: '0.8rem', opacity: 0.8, color: '#34d399' }}>Single-Use Dynamic QR</div>
+                                    <div className="click-details">OPEN SCANNER</div>
+                                </div>
+                            </div>
                         </div>
 
                         {activeEvent && (
                             <div className="detail-panel" ref={detailPanelRef}>
                                 <div className="panel-header-row">
                                     <div className="panel-title-group">
-                                        <h3><FaTable style={{ marginRight: '10px' }} /> {activeEvent.toUpperCase()} DATA STREAM</h3>
+                                        <h3>
+                                            <FaTable style={{ marginRight: '10px' }} />
+                                            {activeEvent === 'srijan'
+                                                ? (srijanEditionFolder === '2027' ? 'NAVONMESH 2027 (NEW REGISTRATIONS)' : srijanEditionFolder === '2026' ? 'NAVONMESH 2026 (ARCHIVE FOLDER)' : 'SRIJAN ALL EDITIONS')
+                                                : activeEvent.toUpperCase()
+                                            } DATA STREAM
+                                        </h3>
+
+                                        {activeEvent === 'srijan' && (
+                                            <div className="edition-folders-nav">
+                                                <button
+                                                    type="button"
+                                                    className={`edition-folder-tab ${srijanEditionFolder === '2027' ? 'active-2027' : ''}`}
+                                                    onClick={() => setSrijanEditionFolder('2027')}
+                                                >
+                                                    <span className="folder-icon">✨</span>
+                                                    <span className="folder-name">Navonmesh 2027 (New)</span>
+                                                    <span className="folder-badge-new">{summary.srijan?.count2027 ?? 0}</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className={`edition-folder-tab archive ${srijanEditionFolder === '2026' ? 'active-2026' : ''}`}
+                                                    onClick={() => setSrijanEditionFolder('2026')}
+                                                >
+                                                    <span className="folder-icon">📁</span>
+                                                    <span className="folder-name">Navonmesh 2026 (Archive)</span>
+                                                    <span className="folder-badge-archive">{summary.srijan?.count2026 ?? 114}</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className={`edition-folder-tab ${srijanEditionFolder === 'ALL' ? 'active-all-folder' : ''}`}
+                                                    onClick={() => setSrijanEditionFolder('ALL')}
+                                                >
+                                                    <span className="folder-icon">🗄️</span>
+                                                    <span className="folder-name">All Teams</span>
+                                                    <span className="folder-badge-total">{summary.srijan?.count ?? 0}</span>
+                                                </button>
+                                            </div>
+                                        )}
+
                                         <div className="acc-sub-filters">
                                             <button className={
                                                 (activeEvent === 'accommodation' && accFilter === 'ALL') ||
@@ -1832,15 +1975,21 @@ const Admin = () => {
                                     })()}
 
                                     {activeEvent === 'srijan' && (() => {
-                                        const innovations = summary.srijan.entries.filter(e => e.problemStatement === 'Student Innovation').length;
-                                        const ps1 = summary.srijan.entries.filter(e => e.problemStatement === 'Problem Statement 1').length;
-                                        const ps2 = summary.srijan.entries.filter(e => e.problemStatement === 'Problem Statement 2').length;
-                                        const totalParticipants = summary.srijan.entries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0);
+                                        let folderEntries = summary.srijan.entries;
+                                        if (srijanEditionFolder !== 'ALL') {
+                                            folderEntries = folderEntries.filter(e => (e.edition || '2026') === srijanEditionFolder);
+                                        }
+                                        const innovations = folderEntries.filter(e => e.problemStatement === 'Student Innovation').length;
+                                        const ps1 = folderEntries.filter(e => e.problemStatement === 'Problem Statement 1').length;
+                                        const ps2 = folderEntries.filter(e => e.problemStatement === 'Problem Statement 2').length;
+                                        const totalParticipants = folderEntries.reduce((acc, e) => acc + (parseInt(e.teamSize) || 0), 0);
 
                                         return (
                                             <div className="pie-section stats-summary">
-                                                <div className="summary-pill highlight">Total Participants: <span>{totalParticipants}</span></div>
-                                                <div className="summary-pill">Teams: <span>{summary.srijan.entries.length}</span></div>
+                                                <div className="summary-pill highlight">
+                                                    {srijanEditionFolder === '2027' ? '⚡ Navonmesh 2027' : srijanEditionFolder === '2026' ? '📁 Navonmesh 2026 Archive' : 'All Editions'}: <span>{folderEntries.length} Teams</span>
+                                                </div>
+                                                <div className="summary-pill">Total Participants: <span>{totalParticipants}</span></div>
                                                 <div className="summary-pill">Innovation: <span>{innovations}</span></div>
                                                 <div className="summary-pill">PS 1: <span>{ps1}</span></div>
                                                 <div className="summary-pill">PS 2: <span>{ps2}</span></div>
@@ -1916,6 +2065,7 @@ const Admin = () => {
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Group Name</th>
+                                                    {activeEvent === 'srijan' && <th>Edition</th>}
                                                     <th>Leader Name</th>
                                                     <th>College</th>
                                                     <th>Group Size</th>
@@ -1937,14 +2087,19 @@ const Admin = () => {
 
                                                 if (activeEvent === 'accommodation' && accFilter !== 'ALL') {
                                                     displayEntries = displayEntries.filter(e => e.event === accFilter);
-                                                } else if (activeEvent === 'srijan' && srijanFilter !== 'ALL') {
-                                                    displayEntries = displayEntries.filter(e => e.problemStatement === srijanFilter);
+                                                } else if (activeEvent === 'srijan') {
+                                                    if (srijanEditionFolder !== 'ALL') {
+                                                        displayEntries = displayEntries.filter(e => (e.edition || '2026') === srijanEditionFolder);
+                                                    }
+                                                    if (srijanFilter !== 'ALL') {
+                                                        displayEntries = displayEntries.filter(e => e.problemStatement === srijanFilter);
+                                                    }
                                                 } else if (activeEvent === 'cultural' && culturalActivityFilter !== 'ALL') {
                                                     displayEntries = displayEntries.filter(e => e.activity.toLowerCase().includes(culturalActivityFilter));
                                                     if (culturalSubFilter !== 'ALL') {
                                                         displayEntries = displayEntries.filter(e => e.activity.toLowerCase() === culturalSubFilter);
                                                     }
-                                                } else                                                if (activeEvent === 'ankur' && ankurFilter !== 'ALL') {
+                                                } else if (activeEvent === 'ankur' && ankurFilter !== 'ALL') {
                                                     displayEntries = displayEntries.filter(e => e.category === ankurFilter);
                                                 }
 
@@ -2047,7 +2202,43 @@ const Admin = () => {
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                    <td>{entry.teamName}</td>
+                                                                    <td>
+                                                                        <div style={{ fontWeight: '600' }}>{entry.teamName}</div>
+                                                                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '4px', flexWrap: 'wrap' }}>
+                                                                            {entry.teamId && (
+                                                                                <span style={{ fontSize: '0.72rem', color: '#00e5ff', fontFamily: 'monospace', fontWeight: 'bold', background: 'rgba(0, 229, 255, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(0, 229, 255, 0.25)', display: 'inline-block' }}>
+                                                                                    {entry.teamId}
+                                                                                </span>
+                                                                            )}
+                                                                            {(entry.teamPassword || entry.leaderPhone) && (
+                                                                                <span
+                                                                                    style={{
+                                                                                        fontSize: '0.72rem',
+                                                                                        color: '#c084fc',
+                                                                                        fontFamily: 'monospace',
+                                                                                        fontWeight: 'bold',
+                                                                                        background: 'rgba(192, 132, 252, 0.12)',
+                                                                                        padding: '2px 6px',
+                                                                                        borderRadius: '4px',
+                                                                                        border: '1px solid rgba(192, 132, 252, 0.3)',
+                                                                                        display: 'inline-flex',
+                                                                                        alignItems: 'center',
+                                                                                        gap: '3px'
+                                                                                    }}
+                                                                                    title="Team Portal Login Password"
+                                                                                >
+                                                                                    🔑 {entry.teamPassword || entry.leaderPhone}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </td>
+                                                                    {activeEvent === 'srijan' && (
+                                                                        <td>
+                                                                            <span className={`edition-pill ${entry.edition === '2027' ? 'pill-2027' : 'pill-2026'}`}>
+                                                                                {entry.edition === '2027' ? 'Navonmesh 2027' : '2026 Archive'}
+                                                                            </span>
+                                                                        </td>
+                                                                    )}
                                                                     <td>{entry.leaderName || 'N/A'}</td>
                                                                     <td>{entry.college || 'N/A'}</td>
                                                                     <td>{entry.teamSize || 'N/A'}</td>
@@ -2472,7 +2663,7 @@ const Admin = () => {
 
                                     <div className="broadcast-targets" style={{ marginTop: '15px' }}>
                                         <div className="target-options">
-                                            {['ALL', 'Srijan (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)', 'Cultural', 'Accommodation', 'Recruitment', 'Core Members'].map(ev => (
+                                            {['ALL', 'Srijan 2027 (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)', 'Cultural', 'Accommodation', 'Recruitment', 'Core Members'].map(ev => (
                                                 <button
                                                     key={ev}
                                                     type="button"
@@ -2567,6 +2758,22 @@ const Admin = () => {
                                             <label>Registration Date</label>
                                             <span>{new Date(selectedEntry.registrationDate).toLocaleString()}</span>
                                         </div>
+                                        {selectedEntry.teamId && (
+                                            <div className="detail-item">
+                                                <label>Team ID (Portal Login)</label>
+                                                <span style={{ color: '#00e5ff', fontFamily: 'monospace', fontWeight: 'bold', fontSize: '1.05rem', letterSpacing: '1px' }}>
+                                                    {selectedEntry.teamId}
+                                                </span>
+                                            </div>
+                                        )}
+                                        {(selectedEntry.teamPassword || selectedEntry.leaderPhone) && (
+                                            <div className="detail-item">
+                                                <label>Team Password</label>
+                                                <span style={{ color: '#c084fc', fontFamily: 'monospace', fontWeight: 'bold', fontSize: '1rem', letterSpacing: '1px' }}>
+                                                    {selectedEntry.teamPassword || selectedEntry.leaderPhone}
+                                                </span>
+                                            </div>
+                                        )}
                                         {selectedEntry.utrNumber && (
                                             <div className="detail-item">
                                                 <label>UTR Number</label>
@@ -2734,7 +2941,51 @@ const Admin = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="modal-footer">
+                            <div className="modal-footer" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                                {selectedEntry._id && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleResendCredentials(selectedEntry._id)}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #7c3aed, #c026d3)',
+                                            color: '#fff',
+                                            border: 'none',
+                                            padding: '10px 18px',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontFamily: 'Orbitron',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 'bold',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            boxShadow: '0 0 15px rgba(192, 38, 211, 0.35)'
+                                        }}
+                                    >
+                                        🔐 RESEND CREDENTIALS (GMAIL)
+                                    </button>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => handleSendMealPasses(selectedEntry._id)}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                                        color: '#fff',
+                                        border: 'none',
+                                        padding: '10px 18px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontFamily: 'Orbitron',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 'bold',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        boxShadow: '0 0 15px rgba(14, 165, 233, 0.3)'
+                                    }}
+                                >
+                                    <FaUtensils /> EMAIL MEAL PASSES (QR)
+                                </button>
                                 <button className="close-btn" onClick={() => setShowModal(false)}>DISMISS UPLINK</button>
                             </div>
                         </div>

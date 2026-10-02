@@ -1,0 +1,508 @@
+/* Team Command Dashboard Styling */
+.team-dashboard-container {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 10%, #0d1933 0%, #050b17 100%);
+    color: #e2e8f0;
+    padding: 30px 20px 80px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.team-dashboard-loading {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: #38bdf8;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.loader-orbit {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(56, 189, 248, 0.2);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Header */
+.team-dash-header {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 18px;
+    padding: 20px 28px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 24px;
+}
+
+.header-team-badge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.squad-id-pill {
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #fff;
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+}
+
+.header-team-badge h2 {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    font-size: 1.4rem;
+}
+
+.event-meta {
+    margin: 4px 0 0 0;
+    color: #94a3b8;
+    font-size: 0.82rem;
+}
+
+.dash-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dash-nav-pills {
+    display: flex;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dash-tab-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dash-tab-btn:hover {
+    color: #fff;
+}
+
+.dash-tab-btn.active {
+    background: #0ea5e9;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+}
+
+.team-logout-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.team-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fff;
+}
+
+/* Content */
+.team-dash-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dash-alert {
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dash-alert.success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #6ee7b7;
+}
+
+.dash-alert.error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+.dash-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.section-title {
+    margin: 0 0 16px 0;
+    font-family: 'Orbitron', sans-serif;
+    color: #38bdf8;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 16px;
+}
+
+@media (max-width: 800px) {
+    .form-grid-2,
+    .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.78rem;
+    font-family: 'Orbitron', sans-serif;
+    color: #94a3b8;
+}
+
+.form-group input,
+.form-group select {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #38bdf8;
+}
+
+.locked-email-input {
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #64748b !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    cursor: not-allowed;
+}
+
+.email-lock-hint {
+    font-size: 0.7rem;
+    color: #f59e0b;
+}
+
+/* Problem Statement Card & Quota Rule */
+.ps-card {
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ps-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.ps-rule-text {
+    margin: 4px 0 0 0;
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.ps-quota-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.ps-quota-badge.available {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+
+.ps-quota-badge.locked {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
+.ps-select {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.ps-select.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background: #090d16;
+}
+
+.locked-explainer {
+    margin-top: 10px;
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 3px solid #f59e0b;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: #fbbf24;
+    border-radius: 0 6px 6px 0;
+}
+
+.locked-explainer.deadline {
+    border-color: #ef4444;
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Members Section */
+.members-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.add-member-btn {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.add-member-btn:hover {
+    background: #0ea5e9;
+    color: #fff;
+}
+
+.members-inputs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.member-form-row {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+@media (max-width: 768px) {
+    .member-form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.member-index-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.member-fields-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.remove-member-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.remove-member-btn:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+.no-members-box {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    padding: 24px;
+    text-align: center;
+    border-radius: 10px;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+/* Submit Bar */
+.form-submit-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.save-changes-btn {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border: none;
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    transition: 0.3s;
+}
+
+.save-changes-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.6);
+}
+
+.sync-notice {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+/* Meal Hub Intro */
+.meal-hub-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.full-pass-page-btn {
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    border: none;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.full-pass-page-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+}
+
+/* Security */
+.change-pass-form {
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.save-pass-btn {
+    background: #0ea5e9;
+    border: none;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 6px;
+}

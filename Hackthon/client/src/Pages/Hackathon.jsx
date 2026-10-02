@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "../Styles/hackathon.css";
 import { FaPaperclip, FaDownload } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import registerBtnImg from "../assets/register-btn.png";
 import ProblemStatements from "../Components/ProblemStatements";
+import RegistrationChoiceModal from "../Components/RegistrationChoiceModal";
+import RegistrationChatModal from "../Components/RegistrationChatModal";
 import srijanPoster from "../assets/HACKATHON.jpeg";
 import webionLogo from "../assets/webion-logo.png";
 import tcsLogo from "../assets/tcs-logo.png";
@@ -18,14 +20,16 @@ import mainSponsor from "../assets/mainsponsor.png";
 
 
 const Hackathon = () => {
+    const navigate = useNavigate();
     const [showAll, setShowAll] = useState(false);
     const [mobileSection, setMobileSection] = useState(null);
-    const [showFilledModal, setShowFilledModal] = useState(false);
+    const [showRegChoiceModal, setShowRegChoiceModal] = useState(false);
+    const [showChatModal, setShowChatModal] = useState(false);
     const [activePS, setActivePS] = useState(null);
 
     // Lock body scroll when modal is open
     React.useEffect(() => {
-        if (activePS || showFilledModal) {
+        if (activePS || showRegChoiceModal || showChatModal) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -33,7 +37,7 @@ const Hackathon = () => {
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [activePS, showFilledModal]);
+    }, [activePS, showRegChoiceModal, showChatModal]);
 
     const toggleMobileSection = (section) => {
         setMobileSection(prev => prev === section ? null : section);
@@ -233,7 +237,7 @@ const Hackathon = () => {
                     <div className="intel-description-box">
                         <span className="box-label">MISSION_DESCRIPTION</span>
                         <p className="hackathon-header-desc">
-                            SRIJAN 2026 is a National Level Hackathon aimed at fostering creative problem-solving, innovation, and rapid prototyping. Join the mission to develop technology-driven solutions for real-world challenges.
+                            SRIJAN 2027 is a National Level Hackathon aimed at fostering creative problem-solving, innovation, and rapid prototyping. Join the mission to develop technology-driven solutions for real-world challenges.
                         </p>
                         <div className="intel-accents">
                             <div className="accent-bar"></div>
@@ -245,7 +249,7 @@ const Hackathon = () => {
                         <button
                             onClick={(e) => {
                                 e.preventDefault();
-                                setShowFilledModal(true);
+                                setShowRegChoiceModal(true);
                             }}
                             className="register-rocket-btn animate-float"
                             style={{ cursor: 'pointer', border: 'none', appearance: 'none' }}
@@ -281,7 +285,7 @@ const Hackathon = () => {
             <div className="mission-hud-specs">
                 <div className="hud-spec-item">
                     <div className="hud-label">ENTRY_FEE</div>
-                    <div className="hud-value">₹300 (PER TEAM)</div>
+                    <div className="hud-value">₹500 (PER TEAM)</div>
                     <div className="hud-bar"><div className="fill" style={{ width: '100%' }}></div></div>
                 </div>
                 <div className="hud-spec-item">
@@ -314,66 +318,25 @@ const Hackathon = () => {
                             id: 'innovation',
                             title: "PROBLEM STATEMENT: STUDENT INNOVATION",
                             subtitle: "If you choose 'Student Innovation' (proposing your own problem statement), please ensure your project aligns with the domains listed below.",
-                            isAvailable: true
+                            screeningNote: "For Student Innovation, there will be a screening round.",
+                            isAvailable: false
                         },
                         {
                             id: 'ps1',
                             title: "PROBLEM STATEMENT 1",
-                            category: "AR-Powered Live Commerce",
-                            subtitle: "AR-Powered Live Commerce: Bringing the Store Experience to Your Screen",
-                            isAvailable: true,
-                            tag: "NEWLY UPDATED",
-                            fullIntel: {
-                                mainTitle: "Hackathon Problem Statement",
-                                title: "Real time Live Interactive Shopping & Exhibition Platform",
-                                background: `Now a days, buying products on E-commerce platforms has become a daily experience. E-commerce Apps offer various products and provide virtual shopping carts to facilitate the purchase. However, the traditional e-commerce Apps provide basic product information, and provide few angle images of products. These Apps cannot provide the depth of information and real time view of that product. When the goods are delivered to the consumer, then the consumer decides the suitability of the product. These goods often need to match the customers need and choice, if not suitable, they need to be returned through the troublesome return procedure. Furthermore, traditional e-commerce websites cannot provide real time Live sale assistance for helping the customers. Also, In present scenario of Ecommerce platform, the specifically the seller of apparels/ dress/ garments demonstrates either by 2D photographs or sketch & hence the buyer can only visualise , specifically the apparels / dress / garments but cannot get the idea that how dress suites to him / her . Also, majority of times the products gets returned due to improper size / fitting.`,
-                                statement: `Keeping in mind the need of real time interactivity and Live Shopping Environment to the customers, Webon Ecomm Private Limited has come up with first of its kind Real time LIVE E-ecommerce platform Webion live shopping app…! Here, we have introduced the Camera that the seller has to install in front of the products & those camera we have integrated with our App. The buyer can visit the shop / stall through his mobile / laptop / computer. Also, when the buyer has any query / wants to negotiate, with our unique feature button alerts goes to available sales person. When sales person click, we van visualized one side Sales person & another half side of screen buyer With our App., Visiting any shop and buying products sitting at your home is possible now...! You can virtually in real time go inside the shop and if you want to discuss/ negotiate, the salesperson will talk to you and show the products of your choice LIVE…! Pay online and the product will get delivered at your home...! Now, we want to have an AR feature integration with our App. by which the customer can view / feel how the product (dress / garments etc.) which has been displayed on the mannequin of the shop suits to his face / body just by clicking a button of his mobile / laptop / computer. Also, he should get the dimensions of the products displayed ( Garments / cloths ) on the mannequins through the sales person camera & buyer should get the dimensions of his clothing’s that he / she has wear on his camera. when a customer and salesperson interaction is going on so that the customer can have a real time view/feel of the product and decide its suitability.`,
-                                objectives: [
-                                    "The customer should be able to use the AR feature to decide the product suitability",
-                                    "The customer should feel & size as if he/she is wearing that product (for Apparel / garments etc.) which the shopkeeper as dressed on / decorated on mannequin / object & also we should get the dimension of the Apparels / cloths / garments etc."
-                                ],
-                                solution: [
-                                    "AR functionality integration",
-                                    "This feature should have a provision to get integrated with our existing Live commerce platform which is developed in React JS, back end logic and API in Node JS using MySQL databse in Unix environment",
-                                    "The salesperson mobile app is in Android in which we have used Agora video calling functionality"
-                                ],
-                                deliverables: [
-                                    "We expect from the team member to have AR feature to be integrated in our application with source code as mentioned above."
-                                ],
-                                downloadPath: "/Srijan_PS1.docx"
-                            },
-                            knowledgePartner: webionLogo
+                            category: "COMING SOON",
+                            subtitle: "Problem statement 1 will be announced soon. Stay tuned!",
+                            tag: "COMING SOON",
+                            isAvailable: false
                         },
-
                         {
                             id: 'ps2',
                             title: "PROBLEM STATEMENT 2",
-                            category: "AI & MANUFACTURING",
-                            subtitle: "Generative AI Agent for Predictive Maintenance Scheduling in Manufacturing",
-                            isAvailable: true,
-                            tag: "NEWLY UPDATED",
-                            fullIntel: {
-                                mainTitle: "Hackathon Problem Statement",
-                                title: "Generative AI Agent for Predictive Maintenance Scheduling in Manufacturing",
-                                background: "Manufacturing plants struggle to efficiently schedule maintenance due to scattered equipment logs and lack of real-time insights, leading to unexpected downtimes and increased costs.",
-                                statement: "Generative AI Agent for Predictive Maintenance Scheduling in Manufacturing",
-                                objectives: [
-                                    "Collect equipment maintenance logs and operational notes.",
-                                    "Use an AI agent to analyze textual logs and identify patterns indicating potential failures.",
-                                    "Generate prioritized maintenance schedules with explanations.",
-                                    "Allow users to query maintenance history and recommendations."
-                                ],
-                                solution: [
-                                    "Refer to objectives and requirements for implementation."
-                                ],
-                                deliverables: [
-                                    "Data Requirements: Maintenance logs, equipment operational notes, and incident reports in text format from manufacturing plant databases or maintenance management systems."
-                                ],
-                                downloadPath: "/ps2.docx"
-                            },
-                            knowledgePartner: tcsLogo
+                            category: "COMING SOON",
+                            subtitle: "Problem statement 2 will be announced soon. Stay tuned!",
+                            tag: "COMING SOON",
+                            isAvailable: false
                         }
-
                     ].map((item, index) => (
                         <div
                             className={`reward-card ${item.isAvailable ? 'ps-available' : ''}`}
@@ -426,7 +389,6 @@ const Hackathon = () => {
                                 )}
 
                                 {item.subtitle && <div className="card-instruction ps-summary-box" style={{
-
                                     fontSize: '1rem',
                                     marginTop: '20px',
                                     color: '#e2e8f0',
@@ -437,6 +399,25 @@ const Hackathon = () => {
                                 }}>
                                     {item.subtitle}
                                 </div>}
+
+                                {item.screeningNote && (
+                                    <div style={{
+                                        marginTop: '15px',
+                                        padding: '10px 14px',
+                                        background: 'rgba(245, 158, 11, 0.15)',
+                                        border: '1px solid rgba(245, 158, 11, 0.4)',
+                                        borderRadius: '6px',
+                                        color: '#fcd34d',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 'bold',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px'
+                                    }}>
+                                        <span>📢</span>
+                                        <span>NOTE: {item.screeningNote}</span>
+                                    </div>
+                                )}
                                 {item.isAvailable && item.id !== 'innovation' && (
                                     <div className="view-details-btn-accent" style={{
                                         marginTop: '25px',
@@ -785,41 +766,31 @@ const Hackathon = () => {
                 </div>
             )}
 
-            {/* REGISTRATION FILLED MODAL */}
-            {showFilledModal && (
-                <div className="voyager-modal-overlay" onClick={() => setShowFilledModal(false)}>
-                    <div className="voyager-modal-content animate-pop" onClick={e => e.stopPropagation()}>
-                        <div className="modal-bracket bracket-top-left"></div>
-                        <div className="modal-bracket bracket-top-right"></div>
-                        <div className="modal-bracket bracket-bottom-left"></div>
-                        <div className="modal-bracket bracket-bottom-right"></div>
+            {/* REGISTRATION CHOICE MODAL (Manual vs Chat) */}
+            <RegistrationChoiceModal
+                isOpen={showRegChoiceModal}
+                onClose={() => setShowRegChoiceModal(false)}
+                onChooseManual={() => {
+                    setShowRegChoiceModal(false);
+                    navigate('/register?event=srijan');
+                }}
+                onChooseChat={() => {
+                    setShowRegChoiceModal(false);
+                    setShowChatModal(true);
+                }}
+                eventName="Srijan 2027 (Hackathon)"
+            />
 
-                        <div className="modal-header">
-                            <span className="status-badge">MISSION_ALERT</span>
-                            <h2>REGISTRATION STATUS</h2>
-                        </div>
-
-                        <div className="modal-body">
-                            <div className="error-icon-container">
-                                <div className="error-circle">!</div>
-                            </div>
-                            <h3>REGISTRATION FILLED</h3>
-                            <p>WE ARE NO LONGER ACCEPTING UNITS FOR THE <strong>SRIJAN HACKATHON</strong> MISSION. THE REQUISITE NUMBERS HAVE BEEN REACHED.</p>
-
-                            <div className="modal-tech-stats">
-                                <div className="stat-line">SYSTEM: STABLE</div>
-                                <div className="stat-line">LIMIT: EXCEEDED</div>
-                            </div>
-                        </div>
-
-                        <div className="modal-footer">
-                            <button className="modal-dismiss-btn" onClick={() => setShowFilledModal(false)}>
-                                DISMISS PROTOCOL
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* CONVERSATIONAL CHAT REGISTRATION MODAL */}
+            <RegistrationChatModal
+                isOpen={showChatModal}
+                onClose={() => setShowChatModal(false)}
+                initialEvent="srijan"
+                onSwitchToManual={(ev) => {
+                    setShowChatModal(false);
+                    navigate(`/register?event=${ev || 'srijan'}`);
+                }}
+            />
         </div>
     );
 };

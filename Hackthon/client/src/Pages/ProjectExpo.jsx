@@ -106,7 +106,7 @@ const ProjectExpo = () => {
                         </div>
                     </div>
 
-                     <div className="header-actions">
+                    <div className="header-actions">
                         {counts.ankur >= 60 ? (
                             <div className="closed-banner-ankur">
                                 <span className="closed-icon">🚫</span>

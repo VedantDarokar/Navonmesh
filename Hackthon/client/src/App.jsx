@@ -27,6 +27,10 @@ import SupportQR from "./Pages/SupportQR";
 import AdminMaintenance from "./Pages/AdminMaintenance";
 import EventDayAdmin from "./Pages/EventDayAdmin";
 import BreakTimer from "./Pages/BreakTimer"; // Import BreakTimer
+import TeamPass from "./Pages/TeamPass";
+import FoodScannerPage from "./Pages/FoodScannerPage";
+import TeamLogin from "./Pages/TeamLogin";
+import TeamDashboard from "./Pages/TeamDashboard";
 
 function App() {
 
@@ -80,6 +84,14 @@ function App() {
             <Route path="/admin/maintenance" element={<AdminMaintenance />} />
             <Route path="/admin/event-day" element={<EventDayAdmin />} />
             <Route path="/admin/break-timer" element={<BreakTimer />} />
+            <Route path="/team-pass" element={<TeamPass />} />
+            <Route path="/meal-pass" element={<TeamPass />} />
+            <Route path="/food-scanner" element={<FoodScannerPage />} />
+            <Route path="/admin/qr-scanner" element={<FoodScannerPage />} />
+            <Route path="/team-login" element={<TeamLogin />} />
+            <Route path="/team/login" element={<TeamLogin />} />
+            <Route path="/team-dashboard" element={<TeamDashboard />} />
+            <Route path="/team/dashboard" element={<TeamDashboard />} />
           </Routes>
 
         </div>

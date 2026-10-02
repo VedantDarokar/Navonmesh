@@ -119,6 +119,23 @@ router.delete('/core-members/clear', (req, res) => {
     res.json({ success: true, message: 'Core members cleared' });
 });
 
+// POST /api/admin/shift-to-2026 - Shift all existing registrations to edition 2026
+router.post('/shift-to-2026', async (req, res) => {
+    try {
+        const result = await Registration.updateMany({}, { $set: { edition: '2026' } });
+        console.log(`✅ Successfully shifted ${result.modifiedCount} teams to Navonmesh 2026`);
+        res.json({ 
+            success: true, 
+            message: `Successfully shifted ${result.modifiedCount} teams to Navonmesh 2026`,
+            matched: result.matchedCount,
+            modified: result.modifiedCount
+        });
+    } catch (err) {
+        console.error('Error shifting to 2026:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Fetch all entries count and data
 router.get('/data', async (req, res) => {
     // Auth Check
@@ -128,7 +145,7 @@ router.get('/data', async (req, res) => {
     }
 
     try {
-        const srijan = await Registration.find({ event: 'Srijan (Hackathon)' });
+        const srijan = await Registration.find({ event: { $regex: /srijan/i } });
         const ankur = await Registration.find({ event: 'Ankur (Project Expo)' });
         const udbhav = await Registration.find({ event: 'Udbhav (Conference)' });
         const cultural = await Cultural.find();
@@ -142,10 +159,25 @@ router.get('/data', async (req, res) => {
             totalBoys += a.boysCount || 0;
         });
 
+        const srijanMapped = srijan.map(r => {
+            const is2027 = r.edition === '2027';
+            return {
+                ...r._doc,
+                edition: is2027 ? '2027' : '2026',
+                paymentVerified: r.paymentVerified,
+                psEdited: r.psEdited
+            };
+        });
+
+        const srijan2027Count = srijanMapped.filter(r => r.edition === '2027').length;
+        const srijan2026Count = srijanMapped.filter(r => r.edition === '2026').length;
+
         res.json({
             srijan: {
                 count: srijan.length,
-                entries: srijan.map(r => ({ ...r._doc, paymentVerified: r.paymentVerified, psEdited: r.psEdited }))
+                count2027: srijan2027Count,
+                count2026: srijan2026Count,
+                entries: srijanMapped
             },
             ankur: {
                 count: ankur.length,
@@ -698,11 +730,14 @@ router.post('/send-bulk-email', async (req, res) => {
             const isAll = targets.includes('ALL');
 
             // 1. Fetch from Main Registration (Hackathon, Expo, Conference)
-            if (isAll || targets.some(t => ['Srijan (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)'].includes(t))) {
+            if (isAll || targets.some(t => ['Srijan (Hackathon)', 'Srijan 2027 (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)'].includes(t))) {
                 let registrationQuery = {};
                 if (!isAll) {
-                    const subEvents = targets.filter(t => ['Srijan (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)'].includes(t));
-                    if (subEvents.length > 0) registrationQuery.event = { $in: subEvents };
+                    const subEvents = targets.filter(t => ['Srijan (Hackathon)', 'Srijan 2027 (Hackathon)', 'Ankur (Project Expo)', 'Udbhav (Conference)'].includes(t));
+                    if (subEvents.length > 0) {
+                        const regexEvents = subEvents.map(ev => ev.includes('Srijan') ? /srijan/i : ev);
+                        registrationQuery.event = { $in: regexEvents };
+                    }
                 }
                 const regs = await Registration.find(registrationQuery);
                 regs.forEach(r => {

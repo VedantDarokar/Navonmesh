@@ -26,12 +26,8 @@ const Home = () => {
   const [flyAway, setFlyAway] = useState(false);
 
   useEffect(() => {
-    const targetDate = new Date("March 23, 2026 00:00:00").getTime();
-    const celebrationEndTest = Date.now() + 5000;
-    
     const checkStatus = () => {
-      const now = new Date().getTime();
-      if (window.scrollY > 50 || now >= targetDate || now < celebrationEndTest) {
+      if (window.scrollY > 50) {
         setFlyAway(true);
       } else {
         setFlyAway(false);

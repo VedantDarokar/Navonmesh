@@ -4,8 +4,8 @@ const Registration = require('../models/Registration');
 
 router.get('/count', async (req, res) => {
     try {
-        const ankurCount = await Registration.countDocuments({ event: 'Ankur (Project Expo)' });
-        const srijanCount = await Registration.countDocuments({ event: 'Srijan (Hackathon)' });
+        const ankurCount = await Registration.countDocuments({ event: { $regex: /ankur/i } });
+        const srijanCount = await Registration.countDocuments({ event: { $regex: /srijan/i } });
         res.json({ ankur: ankurCount, srijan: srijanCount });
     } catch (err) {
         res.status(500).json({ error: 'Error fetching counts' });
@@ -37,11 +37,6 @@ router.post('/', async (req, res) => {
             }
         }
 
-        // --- DISABLE SRIJAN REGISTRATIONS ---
-        if (event && event.toLowerCase().includes('srijan')) {
-            return res.status(403).json({ error: 'Registrations for Srijan (Hackathon) are now closed because all slots are full. Thank you for your interest!' });
-        }
-
         // --- ENFORCE ANKUR RULES ---
         if (event && event.toLowerCase().includes('ankur')) {
             // 1. Block Degree registrations
@@ -56,11 +51,20 @@ router.post('/', async (req, res) => {
             }
         }
 
+        const { generateTeamId, generatePassword, sendCredentialsEmail } = require('./team');
+        const teamId = await generateTeamId();
+        const teamPassword = generatePassword();
+
         const newRegistration = new Registration({
+            teamId,
+            teamPassword,
             event,
+            edition: '2027',
             teamName,
             studentCategory,
             problemStatement,
+            originalProblemStatement: problemStatement,
+            psChangeCount: 0,
             teamSize,
             leaderName,
             leaderEmail,
@@ -73,6 +77,13 @@ router.post('/', async (req, res) => {
 
         await newRegistration.save();
 
+        // Send welcome credentials email with Team ID & Password
+        try {
+            sendCredentialsEmail(newRegistration).catch(e => console.error('Background cred mail error:', e));
+        } catch (e) {
+            console.error('Failed to trigger credential mail:', e);
+        }
+
         // Determine Event Head based on event type
         let eventHead = { name: "Nihal Kankal", phone: "8766417815" }; // Default
         if (event.includes('Srijan')) {
@@ -83,7 +94,12 @@ router.post('/', async (req, res) => {
             eventHead = { name: "Tanmay Kurhekar", phone: "8605359181", role: "Udbhav Head" };
         }
 
-        res.status(201).json({ message: 'Registration successful', data: newRegistration });
+        res.status(201).json({ 
+            message: 'Registration successful', 
+            data: newRegistration,
+            teamId: newRegistration.teamId,
+            teamPassword: newRegistration.teamPassword
+        });
     } catch (error) {
         console.error('Registration Error:', error);
 

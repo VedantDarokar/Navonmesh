@@ -503,6 +503,119 @@
     gap: 8px;
 }
 
+/* Navonmesh / Srijan Edition Folders Navigation */
+.edition-folders-nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 8px 0 14px 0;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    width: 100%;
+}
+
+.edition-folder-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.edition-folder-tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.edition-folder-tab.active-2027 {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(56, 189, 248, 0.35) 100%);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+}
+
+.edition-folder-tab.active-2026 {
+    background: linear-gradient(135deg, rgba(217, 119, 6, 0.25) 0%, rgba(245, 158, 11, 0.35) 100%);
+    border-color: #f59e0b;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+}
+
+.edition-folder-tab.active-all-folder {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.25) 0%, rgba(139, 92, 246, 0.35) 100%);
+    border-color: #a78bfa;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.35);
+}
+
+.folder-badge-new {
+    background: #10b981;
+    color: #000;
+    font-weight: 800;
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.folder-badge-archive {
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    font-weight: 700;
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+}
+
+.folder-badge-total {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    font-weight: 700;
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+}
+
+/* Edition badge inside table rows */
+.edition-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.edition-pill.pill-2027 {
+    background: rgba(14, 165, 233, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+.edition-pill.pill-2026 {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
 .acc-sub-filters {
     display: flex;
     gap: 8px;

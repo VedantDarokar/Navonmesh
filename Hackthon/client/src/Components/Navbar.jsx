@@ -68,17 +68,22 @@ const Navbar = ({ onRegisterClick }) => {
             </li>
             <li>
               <NavLink to="/projectexpo" className="nav-item-dropdown" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-                Ankur (Project Expo)
+                Ankur (Project Competition)
               </NavLink>
             </li>
             <li>
               <NavLink to="/conference" className="nav-item-dropdown" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-                Udbhav (Conference)
+                Udbhav (Student Conference)
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/vayuvega" className="nav-item-dropdown" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
+                Vayuvega (Drone Competition)
               </NavLink>
             </li>
             <li>
               <NavLink to="/pursuit" className="nav-item-dropdown" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-                Pursuit
+                आरोहण (Workshops)
               </NavLink>
             </li>
           </ul>
@@ -109,7 +114,27 @@ const Navbar = ({ onRegisterClick }) => {
       </ul>
 
       {/* 🚀 FAR RIGHT: ACTION HUBS */}
-      <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+      <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <NavLink
+          to="/team-login"
+          className="navbar-team-login-btn"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            color: '#fff',
+            padding: '7px 15px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: '600',
+            textDecoration: 'none',
+            boxShadow: '0 2px 10px rgba(99, 102, 241, 0.35)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}
+        >
+          <span>🔐 Login</span>
+        </NavLink>
         <a
           href="https://drive.google.com/file/d/1Xy_Jz-NlAByWw2A-z3rW4e8BvQ_rU7yJ/view?usp=sharing"
           target="_blank"

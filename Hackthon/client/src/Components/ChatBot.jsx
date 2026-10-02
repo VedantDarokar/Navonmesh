@@ -16,7 +16,7 @@ const KNOWLEDGE_BASE = [
     },
     {
         keywords: ["srijan", "24 hr hackathon", "hackathon"],
-        answer: "🚨 Mission Alert: Srijan Hackathon registrations are officially CLOSED. All slots are full! Thank you for the massive response. Registered teams should check the mission briefing on the Hackathon page."
+        answer: "🚀 Srijan 2027 Hackathon registrations are OPEN! Entry fee is ₹500 per team (2-4 members). Problem statements 1 & 2 are coming soon, and Student Innovation track is available (screening round applies). You can register manually or interactively via chat!"
     },
     {
         keywords: ["ankur", "project expo", "exhibition"],
@@ -27,8 +27,8 @@ const KNOWLEDGE_BASE = [
         answer: "Udhbhav is a National Level Student Conference. Individual entries are required. It's an arena for research-oriented minds to publish and present papers. For more info, visit the Conference page."
     },
     {
-        keywords: ["pursuit", "workshop", "learn"],
-        answer: "Pursuit offers specialized technical workshops in cutting-edge technologies. These sessions are led by experts and offered at highly affordable rates to help you upgrade your skill set."
+        keywords: ["aarohan", "आरोहण", "pursuit", "workshop", "workshops", "learn"],
+        answer: "🎯 Aarohan (आरोहण) features 2 high-impact workshop tracks:\n1️⃣ 15+ Days Long-Term Masterclasses (₹250-₹300): Full Stack Development, PCB Designing (Altium & KiCad), AutoCAD Mechanical, and Electrical Systems with 5 real projects, verified certificate, GitHub profile & resume building!\n2️⃣ Short-Term Fast-Track Workshops (₹50-₹100): Conducted by college committees (E-Cell, ISTE, IEEE, etc.)."
     },
     {
         keywords: ["accommodation", "stay", "hotel", "hostel", "room", "food", "mess"],
@@ -40,7 +40,7 @@ const KNOWLEDGE_BASE = [
     },
     {
         keywords: ["registration", "apply", "form", "join", "link"],
-        answer: "Launch your journey! 🚀 You can still register for Ankur (Project Expo), Udbhav (Conference), and other events. Visit their respective pages to find the 'Register' button. Note: Srijan registrations are closed."
+        answer: "Launch your journey! 🚀 Registrations are OPEN for Srijan 2027 (Hackathon) [₹500/team], Ankur (Project Expo), Aarohan (Workshops), and other events. You can register via traditional form or through our interactive chat bot!"
     },
     {
         keywords: ["contact", "help", "support", "organizer"],
@@ -56,7 +56,7 @@ const SUGGESTIONS = [
     "Tell me about Srijan Hackathon",
     "What is the Prize Pool?",
     "How to Register?",
-    "Tell me about Pursuit Workshops"
+    "Tell me about Aarohan Workshops"
 ];
 
 const ChatBot = () => {

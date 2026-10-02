@@ -62,9 +62,10 @@ const Footer = () => {
             <h4 className="footer-heading">Mega Events</h4>
             <ul className="footer-links">
               <li><Link to="/hackathon" onClick={scrollToTop}>Srijan (Hackathon)</Link></li>
-              <li><Link to="/projectexpo" onClick={scrollToTop}>Ankur (Project Expo)</Link></li>
-              <li><Link to="/conference" onClick={scrollToTop}>Udbhav (Conference)</Link></li>
-              <li><Link to="/pursuit" onClick={scrollToTop}>Pursuit</Link></li>
+              <li><Link to="/projectexpo" onClick={scrollToTop}>Ankur (Project Competition)</Link></li>
+              <li><Link to="/conference" onClick={scrollToTop}>Udbhav (Student Conference)</Link></li>
+              <li><Link to="/vayuvega" onClick={scrollToTop}>Vayuvega (Drone Competition)</Link></li>
+              <li><Link to="/pursuit" onClick={scrollToTop}>आरोहण (Workshops)</Link></li>
             </ul>
           </div>
 

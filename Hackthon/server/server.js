@@ -54,6 +54,8 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/issues', require('./routes/issues'));
 app.use('/api/cultural', require('./routes/cultural'));
 app.use('/api/recruitment', require('./routes/recruitment'));
+app.use('/api/food', require('./routes/food'));
+app.use('/api/team', require('./routes/team').router);
 
 app.get('/', (req, res) => {
     res.send('Navonmesh Hackathon API is running');

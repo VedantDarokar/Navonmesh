@@ -1,0 +1,373 @@
+/* Participant Digital Meal Pass Styling */
+.team-pass-page-container {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 20%, #0d1933 0%, #050b17 100%);
+    color: #e2e8f0;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Login Card */
+.team-pass-login-card {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(16px);
+    text-align: center;
+    margin-top: 40px;
+}
+
+.pass-logo-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #fff;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+}
+
+.team-pass-login-card h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    font-size: 1.6rem;
+    margin: 0 0 8px 0;
+}
+
+.team-pass-login-card .subtitle {
+    color: #94a3b8;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+}
+
+.pass-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.input-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-field-group label {
+    font-size: 0.8rem;
+    font-family: 'Orbitron', sans-serif;
+    color: #cbd5e1;
+}
+
+.input-field-group .hint {
+    font-size: 0.72rem;
+    color: #38bdf8;
+    font-family: 'Inter', sans-serif;
+}
+
+.input-field-group input {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-field-group input:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.login-pass-btn {
+    margin-top: 8px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    border: none;
+    color: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+    transition: 0.3s;
+}
+
+.login-pass-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(14, 165, 233, 0.6);
+}
+
+.pass-error-alert {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.login-note-box {
+    margin-top: 24px;
+    background: rgba(56, 189, 248, 0.08);
+    border-left: 3px solid #38bdf8;
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* Team Passes Grid View */
+.team-passes-view {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.passes-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 18px 24px;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.team-header-info h2 {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.team-header-info p {
+    margin: 4px 0 0 0;
+    color: #38bdf8;
+    font-size: 0.85rem;
+}
+
+.meal-timings-strip {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.time-pill {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+/* Individual Cards Grid */
+.passes-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px;
+}
+
+.individual-pass-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(10, 15, 30, 0.95) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.individual-pass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(56, 189, 248, 0.25);
+}
+
+.pass-card-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.pass-role-tag {
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.pass-id-chip {
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+.pass-participant-info h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #fff;
+}
+
+.college-sub {
+    margin: 4px 0 14px 0;
+    color: #94a3b8;
+    font-size: 0.78rem;
+}
+
+.pass-qr-frame {
+    background: #ffffff;
+    padding: 14px;
+    border-radius: 16px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+    width: 210px;
+}
+
+.qr-image {
+    width: 180px;
+    height: 180px;
+    display: block;
+}
+
+.qr-badge {
+    margin-top: 8px;
+    background: #0f172a;
+    color: #38bdf8;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.today-meal-status {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.status-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.meal-indicators {
+    display: flex;
+    justify-content: space-around;
+    gap: 6px;
+}
+
+.meal-indicator {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Inter', sans-serif;
+}
+
+.meal-indicator.claimed {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.meal-indicator.available {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.download-pass-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    transition: 0.2s;
+}
+
+.download-pass-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}

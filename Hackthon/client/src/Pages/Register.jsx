@@ -3,6 +3,7 @@ import '../Styles/register.css';
 import '../Styles/register_help.css';
 import { FaGoogle, FaWhatsapp, FaTimes, FaArrowLeft, FaExpand } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import RegistrationChatModal from '../Components/RegistrationChatModal';
 
 import PaymentQR from '../assets/payment-qr.png';
 import utrStep1 from '../assets/utr_step1.png'; // Placeholders for shared images
@@ -15,12 +16,14 @@ const Register = () => {
     const queryParams = new URLSearchParams(location.search);
     const urlEvent = queryParams.get('event');
 
+    const [showChatModal, setShowChatModal] = useState(queryParams.get('mode') === 'chat');
+
     const [formData, setFormData] = useState({
         fullName: '', email: '', phone: '', college: '',
-        event: urlEvent?.toLowerCase() === 'srijan' ? 'Srijan (Hackathon)' :
+        event: urlEvent?.toLowerCase() === 'srijan' ? 'Srijan 2027 (Hackathon)' :
             urlEvent?.toLowerCase() === 'ankur' ? 'Ankur (Project Expo)' :
             urlEvent?.toLowerCase() === 'udbhav' ? 'Udbhav (Conference)' :
-            urlEvent?.toLowerCase() === 'pursuit' ? 'Pursuit' : 'Udbhav (Conference)',
+            (urlEvent?.toLowerCase() === 'pursuit' || urlEvent?.toLowerCase() === 'aarohan') ? 'Pursuit' : 'Udbhav (Conference)',
         teamName: '',
         teamSize: '',
         studentCategory: '',
@@ -81,31 +84,34 @@ const Register = () => {
     };
 
     // --- GOOGLE FORM CONFIGURATION ---
-    const FORM_CONFIG = {
-        'Srijan (Hackathon)': {
-            url: "https://docs.google.com/forms/d/e/1FAIpQLSfMpbvgeNfFKXVrTLL4ug41aUpE7YDneNNQv4_IfmkyPTlQ-Q/formResponse",
-            ids: {
-                teamName: "entry.2005620554",
-                leaderName: "entry.1045781291",
-                leaderEmail: "entry.1065046570",
-                leaderPhone: "entry.1166974658",
-                member2Name: "entry.1446904082",
-                member2Email: "entry.282203664",
-                member2Phone: "entry.1059585569",
-                member3Name: "entry.1158408763",
-                member3Email: "entry.194510035",
-                member3Phone: "entry.1200228325",
-                member4Name: "entry.1710049001",
-                member4Email: "entry.921494192",
-                member4Phone: "entry.1681717638",
-                college: "entry.323039862",
-                utrNumber: "entry.624710763"
-            },
-            hasCollege: true,
-            hasMemberPhone: true,
-            hasAccommodation: false,
-            bundleMembers: false
+    const srijanFormConfig = {
+        url: "https://docs.google.com/forms/d/e/1FAIpQLSfMpbvgeNfFKXVrTLL4ug41aUpE7YDneNNQv4_IfmkyPTlQ-Q/formResponse",
+        ids: {
+            teamName: "entry.2005620554",
+            leaderName: "entry.1045781291",
+            leaderEmail: "entry.1065046570",
+            leaderPhone: "entry.1166974658",
+            member2Name: "entry.1446904082",
+            member2Email: "entry.282203664",
+            member2Phone: "entry.1059585569",
+            member3Name: "entry.1158408763",
+            member3Email: "entry.194510035",
+            member3Phone: "entry.1200228325",
+            member4Name: "entry.1710049001",
+            member4Email: "entry.921494192",
+            member4Phone: "entry.1681717638",
+            college: "entry.323039862",
+            utrNumber: "entry.624710763"
         },
+        hasCollege: true,
+        hasMemberPhone: true,
+        hasAccommodation: false,
+        bundleMembers: false
+    };
+
+    const FORM_CONFIG = {
+        'Srijan 2027 (Hackathon)': srijanFormConfig,
+        'Srijan (Hackathon)': srijanFormConfig,
         'Ankur (Project Expo)': {
             url: "https://docs.google.com/forms/d/e/1FAIpQLScW6ESj4WlOoLnV_cKjIrgnezjpDcX6ocNAu3swKZRG8ru-mg/formResponse",
             ids: {
@@ -255,7 +261,7 @@ const Register = () => {
                     event: urlEvent?.toLowerCase() === 'srijan' ? 'Srijan (Hackathon)' :
                         urlEvent?.toLowerCase() === 'ankur' ? 'Ankur (Project Expo)' :
                             urlEvent?.toLowerCase() === 'udbhav' ? 'Udbhav (Conference)' :
-                                urlEvent?.toLowerCase() === 'pursuit' ? 'Pursuit' : 'Udbhav (Conference)',
+                                (urlEvent?.toLowerCase() === 'pursuit' || urlEvent?.toLowerCase() === 'aarohan') ? 'Pursuit' : 'Udbhav (Conference)',
                     teamName: '', teamSize: '', studentCategory: '',
                     member2Name: '', member2Email: '', member2Phone: '',
                     member3Name: '', member3Email: '', member3Phone: '',
@@ -504,53 +510,51 @@ const Register = () => {
 
                     {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
-                    {event === 'Srijan (Hackathon)' ? (
-                        <div className="closed-container" style={{
-                            textAlign: 'center',
-                            padding: '60px 20px',
-                            background: 'rgba(255, 0, 0, 0.05)',
-                            border: '1px solid rgba(255, 0, 0, 0.2)',
-                            borderRadius: '20px',
-                            marginTop: '20px'
-                        }}>
-                            <h2 style={{ color: '#ff4b2b', fontSize: '2.5rem', marginBottom: '20px' }}>Registrations Closed!</h2>
-                            <p style={{ color: '#fff', fontSize: '1.2rem', lineHeight: '1.6', maxWidth: '600px', margin: '0 auto 30px' }}>
-                                Thank you for your overwhelming response! The slots for <strong>Srijan (Hackathon)</strong> are now full and registrations have been officially closed.
+                    {/* Chat Registration Banner */}
+                    <div style={{
+                        background: 'linear-gradient(135deg, rgba(45, 212, 191, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
+                        border: '1px solid rgba(45, 212, 191, 0.35)',
+                        borderRadius: '16px',
+                        padding: '18px 20px',
+                        marginBottom: '25px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '15px',
+                        flexWrap: 'wrap',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)'
+                    }}>
+                        <div>
+                            <p style={{ margin: 0, fontWeight: 'bold', color: '#ffffff', fontSize: '1rem', fontFamily: 'Orbitron, sans-serif' }}>
+                                🤖 Interactive Bot Registration Available
                             </p>
-                            <div className="closed-info" style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '12px', display: 'inline-block' }}>
-                                <p style={{ color: '#ccc', marginBottom: '10px' }}>Registered teams, please stay tuned to the WhatsApp group for further updates.</p>
-                                <a
-                                    href="https://chat.whatsapp.com/K5spryDgbS56emLZP8F30g?mode=gi_t"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="whatsapp-btn"
-                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-                                >
-                                    <FaWhatsapp /> Srijan WhatsApp Group
-                                </a>
-                            </div>
-                            <div style={{ marginTop: '40px' }}>
-                                <button
-                                    onClick={() => navigate('/')}
-                                    style={{
-                                        background: 'linear-gradient(45deg, #00e5ff, #007bff)',
-                                        color: '#fff',
-                                        border: 'none',
-                                        padding: '12px 40px',
-                                        borderRadius: '30px',
-                                        fontWeight: 'bold',
-                                        cursor: 'pointer',
-                                        fontSize: '1rem',
-                                        transition: '0.3s'
-                                    }}
-                                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-                                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                                >
-                                    Back to Home
-                                </button>
-                            </div>
+                            <p style={{ margin: '6px 0 0 0', color: '#94a3b8', fontSize: '0.85rem' }}>
+                                Want the website bot to guide you step-by-step through a chat to fill the form?
+                            </p>
                         </div>
-                    ) : (event === 'Ankur (Project Expo)' && counts.ankur >= 60) ? (
+                        <button
+                            type="button"
+                            onClick={() => setShowChatModal(true)}
+                            style={{
+                                background: 'linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%)',
+                                border: 'none',
+                                color: '#041017',
+                                padding: '10px 22px',
+                                borderRadius: '24px',
+                                fontWeight: 'bold',
+                                fontSize: '0.88rem',
+                                cursor: 'pointer',
+                                boxShadow: '0 0 15px rgba(45, 212, 191, 0.4)',
+                                transition: 'transform 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                            onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                        >
+                            💬 Register by Chat
+                        </button>
+                    </div>
+
+                    {(event.includes('Ankur') && counts.ankur >= 60) ? (
                         <div className="closed-container" style={{
                             textAlign: 'center',
                             padding: '60px 20px',
@@ -596,7 +600,7 @@ const Register = () => {
                                 </button>
                             </div>
                         </div>
-                    ) : event === 'Udbhav (Conference)' ? (
+                    ) : event.includes('Udbhav') ? (
                         <div className="closed-container" style={{
                             textAlign: 'center',
                             padding: '60px 20px',
@@ -647,20 +651,25 @@ const Register = () => {
 
                             <label>EVENT</label>
                             <select name="event" value={event} onChange={onChange} className="register-select" required disabled>
+                                <option value="Srijan 2027 (Hackathon)">Srijan 2027 (Hackathon)</option>
+                                <option value="Srijan (Hackathon)">Srijan (Hackathon)</option>
                                 <option value="Ankur (Project Expo)">Ankur (Project Expo)</option>
                                 <option value="Udbhav (Conference)">Udbhav (Conference)</option>
-                                <option value="Pursuit">Pursuit</option>
+                                <option value="Pursuit">आरोहण (Workshops)</option>
                             </select>
 
-                            {event === 'Srijan (Hackathon)' && (
+                            {event.includes('Srijan') && (
                                 <>
                                     <label>PROBLEM STATEMENT</label>
                                     <select name="problemStatement" value={problemStatement} onChange={onChange} className="register-select" required>
                                         <option value="" disabled>Select Problem Statement</option>
-                                        <option value="Student Innovation">Student Innovation</option>
-                                        <option value="Problem Statement 1">Problem Statement 1</option>
-                                        <option value="Problem Statement 2">Problem Statement 2</option>
+                                        <option value="Student Innovation">Student Innovation (Screening round applies)</option>
+                                        <option value="Problem Statement 1">Problem Statement 1 (Coming Soon)</option>
+                                        <option value="Problem Statement 2">Problem Statement 2 (Coming Soon)</option>
                                     </select>
+                                    <p style={{ fontSize: '0.85rem', color: '#f59e0b', marginTop: '-10px', marginBottom: '5px' }}>
+                                        ⚠️ Note: For Student Innovation, there will be a screening round.
+                                    </p>
                                 </>
                             )}
 
@@ -765,7 +774,9 @@ const Register = () => {
                             {/* PAYMENT SECTION */}
                             <div className="form-section-title">Payment Details</div>
                             <div className="payment-section" style={{ textAlign: "center", marginBottom: "20px" }}>
-                                <p style={{ marginBottom: "10px", fontSize: "1.1em" }}>Scan to pay <strong>₹300</strong></p>
+                                <p style={{ marginBottom: "10px", fontSize: "1.1em" }}>
+                                    Scan to pay <strong>{event.includes('Srijan') ? '₹500' : '₹300'}</strong>
+                                </p>
                                 <img
                                     src={PaymentQR}
                                     alt="Payment QR Code"
@@ -831,6 +842,14 @@ const Register = () => {
                     )}
                 </div>
             </div>
+
+            {/* Conversational Registration Chat Modal */}
+            <RegistrationChatModal
+                isOpen={showChatModal}
+                onClose={() => setShowChatModal(false)}
+                initialEvent={urlEvent || 'srijan'}
+                onSwitchToManual={() => setShowChatModal(false)}
+            />
         </div >
     );
 };

@@ -5,6 +5,7 @@ import e1 from "../assets/events/e1.png";
 import e2 from "../assets/events/e2.png";
 import e3 from "../assets/events/udbhav_event_updated.png";
 import e4 from "../assets/events/pursuit.png";
+import vayuvegaImg from "../assets/events/vayuvega.png";
 
 const events = [
   {
@@ -32,10 +33,18 @@ const events = [
     registerParam: "udbhav"
   },
   {
-    title: "PURSUIT",
-    text: "PURSUIT is the theme-based national level technical symposium. It is a grand stage where innovation meets competition, featuring various technical events and challenges.",
-    image: e4,
+    title: "वायुवेग (DRONE COMPETITION)",
+    text: "Vayuvega is an adrenaline-fueled National Drone Competition testing aerodynamics, precision piloting, and obstacle navigation. Compete with top drone innovators and pilots in high-speed aerial challenges.",
+    image: vayuvegaImg,
     side: "right",
+    id: "vayuvega",
+    registerParam: "vayuvega"
+  },
+  {
+    title: "आरोहण (WORKSHOPS)",
+    text: "Aarohan (आरोहण) is the premier technical workshop symposium featuring two high-impact tracks: 15+ Days Long-Term Industry Masterclasses (Full Stack, PCB Design, AutoCAD, Electrical) with 5 live projects & certifications, and Fast-Track Short-Term workshops conducted by college committees like E-Cell, ISTE, IEEE and more.",
+    image: e4,
+    side: "left",
     id: "pursuit",
     registerParam: "pursuit"
   }
@@ -55,6 +64,8 @@ const EventShowcase = () => {
       targetPath = "/projectexpo";
     } else if (param === "udbhav") {
       targetPath = "/conference";
+    } else if (param === "vayuvega") {
+      targetPath = "/vayuvega";
     }
 
     if (targetPath) {
@@ -102,6 +113,7 @@ const EventShowcase = () => {
     if (param === "srijan") return "/hackathon";
     if (param === "ankur") return "/projectexpo";
     if (param === "udbhav") return "/conference";
+    if (param === "vayuvega") return "/vayuvega";
     return `/register?event=${param}`;
   };
 
@@ -136,14 +148,14 @@ const EventShowcase = () => {
 
               {/* Rocket Register Button */}
               <div
-                className={`register-rocket-btn ${launchingId === i ? "launching" : ""} ${(ev.registerParam === 'srijan' || ev.registerParam === 'udbhav') ? 'closed-btn' : ''}`}
+                className={`register-rocket-btn ${launchingId === i ? "launching" : ""} ${ev.registerParam === 'udbhav' ? 'closed-btn' : ''}`}
                 onClick={() => handleLaunch(i, ev.registerParam)}
               >
                 <span className="reg-text">
-                  {(ev.registerParam === 'srijan' || ev.registerParam === 'udbhav') ? 'Registrations Closed' : 'Register Now'}
+                  {ev.registerParam === 'udbhav' ? 'Registrations Closed' : 'Register Now'}
                 </span>
                 <div className="reg-icon-circle">
-                  {(ev.registerParam === 'srijan' || ev.registerParam === 'udbhav') ? (
+                  {ev.registerParam === 'udbhav' ? (
                     <span className="closed-icon" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>!</span>
                   ) : (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

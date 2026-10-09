@@ -2422,7 +2422,7 @@ const Admin = () => {
                                                 placeholder="Enter the broadcast subject..."
                                                 value={broadcastData.subject}
                                                 onChange={(e) => setBroadcastData({ ...broadcastData, subject: e.target.value })}
-                                                style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#fff', borderRadius: '8px' }}
+                                                style={{ width: '100%', boxSizing: 'border-box', maxWidth: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#fff', borderRadius: '8px' }}
                                                 required
                                             />
                                         </div>
@@ -2619,7 +2619,7 @@ const Admin = () => {
                                                 placeholder={`Greeting, {{participantName}}! Regarding your role as {{designation}} in Navonmesh '27...`}
                                                 value={broadcastData.body}
                                                 onChange={(e) => setBroadcastData({ ...broadcastData, body: e.target.value })}
-                                                style={{ width: '100%', padding: '15px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#fff', borderRadius: '8px', fontFamily: 'Inter', lineHeight: '1.6' }}
+                                                style={{ width: '100%', boxSizing: 'border-box', maxWidth: '100%', padding: '14px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(139, 92, 246, 0.3)', color: '#fff', borderRadius: '8px', fontFamily: 'Inter', lineHeight: '1.6' }}
                                                 required
                                             />
                                         </div>
@@ -2631,16 +2631,20 @@ const Admin = () => {
                                             <button type="submit" className="send-all-btn" disabled={broadcasting || selectedRecipientIds.length === 0} style={{
                                                 background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 100%)',
                                                 color: '#fff',
-                                                padding: '12px 30px',
+                                                padding: '12px 18px',
                                                 border: 'none',
                                                 borderRadius: '12px',
                                                 fontFamily: 'Orbitron',
+                                                fontSize: '0.75rem',
+                                                letterSpacing: '0.5px',
+                                                lineHeight: 1.4,
                                                 fontWeight: 'bold',
                                                 cursor: 'pointer',
                                                 width: '100%',
+                                                boxSizing: 'border-box',
                                                 opacity: (broadcasting || selectedRecipientIds.length === 0) ? 0.6 : 1
                                             }}>
-                                                {broadcasting ? 'TRANSMITTING...' : `INITIATE BROADCAST TO ${selectedRecipientIds.length} ${broadcastData.recipientScope === 'ALL' ? 'TEAMS / RECIPIENTS (ALL MEMBERS)' : 'TEAM LEADERS / RECIPIENTS'}`}
+                                                {broadcasting ? 'TRANSMITTING...' : `INITIATE BROADCAST TO ${selectedRecipientIds.length} ${broadcastData.recipientScope === 'ALL' ? 'TEAMS / MEMBERS' : 'TEAM LEADERS'}`}
                                             </button>
                                         </div>
                                     </form>

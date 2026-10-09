@@ -1,6 +1,6 @@
 {
-  "short_name": "Coordinator",
-  "name": "Navonmesh Coordinator",
+  "short_name": "Mitra",
+  "name": "Navonmesh Mitra",
   "icons": [
     {
       "src": "/icon.png",
@@ -13,7 +13,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/#/coordinator",
+  "start_url": "/#/app",
   "background_color": "#070a13",
   "theme_color": "#d4af37",
   "display": "standalone",

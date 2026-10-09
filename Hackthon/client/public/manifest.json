@@ -1,0 +1,21 @@
+{
+  "short_name": "Coordinator",
+  "name": "Navonmesh Coordinator",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/#/coordinator",
+  "background_color": "#070a13",
+  "theme_color": "#d4af37",
+  "display": "standalone",
+  "orientation": "portrait"
+}

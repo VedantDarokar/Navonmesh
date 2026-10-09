@@ -1,0 +1,9 @@
+{
+  "appId": "org.ssgmce.navonmesh.coordinator",
+  "appName": "Navonmesh Coordinator",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true,
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,447 @@
+/* ==========================================================================
+   NAVONMESH COORDINATOR MOBILE APP - STYLESHEET
+   - Tailored for Android APK & Mobile Viewports
+   - Compact, clean mobile typography (12px-14px)
+   - Multi-theme engine (Cosmic Gold, Cyber Emerald, Deep Nebula)
+   - Hardware-accelerated, zero-glitch smooth animations
+   ========================================================================== */
+
+:root {
+    --coor-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --coor-display-font: 'Orbitron', 'Inter', sans-serif;
+}
+
+/* ---------------- THEME: COSMIC GOLD (DEFAULT - MATCHES LOGO) ---------------- */
+.coordinator-app-container.theme-gold {
+    --coor-bg: #070a13;
+    --coor-surface: #0e1424;
+    --coor-surface-trans: rgba(14, 20, 36, 0.85);
+    --coor-card-bg: rgba(19, 27, 48, 0.7);
+    --coor-card-border: rgba(212, 175, 55, 0.25);
+    --coor-accent: #d4af37;
+    --coor-accent-bright: #fbbf24;
+    --coor-accent-glow: rgba(251, 191, 36, 0.3);
+    --coor-text-main: #f8fafc;
+    --coor-text-sub: #94a3b8;
+    --coor-text-muted: #64748b;
+    --coor-tab-active: #fbbf24;
+}
+
+/* ---------------- THEME: CYBER EMERALD ---------------- */
+.coordinator-app-container.theme-emerald {
+    --coor-bg: #050e12;
+    --coor-surface: #0a1b20;
+    --coor-surface-trans: rgba(10, 27, 32, 0.88);
+    --coor-card-bg: rgba(13, 34, 40, 0.75);
+    --coor-card-border: rgba(16, 185, 129, 0.3);
+    --coor-accent: #10b981;
+    --coor-accent-bright: #34d399;
+    --coor-accent-glow: rgba(52, 211, 153, 0.3);
+    --coor-text-main: #f0fdf4;
+    --coor-text-sub: #94a3b8;
+    --coor-text-muted: #64748b;
+    --coor-tab-active: #34d399;
+}
+
+/* ---------------- THEME: DEEP NEBULA ---------------- */
+.coordinator-app-container.theme-nebula {
+    --coor-bg: #080816;
+    --coor-surface: #10112a;
+    --coor-surface-trans: rgba(16, 17, 42, 0.88);
+    --coor-card-bg: rgba(22, 24, 58, 0.75);
+    --coor-card-border: rgba(139, 92, 246, 0.3);
+    --coor-accent: #8b5cf6;
+    --coor-accent-bright: #a78bfa;
+    --coor-accent-glow: rgba(167, 139, 250, 0.3);
+    --coor-text-main: #f5f3ff;
+    --coor-text-sub: #94a3b8;
+    --coor-text-muted: #64748b;
+    --coor-tab-active: #c084fc;
+}
+
+/* ---------------- BASE APP LAYOUT ---------------- */
+.coordinator-app-container {
+    min-height: 100vh;
+    background: var(--coor-bg);
+    color: var(--coor-text-main);
+    font-family: var(--coor-font);
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Subtle Ambient Glow */
+.coordinator-app-container::before {
+    content: '';
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--coor-accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ---------------- TOP HEADER ---------------- */
+.coor-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--coor-surface-trans);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--coor-card-border);
+    padding: calc(env(safe-area-inset-top, 0px) + 8px) 14px 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.coor-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.coor-header-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--coor-card-border);
+    box-shadow: 0 0 10px var(--coor-accent-glow);
+}
+
+.coor-brand-title {
+    font-family: var(--coor-display-font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--coor-text-main);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.coor-brand-sub {
+    font-size: 10px;
+    color: var(--coor-accent-bright);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.coor-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Theme Selector Pill */
+.coor-theme-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--coor-card-border);
+    color: var(--coor-text-main);
+    border-radius: 16px;
+    padding: 4px 8px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.coor-theme-btn:active {
+    transform: scale(0.96);
+    background: var(--coor-accent-glow);
+}
+
+.coor-logout-btn {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    border-radius: 16px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.coor-logout-btn:active {
+    background: rgba(239, 68, 68, 0.25);
+    transform: scale(0.95);
+}
+
+/* ---------------- AUTHENTICATION / LOGIN VIEW ---------------- */
+.coor-auth-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.coor-auth-card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--coor-surface-trans);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--coor-card-border);
+    border-radius: 20px;
+    padding: 26px 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 24px var(--coor-accent-glow);
+    text-align: center;
+    animation: coorFadeUp 0.35s ease-out forwards;
+}
+
+.coor-auth-logo-frame {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 16px;
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--coor-accent-bright), rgba(255, 255, 255, 0.1));
+    box-shadow: 0 8px 24px var(--coor-accent-glow);
+}
+
+.coor-auth-logo-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    object-fit: cover;
+    background: #000;
+}
+
+.coor-auth-heading {
+    font-family: var(--coor-display-font);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--coor-text-main);
+    margin: 0 0 4px 0;
+}
+
+.coor-auth-subtext {
+    font-size: 11px;
+    color: var(--coor-text-sub);
+    margin: 0 0 18px 0;
+}
+
+.coor-badge-security {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+}
+
+.coor-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+}
+
+.coor-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.coor-input-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--coor-text-sub);
+    text-transform: uppercase;
+}
+
+.coor-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.coor-input-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--coor-accent);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.coor-input-field {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 10px 12px 10px 34px;
+    color: #fff;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.coor-input-field:focus {
+    border-color: var(--coor-accent-bright);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 12px var(--coor-accent-glow);
+}
+
+.coor-auth-submit-btn {
+    margin-top: 6px;
+    background: linear-gradient(135deg, var(--coor-accent), var(--coor-accent-bright));
+    color: #070a13;
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    font-family: var(--coor-display-font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px var(--coor-accent-glow);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.coor-auth-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.coor-auth-submit-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.coor-auth-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.coor-auth-footer-note {
+    margin-top: 18px;
+    font-size: 10px;
+    color: var(--coor-text-muted);
+    line-height: 1.4;
+}
+
+/* ---------------- ACTIVE DUTY CONTENT ---------------- */
+.coor-main-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 72px);
+    overflow-y: auto;
+}
+
+/* ---------------- BOTTOM NAVIGATION BAR ---------------- */
+.coor-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: var(--coor-surface-trans);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--coor-card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 6px 4px calc(env(safe-area-inset-bottom, 0px) + 6px) 4px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.coor-nav-item {
+    background: transparent;
+    border: none;
+    color: var(--coor-text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    max-width: 80px;
+}
+
+.coor-nav-item .coor-nav-icon {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.coor-nav-item .coor-nav-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.coor-nav-item.active {
+    color: var(--coor-tab-active);
+}
+
+.coor-nav-item.active .coor-nav-icon {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 6px var(--coor-accent-glow));
+}
+
+.coor-nav-item:active {
+    transform: scale(0.94);
+}
+
+/* ---------------- ANIMATIONS ---------------- */
+@keyframes coorFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

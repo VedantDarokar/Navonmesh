@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Navonmesh Coordinator</string>
+    <string name="title_activity_main">Navonmesh Coordinator</string>
+    <string name="package_name">org.ssgmce.navonmesh.coordinator</string>
+    <string name="custom_url_scheme">org.ssgmce.navonmesh.coordinator</string>
+</resources>

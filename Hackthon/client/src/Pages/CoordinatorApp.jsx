@@ -5,8 +5,9 @@ import {
     FaRocket, FaCompass, FaCalendarAlt
 } from 'react-icons/fa';
 import '../Styles/coordinator_app.css';
+import '../Styles/coordinator_duty_portal.css';
 import '../Styles/participant_portal.css';
-import coordinatorLogo from '../assets/coordinator_logo.png';
+import navonmeshLogo from '../assets/navonmesh_official_logo.png';
 import { getApiUrl } from '../utils/apiConfig';
 
 // Import Duty Components & Participant Portal
@@ -182,7 +183,9 @@ const CoordinatorApp = () => {
             {/* TOP APP HEADER */}
             <header className="coor-header">
                 <div className="coor-header-brand">
-                    <img src={coordinatorLogo} alt="Navonmesh Mitra Logo" className="coor-header-logo" />
+                    <div className="coor-header-logo-box">
+                        <img src={navonmeshLogo} alt="Navonmesh Logo" className="coor-header-logo-img" />
+                    </div>
                     <div>
                         <h1 className="coor-brand-title">NAVONMESH MITRA</h1>
                         <p className="coor-brand-sub">
@@ -223,7 +226,7 @@ const CoordinatorApp = () => {
                 <main className="coor-auth-view">
                     <div className="coor-auth-card">
                         <div className="coor-auth-logo-frame">
-                            <img src={coordinatorLogo} alt="Navonmesh Mitra" className="coor-auth-logo-img" />
+                            <img src={navonmeshLogo} alt="Navonmesh Mitra" className="coor-auth-logo-img" />
                         </div>
 
                         <h2 className="coor-auth-heading">NAVONMESH MITRA</h2>

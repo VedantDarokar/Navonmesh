@@ -61,11 +61,6 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                 setTasks(data.tasks || []);
                 const pending = (data.tasks || []).filter(t => t.status !== 'COMPLETED').length;
                 setPendingTasksCount(pending);
-
-                // Show alert popup if there are pending tasks and not previously dismissed in this turn
-                if (pending > 0 && !alertDismissed) {
-                    setShowTaskAlertModal(true);
-                }
             }
         } catch (err) {
             console.error('Failed to load coordinator tasks:', err);
@@ -554,6 +549,54 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                     <Admin />
                 </div>
             )}
+
+            {/* FLOATING MOBILE BOTTOM NAVIGATION DOCK */}
+            <nav className="coor-bottom-nav">
+                <button 
+                    className={`coor-bottom-tab ${dutyTab === 'hub' ? 'active' : ''}`}
+                    onClick={() => setDutyTab('hub')}
+                >
+                    <FaTasks className="bottom-icon" />
+                    <span>Duty Hub</span>
+                    {pendingTasksCount > 0 && <span className="bottom-badge">{pendingTasksCount}</span>}
+                </button>
+                <button 
+                    className={`coor-bottom-tab ${dutyTab === 'scanner' ? 'active' : ''}`}
+                    onClick={() => setDutyTab('scanner')}
+                >
+                    <FaQrcode className="bottom-icon" />
+                    <span>Scanner</span>
+                </button>
+                <button 
+                    className={`coor-bottom-tab ${dutyTab === 'timer' ? 'active' : ''}`}
+                    onClick={() => setDutyTab('timer')}
+                >
+                    <FaClock className="bottom-icon" />
+                    <span>Timer</span>
+                </button>
+                <button 
+                    className={`coor-bottom-tab ${dutyTab === 'seats' ? 'active' : ''}`}
+                    onClick={() => setDutyTab('seats')}
+                >
+                    <FaChair className="bottom-icon" />
+                    <span>Seating</span>
+                </button>
+                <button 
+                    className={`coor-bottom-tab ${dutyTab === 'issues' ? 'active' : ''}`}
+                    onClick={() => setDutyTab('issues')}
+                >
+                    <FaExclamationTriangle className="bottom-icon" />
+                    <span>Distress</span>
+                    {stats.activeIssues > 0 && <span className="bottom-badge urgent">{stats.activeIssues}</span>}
+                </button>
+                <button 
+                    className={`coor-bottom-tab ${dutyTab === 'admin_full' ? 'active' : ''}`}
+                    onClick={() => setDutyTab('admin_full')}
+                >
+                    <FaChartBar className="bottom-icon" />
+                    <span>Control</span>
+                </button>
+            </nav>
         </div>
     );
 };

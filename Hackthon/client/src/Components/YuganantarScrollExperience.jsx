@@ -509,12 +509,13 @@ const YuganantarScrollExperience = () => {
         robotGroup.rotation.x = hover * 0.05 - threeRef.current.mouse.y * 0.08;
 
         // When camera passes Z = 2, fade out robot smoothly so camera doesn't clip ugly geometry
-        if (robotMesh) {
+        const curRobotMesh = threeRef.current.robotMesh;
+        if (curRobotMesh) {
           if (nextP > 0.68) {
             const fade = Math.max(0, 1 - (nextP - 0.68) / 0.08);
-            robotMesh.material.opacity = fade;
+            curRobotMesh.material.opacity = fade;
           } else {
-            robotMesh.material.opacity = 1.0; // Fully visible from the first frame
+            curRobotMesh.material.opacity = 1.0; // Fully visible from the first frame
           }
         }
 

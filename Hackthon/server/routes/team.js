@@ -156,7 +156,10 @@ router.post('/login', async (req, res) => {
                 college: team.college,
                 members: team.members || [],
                 paymentVerified: team.paymentVerified,
-                utrNumber: team.utrNumber
+                utrNumber: team.utrNumber,
+                certificatesUnlocked: Boolean(team.certificatesUnlocked),
+                groupNo: team.groupNo,
+                tableNo: team.tableNo
             }
         });
 
@@ -192,7 +195,10 @@ router.get('/profile/:teamId', async (req, res) => {
                 college: team.college,
                 members: team.members || [],
                 paymentVerified: team.paymentVerified,
-                utrNumber: team.utrNumber
+                utrNumber: team.utrNumber,
+                certificatesUnlocked: Boolean(team.certificatesUnlocked),
+                groupNo: team.groupNo,
+                tableNo: team.tableNo
             }
         });
     } catch (err) {
@@ -290,11 +296,17 @@ router.put('/update', async (req, res) => {
                 leaderName: team.leaderName,
                 leaderEmail: team.leaderEmail,
                 leaderPhone: team.leaderPhone,
+                event: team.event,
+                edition: team.edition,
+                studentCategory: team.studentCategory,
                 college: team.college,
                 members: team.members,
                 problemStatement: team.problemStatement,
                 psChangeCount: team.psChangeCount,
-                psEdited: team.psEdited
+                psEdited: team.psEdited,
+                certificatesUnlocked: Boolean(team.certificatesUnlocked),
+                groupNo: team.groupNo,
+                tableNo: team.tableNo
             }
         });
 

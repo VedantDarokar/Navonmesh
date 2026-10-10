@@ -755,3 +755,1183 @@
 .mitra-contact-item:last-child {
     border-bottom: none;
 }
+
+/* ==========================================================================
+   UPGRADED 5-TAB APP STYLING (HOME, SQUAD, TIMELINE, RESULTS/CERTS, SOS)
+   ========================================================================== */
+
+/* Refresh & Micro Tags */
+.squad-salutation {
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    color: #fbbf24;
+    text-transform: uppercase;
+}
+
+.refresh-mini-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-mini-btn:hover {
+    background: rgba(251, 191, 36, 0.2);
+    border-color: #fbbf24;
+    color: #fbbf24;
+}
+
+.spin-icon {
+    animation: spinRotate 1s linear infinite;
+}
+
+@keyframes spinRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.section-micro-tag {
+    font-size: 9.5px;
+    letter-spacing: 1.2px;
+    font-weight: 800;
+    color: #00f0ff;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+/* ---------------- REGISTERED EVENT CARD ---------------- */
+.registered-event-card {
+    background: linear-gradient(135deg, rgba(22, 30, 52, 0.9) 0%, rgba(12, 17, 30, 0.95) 100%);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.card-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.event-tag-badge {
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
+
+.event-title-display {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.event-college-sub {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin: 0 0 14px 0;
+}
+
+.reg-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.info-box {
+    background: rgba(10, 15, 28, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-val {
+    font-size: 12px;
+    color: #f1f5f9;
+    font-weight: 700;
+}
+
+.info-val.ps-highlight {
+    color: #fbbf24;
+}
+
+.shortcut-actions-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+}
+
+.shortcut-btn {
+    flex: 1;
+    min-width: 120px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    padding: 8px 10px;
+    color: #cbd5e1;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.shortcut-btn:hover {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: #00f0ff;
+    color: #00f0ff;
+}
+
+/* ---------------- COUNTDOWN MINI STRIP ---------------- */
+.countdown-mini-strip {
+    background: linear-gradient(135deg, rgba(16, 24, 44, 0.9) 0%, rgba(8, 12, 22, 0.95) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.cd-header {
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    font-weight: 800;
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.cd-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.cd-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cd-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.cd-lbl {
+    font-size: 9px;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+/* ---------------- INDIVIDUAL MESS & MEAL PASSES ---------------- */
+.member-meal-passes-section {
+    margin-top: 20px;
+}
+
+.passes-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.section-sub-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 2px 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-mini-desc {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.download-all-btn {
+    background: linear-gradient(135deg, #00f0ff, #0077b6);
+    color: #03060d;
+    border: none;
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.download-all-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);
+}
+
+.individual-passes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.individual-pass-card {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.95) 0%, rgba(9, 13, 24, 0.98) 100%);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.pass-card-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pass-member-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.role-pill {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.role-pill.leader {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    color: #fbbf24;
+}
+
+.role-pill.member {
+    background: rgba(0, 240, 255, 0.15);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+}
+
+.pid-pill {
+    font-family: monospace;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+.pass-member-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 2px 0 0 0;
+}
+
+.pass-member-contact {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.meal-tokens-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.meal-token-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 9.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.meal-token-pill.ready strong {
+    color: #00f0ff;
+}
+
+.meal-token-pill.scanned {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.meal-token-pill.scanned strong {
+    color: #10b981;
+}
+
+.download-pass-single-btn {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #f1f5f9;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    transition: all 0.2s ease;
+}
+
+.download-pass-single-btn:hover {
+    background: rgba(0, 240, 255, 0.2);
+    border-color: #00f0ff;
+    color: #00f0ff;
+}
+
+.pass-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.qr-box-mount {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    width: 125px;
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.qr-scan-hint {
+    font-size: 9px;
+    color: #64748b;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ---------------- TAB 2: SQUAD EDITOR ---------------- */
+.squad-editor-header {
+    margin-bottom: 16px;
+}
+
+.editor-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 2px 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editor-sub {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.form-section-card {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.card-section-heading {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #fbbf24;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 12px 0;
+}
+
+.label-with-lock {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.locked-pill {
+    font-size: 9.5px;
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+}
+
+.field-security-note {
+    display: block;
+    font-size: 10px;
+    color: #94a3b8;
+    line-height: 1.4;
+    margin-top: 4px;
+}
+
+.ps-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ps-quota-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ps-quota-badge.locked {
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    color: #f87171;
+}
+
+.ps-quota-badge.editable {
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #34d399;
+}
+
+.ps-locked-notice {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px dashed rgba(239, 68, 68, 0.4);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.lock-icon-lg {
+    color: #f87171;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.current-locked-ps {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #fbbf24;
+}
+
+.ps-edit-guideline {
+    font-size: 11px;
+    color: #cbd5e1;
+    line-height: 1.45;
+    margin: 0 0 10px 0;
+}
+
+.ps-dropdown {
+    background: rgba(12, 17, 30, 0.95);
+    color: #ffffff;
+}
+
+.members-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.quota-hint {
+    font-size: 10px;
+    color: #64748b;
+}
+
+.member-index-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #00f0ff;
+}
+
+.grid-2-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.save-squad-action-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+    color: #070a13;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.save-squad-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(251, 191, 36, 0.6);
+}
+
+/* ---------------- TAB 3: TIMELINE ---------------- */
+.timeline-heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 2px 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline-sub {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin: 0 0 14px 0;
+}
+
+.timeline-event-selector {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+.tl-filter-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.tl-filter-btn.active {
+    background: rgba(0, 240, 255, 0.2);
+    border-color: #00f0ff;
+    color: #00f0ff;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+}
+
+.timeline-day-separator {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #fbbf24;
+    padding: 8px 12px;
+    background: rgba(251, 191, 36, 0.1);
+    border-left: 3px solid #fbbf24;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0 10px 0;
+}
+
+/* ---------------- TAB 4: RESULTS & CERTIFICATES ---------------- */
+.results-card-container {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.9) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.results-heading, .cert-heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 2px 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* EXACT USER SPECIFIED NOTICE BODY */
+.results-notice-box {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.notice-icon-circle {
+    font-size: 24px;
+}
+
+.notice-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #fbbf24;
+    margin: 0 0 4px 0;
+}
+
+.notice-body {
+    font-size: 12px;
+    color: #e2e8f0;
+    line-height: 1.45;
+    margin: 0;
+    font-weight: 500;
+}
+
+.evaluation-rounds-tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rounds-title {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 6px 0;
+}
+
+.round-step-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.step-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.step-circle.active {
+    background: #00f0ff;
+    color: #03060d;
+}
+
+.step-circle.pending {
+    background: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.step-header strong {
+    font-size: 12px;
+    color: #f1f5f9;
+}
+
+.step-badge {
+    font-size: 9.5px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.step-badge.ongoing {
+    background: rgba(0, 240, 255, 0.15);
+    color: #00f0ff;
+}
+
+.step-badge.pending {
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+}
+
+.step-content p {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* CERTIFICATES SECTION */
+.certificates-card-container {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.9) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 18px;
+    padding: 18px;
+}
+
+.cert-locked-box {
+    text-align: center;
+    padding: 16px 10px;
+}
+
+.lock-icon-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px auto;
+}
+
+.huge-lock-icon {
+    font-size: 26px;
+    color: #f87171;
+}
+
+.locked-badge-chip {
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    font-weight: 800;
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.12);
+    padding: 3px 12px;
+    border-radius: 12px;
+}
+
+.locked-state-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 12px 0 8px 0;
+}
+
+.locked-state-desc {
+    font-size: 11.5px;
+    color: #94a3b8;
+    line-height: 1.5;
+    max-width: 480px;
+    margin: 0 auto 18px auto;
+}
+
+.certificate-mock-preview {
+    background: linear-gradient(135deg, #10172a 0%, #060913 100%);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.watermark-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.05);
+    letter-spacing: 4px;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.mock-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #fbbf24;
+    margin-bottom: 4px;
+}
+
+.mock-sub {
+    font-size: 10px;
+    color: #00f0ff;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.mock-body {
+    font-size: 11px;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.mock-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5px;
+    color: #64748b;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
+}
+
+/* UNLOCKED CERTS */
+.cert-badge-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.unlocked-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.unlocked-sub {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin: 0 0 16px 0;
+}
+
+.cert-members-download-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cert-download-row {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.cert-meta {
+    display: block;
+    font-size: 10px;
+    color: #64748b;
+    font-family: monospace;
+}
+
+.cert-btn-download {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+/* ---------------- TAB 5: SOS & EMERGENCY ---------------- */
+.sos-banner-alert {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.3) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.sos-alert-top {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.sos-icon-pulse {
+    font-size: 28px;
+    animation: sosPulse 1.2s infinite alternate;
+}
+
+@keyframes sosPulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.18); }
+}
+
+.sos-banner-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #f87171;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.5px;
+}
+
+.sos-banner-desc {
+    font-size: 11px;
+    color: #fca5a5;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.hotlines-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.hotline-card {
+    background: rgba(20, 28, 50, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hotline-card.urgent {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(30, 20, 28, 0.85);
+}
+
+.hotline-role {
+    font-size: 10.5px;
+    color: #94a3b8;
+    display: block;
+}
+
+.hotline-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 13.5px;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.dial-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fbbf24;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.dial-btn.medical {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.help-ticket-card {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.9) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+.ticket-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13.5px;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ticket-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+
+.transmit-ticket-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #00f0ff, #0077b6);
+    color: #03060d;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.campus-venues-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.venues-title {
+    font-size: 12px;
+    color: #fbbf24;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.venues-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.venue-pill {
+    font-size: 11px;
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.venue-pill strong {
+    color: #00f0ff;
+}
+
+/* Common Alert Box */
+.alert-box {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.alert-box.success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+
+.alert-box.error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+

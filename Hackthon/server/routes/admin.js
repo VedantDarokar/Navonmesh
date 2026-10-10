@@ -1143,5 +1143,21 @@ router.post('/timer/update', async (req, res) => {
     }
 });
 
+// Admin Toggle Digital Certificates Unlock State
+router.post('/toggle-certificates', async (req, res) => {
+    try {
+        const { unlock, teamId } = req.body;
+        const query = teamId ? { teamId: String(teamId).trim().toUpperCase() } : {};
+        const result = await Registration.updateMany(query, { $set: { certificatesUnlocked: Boolean(unlock) } });
+        res.json({
+            success: true,
+            message: `Certificates ${unlock ? 'UNLOCKED' : 'LOCKED'} for ${result.modifiedCount} squads.`,
+            unlocked: Boolean(unlock)
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;
 

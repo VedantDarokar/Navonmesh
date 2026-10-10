@@ -60,8 +60,9 @@ const RegistrationSchema = new mongoose.Schema({
     groupNo: { type: Number },
     tableNo: { type: Number },
 
-    // Admin Edits
-    psEdited: { type: Boolean, default: false }
+    // Admin Edits & Certificate Status
+    psEdited: { type: Boolean, default: false },
+    certificatesUnlocked: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('Registration', RegistrationSchema);

@@ -514,7 +514,7 @@ const YuganantarScrollExperience = () => {
             const fade = Math.max(0, 1 - (nextP - 0.68) / 0.08);
             robotMesh.material.opacity = fade;
           } else {
-            robotMesh.material.opacity = Math.min(1, nextP * 5); // Fades in with opening
+            robotMesh.material.opacity = 1.0; // Fully visible from the first frame
           }
         }
 
@@ -655,14 +655,7 @@ const YuganantarScrollExperience = () => {
       // Update state flags for DOM effects
       setApertureOpen(rawProgress > 0.02);
       setInTunnel(rawProgress > 0.70);
-      setIsSiteVisible(rawProgress > 0.90);
-
-      // Subdue navbar during dark cinematic opening
-      if (rawProgress < 0.25) {
-        document.body.classList.add("yuganantar-cinematic-active");
-      } else {
-        document.body.classList.remove("yuganantar-cinematic-active");
-      }
+      setIsSiteVisible(rawProgress > 0.85);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -670,7 +663,6 @@ const YuganantarScrollExperience = () => {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      document.body.classList.remove("yuganantar-cinematic-active");
     };
   }, []);
 
@@ -681,7 +673,7 @@ const YuganantarScrollExperience = () => {
 
   return (
     <div className="yuganantar-viewport-wrapper">
-      {/* 500vh Scroll Track that drives the timeline */}
+      {/* 460vh Scroll Track driving the camera journey */}
       <div className="yuganantar-scroll-track" ref={containerRef}>
         {/* Pinned 100vh Fullscreen Canvas Container */}
         <div className="yuganantar-pinned-stage">
@@ -689,62 +681,104 @@ const YuganantarScrollExperience = () => {
           <div className="yuganantar-webgl-mount" ref={canvasContainerRef} />
 
           {/* ---------------------------------------------------- */}
-          {/* CENTER-OPENING APERTURE OVERLAY (Radial Reveal Mask)  */}
+          {/* HERO BILLBOARD OVERLAY (Visible immediately at scroll 0) */}
           {/* ---------------------------------------------------- */}
           <div
-            ref={apertureRef}
-            className={`yuganantar-aperture-overlay ${isApertureFullyOpen ? "aperture-cleared" : ""}`}
+            className="yuganantar-stage-hero-overlay"
             style={{
-              // Center radial mask cutting a circular hole from exact center
-              maskImage: isApertureFullyOpen
-                ? "none"
-                : `radial-gradient(circle at 50% 50%, transparent ${apertureRadiusPercent}%, black ${Math.min(100, apertureRadiusPercent + 3)}%)`,
-              WebkitMaskImage: isApertureFullyOpen
-                ? "none"
-                : `radial-gradient(circle at 50% 50%, transparent ${apertureRadiusPercent}%, black ${Math.min(100, apertureRadiusPercent + 3)}%)`,
+              opacity: Math.max(0, 1 - scrollProgress / 0.22),
+              transform: `translateY(-${scrollProgress * 240}px) scale(${1 - scrollProgress * 0.12})`,
+              pointerEvents: scrollProgress > 0.20 ? "none" : "auto",
             }}
           >
-            {/* The Pitch-Black Void Curtain */}
-            <div className="aperture-dark-curtain" />
+            <div className="billboard-container">
+              <div className="presenter-tag">
+                <span className="tag-line" />
+                <span>SHRI SANT GAJANAN MAHARAJ COLLEGE OF ENGINEERING PRESENTS</span>
+                <span className="tag-line" />
+              </div>
+
+              <div className="grand-title-lockup">
+                <div className="title-back-glow" />
+                <h1 className="title-yuganantar">YUGANANTAR</h1>
+                <div className="title-edition-badge">2026 EDITION</div>
+              </div>
+
+              <h2 className="marathi-sacred-motto">ज्ञानातून नवोन्मेष, नवोन्मेषातून विकास</h2>
+              <p className="epic-hero-subtext">
+                Where Ancient Civilization Wisdom Converges with Futuristic Quantum Intelligence.
+                Join 5,000+ Innovators, Engineers & Creators Across India in SSGMCE's Flagship Conclave.
+              </p>
+
+              {/* Event Meta Pills */}
+              <div className="event-meta-bar">
+                <div className="meta-pill">
+                  <span className="meta-icon">⚡</span>
+                  <span className="meta-text">National Symposium & Hackathon</span>
+                </div>
+                <div className="meta-pill">
+                  <span className="meta-icon">🏛️</span>
+                  <span className="meta-text">SSGMCE Campus, Shegaon</span>
+                </div>
+                <div className="meta-pill">
+                  <span className="meta-icon">🏆</span>
+                  <span className="meta-text">₹2,50,000+ Prize Pool</span>
+                </div>
+              </div>
+
+              {/* Primary Action Buttons */}
+              <div className="hero-cta-group">
+                <button className="btn-yuganantar-primary" onClick={openRegister}>
+                  <span className="btn-sparkle">✦</span>
+                  <span>REGISTER FOR YUGANANTAR</span>
+                  <span className="btn-arrow">→</span>
+                </button>
+
+                <button
+                  className="btn-yuganantar-secondary"
+                  onClick={handleSkipToIntro}
+                >
+                  <span>EXPLORE ARENAS</span>
+                </button>
+              </div>
+
+              {/* Countdown Integration */}
+              <div className="hero-countdown-wrapper">
+                <CountdownTimer />
+              </div>
+
+              {/* Scroll prompt cue */}
+              <div className="hero-scroll-cue">
+                <span className="scroll-cue-text">SCROLL TO TRAVEL THROUGH TIME-SPACE</span>
+                <div className="scroll-cue-arrow">
+                  <span className="cue-arrow-down" />
+                  <span className="cue-arrow-down" />
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Glowing Aperture Border Ring & Sparks (Only active while opening) */}
-          {!isApertureFullyOpen && (
+          {/* Glowing Aperture Border Ring & Sparks (Expands during zoom) */}
+          {scrollProgress > 0.02 && scrollProgress < 0.45 && (
             <div
               className="aperture-rim-glow"
               style={{
-                width: `${Math.max(8, apertureRadiusPercent * 2.2)}vmax`,
-                height: `${Math.max(8, apertureRadiusPercent * 2.2)}vmax`,
-                opacity: scrollProgress < 0.01 ? 0 : Math.min(1, (0.28 - scrollProgress) * 5),
+                width: `${Math.max(12, apertureRadiusPercent * 2.2)}vmax`,
+                height: `${Math.max(12, apertureRadiusPercent * 2.2)}vmax`,
+                opacity: Math.min(1, (0.45 - scrollProgress) * 4),
               }}
             >
               <div className="aperture-electric-sparks" />
             </div>
           )}
 
-          {/* Initial State Singularity Point (Subtle Center Glow) */}
-          <div
-            ref={centerGlowRef}
-            className={`aperture-center-singularity ${apertureOpen ? "singularity-dispersed" : ""}`}
-          >
-            <div className="singularity-core" />
-            <div className="singularity-pulse-ring" />
-            <div className="singularity-hint-text">
-              <span className="hint-prompt">SCROLL TO ENTER TIME-SPACE</span>
-              <div className="hint-scroll-arrow">
-                <span className="arrow-chevron" />
-                <span className="arrow-chevron" />
-              </div>
-            </div>
-          </div>
-
           {/* Cinematic Radial Motion Blur & Chromatic Aberration Vignette */}
           <div
             className="yuganantar-warp-blur"
             style={{
               opacity:
-                scrollProgress > 0.55 && scrollProgress < 0.92
-                  ? Math.sin(((scrollProgress - 0.55) / (0.92 - 0.55)) * Math.PI) * 0.8
+                scrollProgress > 0.50 && scrollProgress < 0.92
+                  ? Math.sin(((scrollProgress - 0.50) / (0.92 - 0.50)) * Math.PI) * 0.8
                   : 0,
             }}
           />
@@ -754,7 +788,7 @@ const YuganantarScrollExperience = () => {
           <div className="cinema-letterbox letterbox-bottom" />
 
           {/* Floating Live HUD Metrics */}
-          <div className={`yuganantar-cinematic-hud ${scrollProgress > 0.05 ? "hud-active" : ""}`}>
+          <div className={`yuganantar-cinematic-hud ${scrollProgress > 0.04 ? "hud-active" : ""}`}>
             <div className="hud-metric hud-top-left">
               <span className="hud-label">CHRONO-COORDINATE</span>
               <span className="hud-value">
@@ -787,12 +821,12 @@ const YuganantarScrollExperience = () => {
               </div>
               <span className="timeline-caption">
                 {scrollProgress < 0.28
-                  ? "PHASE I • CENTER APERTURE OPENING"
+                  ? "PHASE I • HERO CONVERGENCE"
                   : scrollProgress < 0.65
                   ? "PHASE II • TIME-TRAVELER APPROACH"
                   : scrollProgress < 0.90
                   ? "PHASE III • TIME-SPACE WARP TUNNEL"
-                  : "PHASE IV • YUGANANTAR DESTINATION"}
+                  : "PHASE IV • YUGANANTAR CONCLAVE"}
               </span>
             </div>
           </div>
@@ -807,70 +841,6 @@ const YuganantarScrollExperience = () => {
         ref={contentSectionRef}
         id="yuganantar-conclave"
       >
-        {/* Grand Hero Destination Banner */}
-        <div className="yuganantar-hero-billboard">
-          <div className="hero-cosmic-glow" />
-
-          <div className="billboard-container">
-            <div className="presenter-tag">
-              <span className="tag-line" />
-              <span>SHRI SANT GAJANAN MAHARAJ COLLEGE OF ENGINEERING PRESENTS</span>
-              <span className="tag-line" />
-            </div>
-
-            <div className="grand-title-lockup">
-              <div className="title-back-glow" />
-              <h1 className="title-yuganantar">YUGANANTAR</h1>
-              <div className="title-edition-badge">2026 EDITION</div>
-            </div>
-
-            <h2 className="marathi-sacred-motto">ज्ञानातून नवोन्मेष, नवोन्मेषातून विकास</h2>
-            <p className="epic-hero-subtext">
-              Where Ancient Civilization Wisdom Converges with Futuristic Quantum Intelligence.
-              Join 5,000+ Innovators, Engineers & Creators Across India in SSGMCE's Flagship Conclave.
-            </p>
-
-            {/* Event Meta Pills */}
-            <div className="event-meta-bar">
-              <div className="meta-pill">
-                <span className="meta-icon">⚡</span>
-                <span className="meta-text">National Symposium & Hackathon</span>
-              </div>
-              <div className="meta-pill">
-                <span className="meta-icon">🏛️</span>
-                <span className="meta-text">SSGMCE Campus, Shegaon</span>
-              </div>
-              <div className="meta-pill">
-                <span className="meta-icon">🏆</span>
-                <span className="meta-text">₹2,50,000+ Prize Pool</span>
-              </div>
-            </div>
-
-            {/* Primary Action Buttons */}
-            <div className="hero-cta-group">
-              <button className="btn-yuganantar-primary" onClick={openRegister}>
-                <span className="btn-sparkle">✦</span>
-                <span>REGISTER FOR YUGANANTAR</span>
-                <span className="btn-arrow">→</span>
-              </button>
-
-              <button
-                className="btn-yuganantar-secondary"
-                onClick={() => {
-                  const evSec = document.getElementById("events-showcase");
-                  if (evSec) evSec.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                <span>EXPLORE ARENAS</span>
-              </button>
-            </div>
-
-            {/* Countdown Integration */}
-            <div className="hero-countdown-wrapper">
-              <CountdownTimer />
-            </div>
-          </div>
-        </div>
 
         {/* -------------------------------------------------- */}
         {/* SECTION: EVOLUTION OF CIVILIZATION (THE TIME AXIS) */}

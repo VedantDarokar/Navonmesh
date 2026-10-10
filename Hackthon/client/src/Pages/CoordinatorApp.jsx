@@ -15,6 +15,7 @@ import FoodScannerPage from './FoodScannerPage';
 import BreakTimer from './BreakTimer';
 import EventDayAdmin from './EventDayAdmin';
 import ParticipantPortal from './ParticipantPortal';
+import CoordinatorDutyPortal from './CoordinatorDutyPortal';
 
 const CoordinatorApp = () => {
     // Role selection for login: 'participant' | 'coordinator'
@@ -360,49 +361,7 @@ const CoordinatorApp = () => {
                 <ParticipantPortal teamData={teamData} onLogout={handleLogout} />
             ) : (
                 /* ================= COORDINATOR DUTY PORTAL ================= */
-                <>
-                    <main className="coor-main-content">
-                        {activeTab === 'scanner' && <FoodScannerPage />}
-                        {activeTab === 'timer' && <BreakTimer />}
-                        {activeTab === 'event-day' && <EventDayAdmin />}
-                        {activeTab === 'dashboard' && <Admin />}
-                    </main>
-
-                    {/* BOTTOM NAVIGATION FOR COORDINATORS */}
-                    <nav className="coor-bottom-nav">
-                        <button
-                            className={`coor-nav-item ${activeTab === 'scanner' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('scanner')}
-                        >
-                            <FaQrcode className="coor-nav-icon" />
-                            <span className="coor-nav-label">Scanner</span>
-                        </button>
-
-                        <button
-                            className={`coor-nav-item ${activeTab === 'timer' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('timer')}
-                        >
-                            <FaClock className="coor-nav-icon" />
-                            <span className="coor-nav-label">Timer</span>
-                        </button>
-
-                        <button
-                            className={`coor-nav-item ${activeTab === 'event-day' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('event-day')}
-                        >
-                            <FaChair className="coor-nav-icon" />
-                            <span className="coor-nav-label">Seats</span>
-                        </button>
-
-                        <button
-                            className={`coor-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('dashboard')}
-                        >
-                            <FaChartBar className="coor-nav-icon" />
-                            <span className="coor-nav-label">Control</span>
-                        </button>
-                    </nav>
-                </>
+                <CoordinatorDutyPortal onLogout={handleLogout} />
             )}
         </div>
     );

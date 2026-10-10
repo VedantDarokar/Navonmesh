@@ -1,0 +1,723 @@
+/* ==========================================================================
+   COORDINATOR DUTY PORTAL - COMPREHENSIVE STYLESHEET
+   Mobile-Optimized Duty Hub, Task Alerts, and Tool Views
+   ========================================================================== */
+
+.coordinator-duty-portal {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 80px) 14px;
+    box-sizing: border-box;
+    color: #f8fafc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------------- SUB-NAVIGATION TABS ---------------- */
+.coor-duty-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px 12px 2px;
+    margin-bottom: 14px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.coor-duty-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.coor-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(18, 24, 40, 0.75);
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.coor-nav-pill:hover {
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fff;
+}
+
+.coor-nav-pill.active {
+    background: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+    border-color: #fbbf24;
+    color: #070a13;
+    box-shadow: 0 4px 14px rgba(251, 191, 36, 0.35);
+}
+
+.nav-badge-alert {
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+.nav-badge-urgent {
+    background: #f59e0b;
+    color: #000;
+    font-size: 9.5px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+/* ---------------- WELCOME HERO CARD ---------------- */
+.coor-welcome-hero-card {
+    background: linear-gradient(135deg, rgba(28, 37, 65, 0.95) 0%, rgba(11, 16, 30, 0.98) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+}
+
+.hero-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.hero-role-tag {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    color: #fbbf24;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.hero-name-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.hero-duty-sub {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0 0 12px 0;
+}
+
+.hero-duty-sub strong {
+    color: #00f0ff;
+}
+
+.hero-meta-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.duty-status-badge {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
+
+.duty-status-badge.on-duty {
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #34d399;
+}
+
+.duty-id-badge {
+    font-family: monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #cbd5e1;
+}
+
+.refresh-duty-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #cbd5e1;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.refresh-duty-btn:hover {
+    background: rgba(251, 191, 36, 0.2);
+    border-color: #fbbf24;
+    color: #fbbf24;
+}
+
+/* ---------------- PENDING TASK BANNER ALERT ---------------- */
+.pending-task-banner-alert {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.35) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.6);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(239, 68, 68, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.pending-task-banner-alert:hover {
+    transform: translateY(-2px);
+}
+
+.banner-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.banner-icon-ring {
+    font-size: 24px;
+    animation: alertBounce 1s infinite alternate;
+}
+
+@keyframes alertBounce {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); }
+}
+
+.banner-alert-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12.5px;
+    font-weight: 900;
+    color: #f87171;
+    margin: 0 0 2px 0;
+    letter-spacing: 0.5px;
+}
+
+.banner-alert-sub {
+    font-size: 11px;
+    color: #fca5a5;
+    margin: 0;
+}
+
+.banner-action-arrow {
+    color: #fca5a5;
+    font-size: 14px;
+}
+
+/* ---------------- STATS GRID ---------------- */
+.coor-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.stat-card {
+    background: rgba(16, 24, 44, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 9.5px;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 4px 0 2px 0;
+}
+
+.stat-number.urgent {
+    color: #f87171;
+}
+
+.stat-progress {
+    font-size: 9.5px;
+    color: #34d399;
+    font-weight: 600;
+}
+
+/* ---------------- ASSIGNED TASKS CHECKLIST ---------------- */
+.tasks-section-container {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.9) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 14px;
+}
+
+.section-micro-tag {
+    font-size: 9.5px;
+    letter-spacing: 1.2px;
+    font-weight: 800;
+    color: #fbbf24;
+    text-transform: uppercase;
+}
+
+.section-main-heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 2px 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coor-mini-action-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #cbd5e1;
+    border-radius: 12px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tasks-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.duty-task-card {
+    background: rgba(12, 17, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 14px;
+    transition: all 0.2s ease;
+}
+
+.duty-task-card.completed {
+    opacity: 0.65;
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(8, 15, 20, 0.85);
+}
+
+.task-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.task-badge {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.task-badge.urgent {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #f87171;
+}
+
+.task-badge.high {
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    color: #fbbf24;
+}
+
+.task-badge.medium {
+    background: rgba(0, 240, 255, 0.15);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+}
+
+.task-timing {
+    font-size: 10.5px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.task-main-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+    line-height: 1.35;
+}
+
+.duty-task-card.completed .task-main-title {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+
+.task-main-desc {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.task-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 8px;
+}
+
+.task-assigned-by {
+    font-size: 10px;
+    color: #64748b;
+}
+
+.task-toggle-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 5px 12px;
+    font-size: 10.5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.task-toggle-btn.pending {
+    background: rgba(0, 240, 255, 0.15);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+}
+
+.task-toggle-btn.done {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #34d399;
+}
+
+/* ---------------- QUICK ACTION LAUNCHPAD ---------------- */
+.quick-duty-launchpad {
+    margin-top: 10px;
+}
+
+.launchpad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.launch-card {
+    background: linear-gradient(135deg, rgba(20, 28, 50, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.launch-card:hover {
+    transform: translateY(-2px);
+    border-color: #00f0ff;
+    box-shadow: 0 6px 20px rgba(0, 240, 255, 0.2);
+}
+
+.launch-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.launch-icon.scanner { color: #10b981; }
+.launch-icon.timer { color: #00f0ff; }
+.launch-icon.seats { color: #fbbf24; }
+.launch-icon.issues { color: #ef4444; }
+
+.launch-card h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.launch-card p {
+    font-size: 10.5px;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.35;
+}
+
+/* ---------------- ALERT POPUP MODAL ---------------- */
+.coor-alert-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    z-index: 10000;
+}
+
+.coor-alert-modal {
+    width: 100%;
+    max-width: 440px;
+    background: linear-gradient(135deg, #10172a 0%, #080d1a 100%);
+    border: 1px solid rgba(239, 68, 68, 0.6);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+}
+
+.alert-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.close-alert-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.alert-modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    color: #f87171;
+    margin: 0 0 2px 0;
+    letter-spacing: 0.8px;
+}
+
+.alert-modal-sub {
+    font-size: 11.5px;
+    color: #cbd5e1;
+    margin: 0;
+}
+
+.alert-tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding-right: 4px;
+}
+
+.alert-task-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-info {
+    flex: 1;
+}
+
+.task-title-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 2px 0;
+}
+
+.task-desc-text {
+    font-size: 10.5px;
+    color: #94a3b8;
+    margin: 0 0 4px 0;
+}
+
+.task-due-time {
+    font-size: 9.5px;
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+.mark-done-btn {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #34d399;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 10.5px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.ack-alert-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #00f0ff, #0077b6);
+    color: #03060d;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* ---------------- ISSUES LIST ---------------- */
+.issues-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.issue-card {
+    background: rgba(20, 28, 50, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.issue-card.active {
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.issue-card.resolved {
+    opacity: 0.6;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.issue-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.issue-table-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #fbbf24;
+}
+
+.issue-status-pill {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.issue-status-pill.active {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.issue-status-pill.resolved {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.issue-desc-content {
+    font-size: 12px;
+    color: #e2e8f0;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.issue-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 8px;
+}
+
+.issue-time {
+    font-size: 10px;
+    color: #64748b;
+}
+
+.resolve-ticket-btn {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    color: #34d399;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tasks-empty-state {
+    text-align: center;
+    padding: 24px 10px;
+    color: #94a3b8;
+}
+
+.empty-check-icon {
+    font-size: 32px;
+    color: #10b981;
+    margin-bottom: 8px;
+}
+
+.tasks-empty-state h4 {
+    color: #fff;
+    margin: 0 0 4px 0;
+    font-size: 14px;
+}
+
+.tasks-empty-state p {
+    font-size: 11px;
+    margin: 0;
+}

@@ -1,37 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Inter:wght@400;600;700&display=swap');
+
+/* ==========================================================================
+   BREAK TIMER - RESPONSIVE MOBILE & DESKTOP STYLESHEET
+   - Auto-scales to fit mobile phone screens cleanly
+   - High contrast digital clock presentation
+   ========================================================================== */
 
 .simple-timer-page {
-    min-height: 100vh;
-    background: #000;
+    width: 100%;
+    min-height: calc(100vh - 140px);
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    font-family: 'Orbitron', sans-serif;
+    padding: 16px 14px calc(env(safe-area-inset-bottom, 0px) + 70px) 14px;
+    box-sizing: border-box;
+    font-family: 'Orbitron', 'Inter', sans-serif;
 }
 
-/* Aspect ratio 9:16 - Fits properly in mobile and desktop */
 .timer-wrapper {
-    width: 90vw;
-    /* Default for mobile */
-    height: 160vw;
-    /* Maintain 9:16 ratio on mobile */
-    max-width: 56.25vh;
-    /* Ensure it doesn't exceed 9:16 on desktop (9/16 * 100vh) */
-    max-height: 100vh;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    width: 100%;
+    max-width: 480px;
+    background: linear-gradient(135deg, rgba(16, 24, 44, 0.95) 0%, rgba(8, 12, 22, 0.98) 100%);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    border-radius: 22px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 240, 255, 0.12);
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 6vh 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 40px rgba(0, 243, 255, 0.1);
-    border: 1px solid rgba(0, 243, 255, 0.2);
-    position: relative;
+    align-items: center;
     box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
 }
 
 .timer-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -39,266 +46,254 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
 .timer-navonmesh-logo {
-    height: 70px;
+    height: 48px;
     width: auto;
-    filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.4));
+    filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.5));
 }
 
 .status-glow-text {
-    font-size: 0.85rem;
-    letter-spacing: 4px;
-    font-weight: 8s00;
-    color: #ef4444;
-    text-shadow: 0 0 15px rgba(185, 28, 28, 0.6);
-    background: rgba(239, 68, 68, 0.1);
-    padding: 6px 20px;
-    border-radius: 100px;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #f87171;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    padding: 5px 16px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .status-glow-text.active {
-    color: #10b981;
-    text-shadow: 0 0 15px rgba(5, 150, 105, 0.6);
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
 }
 
+/* ---------------- COMPACT RESPONSIVE CLOCK DISPLAY ---------------- */
 .time-display-vertical {
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 20px 10px;
+    margin-bottom: 22px;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .time-block {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: 65px;
 }
 
 .time-val {
-    font-size: 11rem;
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.4rem, 9vw, 3.8rem);
     line-height: 1;
     font-weight: 900;
-    color: #fff;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    letter-spacing: 1px;
 }
 
 .time-lab {
-    font-size: 1rem;
-    letter-spacing: 10px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 10px;
-    font-family: sans-serif;
-    font-weight: 800;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
 }
 
 .time-divider {
-    width: 60%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #00f3ff, transparent);
-    opacity: 0.3;
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 8vw, 3rem);
+    color: rgba(0, 240, 255, 0.6);
+    font-weight: 900;
+    margin-top: -12px;
 }
 
-.timer-actions {
+/* ---------------- PRESET SHORTCUTS ---------------- */
+.timer-presets {
     display: flex;
-    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.preset-chip {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    border-radius: 14px;
+    padding: 5px 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preset-chip:hover {
+    background: rgba(0, 240, 255, 0.18);
+    border-color: #00f0ff;
+    color: #00f0ff;
+}
+
+/* ---------------- ACTION BUTTONS ---------------- */
+.timer-actions {
+    width: 100%;
+    display: flex;
+    gap: 10px;
     align-items: center;
-    gap: 15px;
 }
 
 .main-btn {
-    width: auto;
-    min-width: 250px;
-    padding: 16px 40px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    cursor: pointer;
-    border-radius: 12px;
-    transition: 0.3s;
+    flex: 2;
+    padding: 14px 20px;
     border: none;
-    letter-spacing: 2px;
+    border-radius: 14px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .main-btn.start {
-    background: #10b981;
-    color: #000;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+}
+
+.main-btn.start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.6);
 }
 
 .main-btn.pause {
-    background: #ef4444;
-    color: #000;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4);
 }
 
 .reset-btn {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.5);
-    padding: 8px 30px;
-    border-radius: 8px;
+    flex: 1;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    border-radius: 14px;
+    padding: 14px 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
+    transition: all 0.2s ease;
 }
 
 .reset-btn:hover {
-    color: #fff;
-    border-color: #fff;
+    background: rgba(239, 68, 68, 0.25);
+    border-color: #f87171;
+    color: #ffffff;
 }
 
-/* Password Modal */
+/* ---------------- PASSWORD MODAL ---------------- */
 .pass-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(6px);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
     padding: 20px;
-    backdrop-filter: blur(5px);
+    z-index: 9999;
 }
 
 .pass-modal {
     width: 100%;
-    max-width: 400px;
-    background: #111;
-    border: 1px solid #00f3ff;
-    padding: 40px;
-    border-radius: 16px;
+    max-width: 340px;
+    background: #0f172a;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 18px;
+    padding: 22px;
     text-align: center;
-    color: #fff;
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 
 .pass-modal h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #00f3ff;
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    color: #00f0ff;
 }
 
 .pass-modal p {
-    font-size: 0.9rem;
-    color: #888;
-    margin-bottom: 25px;
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0 0 16px 0;
 }
 
 .pass-modal input {
     width: 100%;
-    padding: 18px;
-    background: #000;
-    border: 1px solid #333;
-    color: #fff;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
     text-align: center;
-    outline: none;
-}
-
-.pass-modal input:focus {
-    border-color: #00f3ff;
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+    box-sizing: border-box;
+    margin-bottom: 12px;
 }
 
 .pass-error {
-    color: #ef4444;
-    font-size: 0.8rem;
-    margin-bottom: 20px;
+    color: #f87171;
+    font-size: 11px;
+    margin-bottom: 10px;
 }
 
 .pass-btns {
     display: flex;
-    gap: 15px;
+    gap: 8px;
 }
 
 .pass-btns button {
     flex: 1;
-    padding: 15px;
+    padding: 10px;
+    border-radius: 10px;
     border: none;
-    border-radius: 8px;
-    font-weight: 800;
+    font-weight: 700;
+    font-size: 12px;
     cursor: pointer;
 }
 
 .pass-btns .confirm {
-    background: #00f3ff;
-    color: #000;
+    background: #00f0ff;
+    color: #03060d;
 }
 
 .pass-btns .cancel {
-    background: #222;
-    color: #fff;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .timer-wrapper {
-        width: 95vw;
-        height: auto;
-        min-height: auto;
-        max-height: calc(100vh - 120px);
-        padding: 16px 14px;
-        border-radius: 16px;
-        gap: 12px;
-        justify-content: space-around;
-    }
-
-    .timer-header {
-        margin-bottom: 6px;
-    }
-
-    .timer-navonmesh-logo {
-        height: 48px;
-    }
-
-    .status-glow-text {
-        font-size: 0.72rem;
-        letter-spacing: 2px;
-        padding: 4px 14px;
-    }
-
-    .time-display-vertical {
-        gap: 8px;
-    }
-
-    .time-val {
-        font-size: 4.8rem;
-    }
-
-    .time-lab {
-        font-size: 0.75rem;
-        letter-spacing: 5px;
-        margin-top: 2px;
-    }
-
-    .time-divider {
-        width: 50%;
-    }
-
-    .timer-actions {
-        gap: 8px;
-    }
-
-    .main-btn {
-        min-width: 200px;
-        padding: 10px 24px;
-        font-size: 0.95rem;
-    }
-
-    .reset-btn {
-        padding: 8px 24px;
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .time-val {
-        font-size: 4.2rem;
-    }
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
 }

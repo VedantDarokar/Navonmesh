@@ -138,31 +138,51 @@ const BreakTimer = () => {
                         <span className="time-val">{h}</span>
                         <span className="time-lab">HOURS</span>
                     </div>
-                    <div className="time-divider"></div>
+                    <div className="time-divider">:</div>
                     <div className="time-block">
                         <span className="time-val">{m}</span>
                         <span className="time-lab">MINUTES</span>
                     </div>
-                    <div className="time-divider"></div>
+                    <div className="time-divider">:</div>
                     <div className="time-block">
                         <span className="time-val">{s}</span>
                         <span className="time-lab">SECONDS</span>
                     </div>
                 </div>
 
+                {/* Quick Presets */}
+                <div className="timer-presets">
+                    <button className="preset-chip" onClick={() => {
+                        const now = Date.now();
+                        updateServer({ isActive: true, endTime: new Date(now + 15 * 60 * 1000), pausedAt: null });
+                    }}>15m Quick</button>
+                    <button className="preset-chip" onClick={() => {
+                        const now = Date.now();
+                        updateServer({ isActive: true, endTime: new Date(now + 30 * 60 * 1000), pausedAt: null });
+                    }}>30m Lunch</button>
+                    <button className="preset-chip" onClick={() => {
+                        const now = Date.now();
+                        updateServer({ isActive: true, endTime: new Date(now + 45 * 60 * 1000), pausedAt: null });
+                    }}>45m Dinner</button>
+                    <button className="preset-chip" onClick={() => {
+                        const now = Date.now();
+                        updateServer({ isActive: true, endTime: new Date(now + 60 * 60 * 1000), pausedAt: null });
+                    }}>1h Rest</button>
+                </div>
+
                 <div className="timer-actions">
                     {!isActive ? (
                         <button className="main-btn start" onClick={() => handleActionRequest('start')}>
-                            START BREAK
+                            ▶ START BREAK
                         </button>
                     ) : (
                         <button className="main-btn pause" onClick={() => handleActionRequest('pause')}>
-                            PAUSE BREAK
+                            ⏸ PAUSE BREAK
                         </button>
                     )}
                     <button className="reset-btn" onClick={() => {
                         handleActionRequest('reset');
-                    }}>RESET</button>
+                    }}>↺ RESET</button>
                 </div>
             </div>
 

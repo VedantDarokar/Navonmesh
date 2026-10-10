@@ -8,6 +8,7 @@ const sendEmail = require('../utils/email');
 const Timer = require('../models/Timer');
 const CommitteeMember = require('../models/CommitteeMember');
 const Recruitment = require('../models/Recruitment');
+const CoordinatorTask = require('../models/CoordinatorTask');
 
 const coreMembersUtil = require('../utils/coreMembers');
 const accessControl = require('../utils/accessControl');
@@ -1154,6 +1155,105 @@ router.post('/toggle-certificates', async (req, res) => {
             message: `Certificates ${unlock ? 'UNLOCKED' : 'LOCKED'} for ${result.modifiedCount} squads.`,
             unlocked: Boolean(unlock)
         });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/admin/coordinator-tasks?coordinatorId=...
+router.get('/coordinator-tasks', async (req, res) => {
+    try {
+        const { coordinatorId } = req.query;
+        let query = {};
+        if (coordinatorId) {
+            query = {
+                $or: [
+                    { assignedTo: 'all' },
+                    { assignedTo: String(coordinatorId).trim().toLowerCase() }
+                ]
+            };
+        }
+        let tasks = await CoordinatorTask.find(query).sort({ createdAt: -1 });
+
+        // Seed initial event day operational tasks if none exist
+        if (tasks.length === 0) {
+            const seedTasks = [
+                {
+                    assignedTo: 'all',
+                    title: 'Verify Breakfast & Lunch QR Scans at Central Mess Counter 2',
+                    description: 'Ensure each squad member scans their individual pass once per meal slot.',
+                    priority: 'HIGH',
+                    dueTime: '08:30 AM - 09:30 AM',
+                    status: 'PENDING'
+                },
+                {
+                    assignedTo: 'all',
+                    title: 'Distribute Lab Workstation WiFi Credentials & Kit to Tables 1-20',
+                    description: 'Verify team lanyards and supply LAN cables at CSE Dept Lab 3.',
+                    priority: 'URGENT',
+                    dueTime: '10:00 AM - 11:00 AM',
+                    status: 'PENDING'
+                },
+                {
+                    assignedTo: 'all',
+                    title: 'Collect Checkpoint 1 Evaluation Rubric Sheets from Industry Mentors',
+                    description: 'Collect signed jury sheets from Rooms 101, 102 & submit to Admin Room.',
+                    priority: 'HIGH',
+                    dueTime: '03:30 PM - 04:30 PM',
+                    status: 'PENDING'
+                }
+            ];
+            tasks = await CoordinatorTask.insertMany(seedTasks);
+        }
+
+        const pendingTasks = tasks.filter(t => t.status !== 'COMPLETED');
+
+        res.json({
+            success: true,
+            tasks,
+            pendingCount: pendingTasks.length,
+            hasPendingTasks: pendingTasks.length > 0,
+            pendingTasks
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/admin/coordinator-tasks
+router.post('/coordinator-tasks', async (req, res) => {
+    try {
+        const { assignedTo, coordinatorName, title, description, priority, dueTime } = req.body;
+        if (!title) return res.status(400).json({ error: 'Task title is required' });
+
+        const task = new CoordinatorTask({
+            assignedTo: (assignedTo || 'all').trim().toLowerCase(),
+            coordinatorName: coordinatorName || 'Coordinator',
+            title: title.trim(),
+            description: description || '',
+            priority: priority || 'HIGH',
+            dueTime: dueTime || 'Today',
+            status: 'PENDING'
+        });
+
+        await task.save();
+        res.json({ success: true, task });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// PUT /api/admin/coordinator-tasks/:id/status
+router.put('/coordinator-tasks/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        const task = await CoordinatorTask.findByIdAndUpdate(
+            req.params.id,
+            { status: status || 'COMPLETED' },
+            { new: true }
+        );
+        if (!task) return res.status(404).json({ error: 'Task not found' });
+        res.json({ success: true, task });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

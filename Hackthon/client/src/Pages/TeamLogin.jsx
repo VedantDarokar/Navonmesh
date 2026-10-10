@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUserShield, FaKey, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import '../Styles/team_login.css';
+import authStorage from '../utils/authStorage';
 
 const TeamLogin = () => {
     const navigate = useNavigate();
@@ -41,10 +42,12 @@ const TeamLogin = () => {
 
             const data = await res.json();
             if (res.ok && data.success) {
-                // Save team session in sessionStorage
-                sessionStorage.setItem('teamToken', 'team_active_' + data.team.id);
-                sessionStorage.setItem('teamData', JSON.stringify(data.team));
-                sessionStorage.setItem('teamId', data.team.teamId);
+                // Save team session in persistent authStorage
+                authStorage.setTeamSession({
+                    teamToken: data.token,
+                    teamData: data.team,
+                    teamId: data.team.teamId
+                });
                 navigate('/team-dashboard');
             } else {
                 setError(data.error || 'Invalid credentials. Please check your Team ID or Password.');

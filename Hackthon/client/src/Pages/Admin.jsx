@@ -8,6 +8,7 @@ import autoTable from 'jspdf-autotable';
 import navonmeshLogo from '../assets/navonmesh_tricolor.png';
 import ssgmceLogo from '../assets/SSGMCE-Colour-Logomark-01 2.png';
 import AdminQRScanner from '../Components/AdminQRScanner';
+import authStorage from '../utils/authStorage';
 
 const Admin = () => {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -73,15 +74,15 @@ const Admin = () => {
     }, [activeEvent]);
 
     useEffect(() => {
-        const token = sessionStorage.getItem('adminToken');
-        if (token) {
-            setAdminId(sessionStorage.getItem('adminId') || '');
+        const session = authStorage.getAdminSession();
+        if (session?.token) {
+            setAdminId(session.id || '');
             setAdminInfo({
-                name: sessionStorage.getItem('adminName'),
-                subRole: sessionStorage.getItem('adminSubRole')
+                name: session.name,
+                subRole: session.subRole
             });
             setLoggedIn(true);
-            fetchData(token);
+            fetchData(session.token);
         }
     }, []);
 
@@ -116,10 +117,11 @@ const Admin = () => {
             await new Promise(resolve => setTimeout(resolve, 1500));
 
             if (res.ok && data.success) {
-                sessionStorage.setItem('adminToken', data.token);
-                sessionStorage.setItem('adminName', data.adminInfo.name);
-                sessionStorage.setItem('adminSubRole', data.adminInfo.subRole);
-                sessionStorage.setItem('adminId', loginData.id);
+                authStorage.setAdminSession({
+                    token: data.token,
+                    adminInfo: data.adminInfo,
+                    adminId: loginData.id
+                });
                 setAdminId(loginData.id);
                 setAdminInfo(data.adminInfo);
                 setLoggedIn(true);
@@ -135,10 +137,7 @@ const Admin = () => {
     };
 
     const handleLogout = () => {
-        sessionStorage.removeItem('adminToken');
-        sessionStorage.removeItem('adminName');
-        sessionStorage.removeItem('adminSubRole');
-        sessionStorage.removeItem('adminId');
+        authStorage.clearAdminSession();
         setAdminId('');
         setLoggedIn(false);
         setSummary(null);

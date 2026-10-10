@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
     FaShieldAlt, FaUser, FaLock, FaQrcode, FaClock, FaChartBar, FaChair, 
     FaPalette, FaSignOutAlt, FaCheckCircle, FaExclamationTriangle, FaUsers, 
-    FaRocket, FaCompass, FaCalendarAlt
+    FaRocket, FaCompass, FaCalendarAlt, FaEye, FaEyeSlash
 } from 'react-icons/fa';
 import '../Styles/coordinator_app.css';
 import '../Styles/coordinator_duty_portal.css';
@@ -10,6 +10,8 @@ import '../Styles/participant_portal.css';
 import navonmeshLogo from '../assets/navonmesh_official_logo.png';
 import { getApiUrl } from '../utils/apiConfig';
 import { getCoordinatorProfile } from '../utils/coordinatorProfiles';
+import authStorage from '../utils/authStorage';
+import { App as CapacitorApp } from '@capacitor/app';
 
 // Import Duty Components & Participant Portal
 import Admin from './Admin';
@@ -34,6 +36,7 @@ const CoordinatorApp = () => {
     const [loginError, setLoginError] = useState('');
     const [failedAttempts, setFailedAttempts] = useState(0);
     const [lockoutTimer, setLockoutTimer] = useState(0);
+    const [showPassword, setShowPassword] = useState(false);
 
     // Active Tab for Coordinator ('scanner' | 'timer' | 'event-day' | 'dashboard')
     const [activeTab, setActiveTab] = useState('scanner');
@@ -45,24 +48,18 @@ const CoordinatorApp = () => {
 
     const API_URL = getApiUrl();
 
-    // Verify existing session on mount
+    // Verify existing persistent session on mount (survives closing the app)
     useEffect(() => {
-        const adminToken = sessionStorage.getItem('adminToken');
-        const teamToken = sessionStorage.getItem('teamToken');
-        const rawTeam = sessionStorage.getItem('teamData');
+        const adminSession = authStorage.getAdminSession();
+        const teamSession = authStorage.getTeamSession();
 
-        if (adminToken) {
+        if (adminSession) {
             setIsLoggedIn(true);
             setUserRole('coordinator');
-        } else if (teamToken && rawTeam) {
-            try {
-                const parsed = JSON.parse(rawTeam);
-                setTeamData(parsed);
-                setIsLoggedIn(true);
-                setUserRole('participant');
-            } catch (e) {
-                // Ignore parse error
-            }
+        } else if (teamSession) {
+            setTeamData(teamSession.teamData);
+            setIsLoggedIn(true);
+            setUserRole('participant');
         }
     }, []);
 
@@ -73,6 +70,25 @@ const CoordinatorApp = () => {
             return () => clearTimeout(timer);
         }
     }, [lockoutTimer]);
+
+    // Close app on back button if on login screen
+    useEffect(() => {
+        let listenerHandle = null;
+        if (!isLoggedIn) {
+            CapacitorApp.addListener('backButton', () => {
+                try {
+                    CapacitorApp.exitApp();
+                } catch (e) {}
+            }).then(handle => {
+                listenerHandle = handle;
+            }).catch(() => {});
+        }
+        return () => {
+            if (listenerHandle?.remove) {
+                listenerHandle.remove();
+            }
+        };
+    }, [isLoggedIn]);
 
     const handleThemeToggle = () => {
         const themes = ['theme-gold', 'theme-emerald', 'theme-nebula'];
@@ -109,9 +125,11 @@ const CoordinatorApp = () => {
 
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    sessionStorage.setItem('teamToken', 'team_active_' + (data.team.id || data.team._id));
-                    sessionStorage.setItem('teamData', JSON.stringify(data.team));
-                    sessionStorage.setItem('teamId', data.team.teamId);
+                    authStorage.setTeamSession({
+                        teamToken: data.token,
+                        teamData: data.team,
+                        teamId: data.team.teamId
+                    });
                     setTeamData(data.team);
                     setUserRole('participant');
                     setIsLoggedIn(true);
@@ -132,10 +150,11 @@ const CoordinatorApp = () => {
 
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    sessionStorage.setItem('adminToken', data.token);
-                    sessionStorage.setItem('adminName', data.adminInfo.name);
-                    sessionStorage.setItem('adminSubRole', data.adminInfo.subRole);
-                    sessionStorage.setItem('adminId', loginData.id);
+                    authStorage.setAdminSession({
+                        token: data.token,
+                        adminInfo: data.adminInfo,
+                        adminId: loginData.id
+                    });
                     setUserRole('coordinator');
                     setIsLoggedIn(true);
                     setFailedAttempts(0);
@@ -163,13 +182,7 @@ const CoordinatorApp = () => {
     };
 
     const handleLogout = () => {
-        sessionStorage.removeItem('adminToken');
-        sessionStorage.removeItem('adminName');
-        sessionStorage.removeItem('adminSubRole');
-        sessionStorage.removeItem('adminId');
-        sessionStorage.removeItem('teamToken');
-        sessionStorage.removeItem('teamData');
-        sessionStorage.removeItem('teamId');
+        authStorage.clearAll();
         setIsLoggedIn(false);
         setUserRole(null);
         setTeamData(null);
@@ -177,8 +190,9 @@ const CoordinatorApp = () => {
         setActiveTab('scanner');
     };
 
-    const adminSubRole = sessionStorage.getItem('adminSubRole') || 'Coordinator';
-    const activeAdminId = sessionStorage.getItem('adminId') || 'nihal.navonmesh';
+    const adminSession = authStorage.getAdminSession();
+    const adminSubRole = adminSession?.subRole || 'Coordinator';
+    const activeAdminId = adminSession?.id || 'nihal.navonmesh';
     const coorProfile = getCoordinatorProfile(activeAdminId);
 
     return (
@@ -213,7 +227,7 @@ const CoordinatorApp = () => {
                         onClick={handleThemeToggle}
                         title="Change App Theme"
                     >
-                        <FaPalette style={{ fontSize: '10px' }} />
+                        <FaPalette style={{ fontSize: '9px' }} />
                         <span>{getThemeLabel()}</span>
                     </button>
 
@@ -224,7 +238,7 @@ const CoordinatorApp = () => {
                             onClick={handleLogout}
                             title="Log Out"
                         >
-                            <FaSignOutAlt style={{ fontSize: '10px' }} />
+                            <FaSignOutAlt style={{ fontSize: '9px' }} />
                             <span>Exit</span>
                         </button>
                     )}
@@ -311,14 +325,12 @@ const CoordinatorApp = () => {
 
                         <form onSubmit={handleLogin} className="coor-auth-form">
                             <div className="coor-input-group">
-                                <label className="coor-input-label">
-                                    {loginRole === 'participant' ? 'Team ID / Leader Phone / Email' : 'Coordinator ID / Passcode'}
-                                </label>
+                                <label className="coor-input-label">USERNAME</label>
                                 <div className="coor-input-wrapper">
                                     <FaUser className="coor-input-icon" />
                                     <input
                                         type="text"
-                                        placeholder={loginRole === 'participant' ? 'e.g. SQUAD001 or phone' : 'e.g. nihal.navonmesh'}
+                                        placeholder="Username"
                                         className="coor-input-field"
                                         value={loginData.id}
                                         onChange={(e) => setLoginData({ ...loginData, id: e.target.value })}
@@ -330,19 +342,26 @@ const CoordinatorApp = () => {
                             </div>
 
                             <div className="coor-input-group">
-                                <label className="coor-input-label">
-                                    Password {loginRole === 'participant' && <span style={{ opacity: 0.7 }}>(Default: Leader Phone)</span>}
-                                </label>
+                                <label className="coor-input-label">PASSWORD</label>
                                 <div className="coor-input-wrapper">
                                     <FaLock className="coor-input-icon" />
                                     <input
-                                        type="password"
-                                        placeholder="Enter password"
-                                        className="coor-input-field"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Password"
+                                        className="coor-input-field coor-input-field-pwd"
                                         value={loginData.password}
                                         onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                                         required
                                     />
+                                    <button
+                                        type="button"
+                                        className="coor-pwd-eye-btn"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
                                 </div>
                             </div>
 

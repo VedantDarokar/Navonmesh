@@ -99,32 +99,34 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--coor-card-border);
-    padding: calc(env(safe-area-inset-top, 0px) + 8px) 14px 8px 14px;
+    padding: calc(env(safe-area-inset-top, 0px) + 6px) 10px 6px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .coor-header-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
+    min-width: 0;
+    flex-shrink: 1;
 }
 
 .coor-header-logo-box {
-    width: 44px;
-    height: 38px;
-    border-radius: 9px;
+    width: 38px;
+    height: 34px;
+    border-radius: 8px;
     background: #000000;
     border: 1px solid rgba(255, 255, 255, 0.22);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3px 6px;
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.28);
+    padding: 2px 4px;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.25);
     flex-shrink: 0;
 }
 
@@ -136,32 +138,39 @@
 
 .coor-brand-title {
     font-family: var(--coor-display-font);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     color: var(--coor-text-main);
     margin: 0;
     line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .coor-brand-sub {
-    font-size: 10px;
+    font-size: 9px;
     color: var(--coor-accent-bright);
     font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .coor-header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 5px;
+    flex-shrink: 0;
 }
 
 /* Circular Coordinator Profile Frame (Small, No glow effect) */
 .coor-header-profile-avatar {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     overflow: hidden;
     border: 1.5px solid rgba(255, 255, 255, 0.28);
@@ -185,14 +194,16 @@
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--coor-card-border);
     color: var(--coor-text-main);
-    border-radius: 16px;
-    padding: 4px 8px;
-    font-size: 11px;
+    border-radius: 14px;
+    padding: 3px 6px;
+    font-size: 10px;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .coor-theme-btn:active {
@@ -204,20 +215,55 @@
     background: rgba(239, 68, 68, 0.12);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: #f87171;
-    border-radius: 16px;
-    padding: 4px 10px;
-    font-size: 11px;
+    border-radius: 14px;
+    padding: 3px 7px;
+    font-size: 10px;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 3.5px;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .coor-logout-btn:active {
     background: rgba(239, 68, 68, 0.25);
     transform: scale(0.95);
+}
+
+@media (max-width: 380px) {
+    .coor-header {
+        padding: calc(env(safe-area-inset-top, 0px) + 5px) 6px 5px 6px;
+        gap: 4px;
+    }
+
+    .coor-header-logo-box {
+        width: 34px;
+        height: 30px;
+        padding: 2px 3px;
+    }
+
+    .coor-header-actions {
+        gap: 3px;
+    }
+
+    .coor-header-profile-avatar {
+        width: 24px;
+        height: 24px;
+    }
+
+    .coor-theme-btn {
+        padding: 2.5px 5px;
+        font-size: 9px;
+    }
+
+    .coor-logout-btn {
+        padding: 2px 6px;
+        font-size: 9px;
+        gap: 3px;
+    }
 }
 
 /* ---------------- AUTHENTICATION / LOGIN VIEW ---------------- */
@@ -351,6 +397,34 @@
     border-color: var(--coor-accent-bright);
     background: rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 12px var(--coor-accent-glow);
+}
+
+.coor-input-field-pwd {
+    padding-right: 38px;
+}
+
+.coor-pwd-eye-btn {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--coor-text-sub);
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: color 0.2s ease, transform 0.1s ease;
+    z-index: 2;
+}
+
+.coor-pwd-eye-btn:hover,
+.coor-pwd-eye-btn:focus,
+.coor-pwd-eye-btn:active {
+    color: var(--coor-accent-bright);
+    outline: none;
 }
 
 .coor-auth-submit-btn {

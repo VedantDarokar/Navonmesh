@@ -70,6 +70,7 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
             if (res.ok && data.success && data.team) {
                 setTeam(data.team);
                 sessionStorage.setItem('teamData', JSON.stringify(data.team));
+                localStorage.setItem('teamData', JSON.stringify(data.team));
                 setTeamName(data.team.teamName || '');
                 setCollege(data.team.college || '');
                 setLeaderName(data.team.leaderName || '');
@@ -119,7 +120,7 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
         try {
             const participants = [];
             // 1. Leader
-            const leaderQr = await QRCode.toDataURL(team.teamId ? `${team.teamId}-LEADER` : 'SQUAD-LEADER', {
+            const leaderQr = await QRCode.toDataURL(team.teamId ? `${team.teamId}-L` : 'SQUAD-L', {
                 width: 320,
                 margin: 2
             });
@@ -167,6 +168,11 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
     useEffect(() => {
         if (team) {
             fetchIndividualPasses();
+            // Automatically poll meal scan status every 5 seconds so live scans update immediately to Redeemed
+            const mealPollInterval = setInterval(() => {
+                fetchIndividualPasses();
+            }, 5000);
+            return () => clearInterval(mealPollInterval);
         }
     }, [team?.teamId, team?.teamName, members.length]);
 
@@ -212,6 +218,7 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
             if (res.ok && data.success) {
                 setTeam(data.team);
                 sessionStorage.setItem('teamData', JSON.stringify(data.team));
+                localStorage.setItem('teamData', JSON.stringify(data.team));
                 setSaveStatus({ success: 'Squad details updated and synced to database!', error: '' });
                 fetchIndividualPasses();
                 setTimeout(() => setSaveStatus({ success: '', error: '' }), 5000);
@@ -519,14 +526,36 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
                                     Each squad member has an individual QR pass for breakfast, lunch, and dinner counters.
                                 </p>
                             </div>
-                            {passesData?.participants?.length > 1 && (
-                                <button className="download-all-btn" onClick={handleDownloadAllPasses}>
-                                    <FaDownload /> Save All Passes
+                            <div className="passes-header-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                <button 
+                                    className="refresh-passes-btn" 
+                                    onClick={fetchIndividualPasses}
+                                    title="Refresh Meal Status"
+                                    style={{
+                                        background: 'rgba(255, 255, 255, 0.08)',
+                                        border: '1px solid rgba(0, 240, 255, 0.35)',
+                                        color: '#00f0ff',
+                                        borderRadius: '12px',
+                                        padding: '7px 12px',
+                                        fontSize: '11px',
+                                        fontWeight: 700,
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    <FaSync className={passesLoading ? 'spin' : ''} /> {passesLoading ? 'Syncing...' : 'Sync Status'}
                                 </button>
-                            )}
+                                {passesData?.participants?.length > 1 && (
+                                    <button className="download-all-btn" onClick={handleDownloadAllPasses}>
+                                        <FaDownload /> Save All Passes
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
-                        {passesLoading ? (
+                        {passesLoading && !passesData ? (
                             <div className="passes-loading-box">
                                 <div className="pulse-spinner" />
                                 <p>Generating high-contrast individual member QR passes...</p>
@@ -550,26 +579,19 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
 
                                             {/* Meal Tokens Status */}
                                             <div className="meal-tokens-bar">
-                                                <div className={`meal-token-pill ${p.todayMeals?.breakfast ? 'scanned' : 'ready'}`}>
+                                                <div className={`meal-token-pill ${p.todayMeals?.breakfast ? 'redeemed' : 'ready'}`}>
                                                     <span>🌅 Breakfast</span>
-                                                    <strong>{p.todayMeals?.breakfast ? '✓ Scanned' : 'Available'}</strong>
+                                                    <strong>{p.todayMeals?.breakfast ? '✓ Redeemed' : 'Available'}</strong>
                                                 </div>
-                                                <div className={`meal-token-pill ${p.todayMeals?.lunch ? 'scanned' : 'ready'}`}>
+                                                <div className={`meal-token-pill ${p.todayMeals?.lunch ? 'redeemed' : 'ready'}`}>
                                                     <span>☀️ Lunch</span>
-                                                    <strong>{p.todayMeals?.lunch ? '✓ Scanned' : 'Available'}</strong>
+                                                    <strong>{p.todayMeals?.lunch ? '✓ Redeemed' : 'Available'}</strong>
                                                 </div>
-                                                <div className={`meal-token-pill ${p.todayMeals?.dinner ? 'scanned' : 'ready'}`}>
+                                                <div className={`meal-token-pill ${p.todayMeals?.dinner ? 'redeemed' : 'ready'}`}>
                                                     <span>🌙 Dinner</span>
-                                                    <strong>{p.todayMeals?.dinner ? '✓ Scanned' : 'Available'}</strong>
+                                                    <strong>{p.todayMeals?.dinner ? '✓ Redeemed' : 'Available'}</strong>
                                                 </div>
                                             </div>
-
-                                            <button 
-                                                className="download-pass-single-btn" 
-                                                onClick={() => handleDownloadIndividualPass(p)}
-                                            >
-                                                <FaDownload /> Download PNG Pass
-                                            </button>
                                         </div>
 
                                         <div className="pass-card-right">
@@ -581,6 +603,13 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
                                                 )}
                                             </div>
                                             <span className="qr-scan-hint">Scan at Mess Counter</span>
+
+                                            <button 
+                                                className="download-pass-single-btn" 
+                                                onClick={() => handleDownloadIndividualPass(p)}
+                                            >
+                                                <FaDownload /> Download PNG Pass
+                                            </button>
                                         </div>
                                     </div>
                                 ))}

@@ -73,6 +73,8 @@ const io = new Server(server, {
     pingTimeout: 60000,
 });
 
+app.set('io', io);
+
 io.on('connection', (socket) => {
     console.log(`[Socket] New operative connected: ${socket.id}`);
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { FaSearch, FaUserEdit, FaTrash, FaCheckCircle, FaTimes, FaUsers, FaChair, FaSync, FaSignal } from 'react-icons/fa';
 import '../Styles/admin.css'; // Reusing styles and adding specific ones
+import '../Styles/admin_maintenance.css';
 import bgVideo from '../assets/bg.mp4';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -27,11 +28,11 @@ const EventDayAdmin = () => {
     const socketRef = useRef(null);
 
     useEffect(() => {
-        const token = sessionStorage.getItem('adminToken');
+        const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
         if (token) {
             setAdminInfo({
-                name: sessionStorage.getItem('adminName'),
-                subRole: sessionStorage.getItem('adminSubRole')
+                name: localStorage.getItem('adminName') || sessionStorage.getItem('adminName'),
+                subRole: localStorage.getItem('adminSubRole') || sessionStorage.getItem('adminSubRole')
             });
             setLoggedIn(true);
             fetchData(token);
@@ -271,35 +272,6 @@ const EventDayAdmin = () => {
             <video className="global-bg-video" src={bgVideo} autoPlay loop muted playsInline />
             <div className="tactical-overlay"></div>
 
-            <header className="admin-header tactical-header">
-                <div className="admin-profile-info">
-                    <div className="admin-welcome-line">
-                        <div className="pulse-tag">MISSION CONNECTED</div>
-                        <h2 className="admin-name-display tactical-title">NAVONMESH COMMAND CENTRAL <span className="version">v3.0</span></h2>
-                    </div>
-                </div>
-
-                <div className="header-meta-stats">
-                    <div className="meta-stat-item">
-                        <div className="meta-label"><FaSignal /> SYSTEM LATENCY</div>
-                        <div className="meta-value">24ms</div>
-                    </div>
-                    <div className={`meta-stat-item connection-badge ${socketConnected ? 'online' : 'offline'}`}>
-                        <div className="meta-label">UPLINK STATUS</div>
-                        <div className="meta-value">{socketConnected ? 'STABLE' : 'INTERRUPT'}</div>
-                    </div>
-                    <div className="status-indicator-dot small"></div>
-                </div>
-
-                <div className="admin-actions">
-                    <button className="tactical-btn secondary" onClick={() => window.location.href = '#/admin'}>
-                        <FaTimes /> ABORT OPS
-                    </button>
-                    <button className="refresh-btn tactical-refresh" onClick={() => fetchData(sessionStorage.getItem('adminToken'))}>
-                        <FaSync className={loading ? 'spin' : ''} />
-                    </button>
-                </div>
-            </header>
 
             <div className="admin-content tactical-content">
                 {/* Stats Dashboard Top Bar */}
@@ -585,6 +557,7 @@ const EventDayAdmin = () => {
                                             <div
                                                 key={t.number}
                                                 className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                title={t.occupant ? `${t.occupant.teamName} (Station ${t.number})` : `Station ${t.number} (Vacant)`}
                                                 onClick={() => {
                                                     if (isFullyVerified) {
                                                         const updatePayload = {
@@ -623,6 +596,7 @@ const EventDayAdmin = () => {
                                             <div
                                                 key={t.number}
                                                 className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                title={t.occupant ? `${t.occupant.teamName} (Station ${t.number})` : `Station ${t.number} (Vacant)`}
                                                 onClick={() => {
                                                     if (isFullyVerified) {
                                                         const updatePayload = {
@@ -656,11 +630,12 @@ const EventDayAdmin = () => {
 
                                     <div className="tactical-road"></div>
 
-                                    <div className="tactical-grid-side right">
+                                     <div className="tactical-grid-side right">
                                         {tableGrid.slice(0, 28).map(t => (
                                             <div
                                                 key={t.number}
                                                 className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                title={t.occupant ? `${t.occupant.teamName} (Station ${t.number})` : `Station ${t.number} (Vacant)`}
                                                 onClick={() => {
                                                     if (isFullyVerified) {
                                                         const updatePayload = {
@@ -699,6 +674,7 @@ const EventDayAdmin = () => {
                                             <div
                                                 key={t.number}
                                                 className={`tactical-cell ${t.occupant ? 'occupied' : 'vacant'} ${isFullyVerified ? 'can-allot' : ''}`}
+                                                title={t.occupant ? `${t.occupant.teamName} (Station ${t.number})` : `Station ${t.number} (Vacant)`}
                                                 onClick={() => {
                                                     if (isFullyVerified) {
                                                         const updatePayload = {
@@ -846,32 +822,85 @@ const EventDayAdmin = () => {
 
                 .tactical-stats-bar {
                     display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 20px;
-                    margin-bottom: 25px;
+                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                    gap: 14px;
+                    margin-bottom: 20px;
                     z-index: 5;
                     position: relative;
+                    width: 100%;
+                    box-sizing: border-box;
                 }
 
                 .t-stat {
                     background: var(--glass);
                     border: 1px solid var(--glass-border);
-                    padding: 15px 20px;
+                    padding: 12px 14px;
                     border-radius: 12px;
                     display: flex;
                     flex-direction: column;
+                    justify-content: space-between;
                     position: relative;
                     overflow: hidden;
+                    min-width: 0;
+                    box-sizing: border-box;
                 }
 
-                .t-stat.highlighted { border-color: rgba(16, 185, 129, 0.3); }
-                .t-stat.danger { border-color: rgba(239, 68, 68, 0.3); }
+                .t-stat.highlighted { border-color: rgba(16, 185, 129, 0.35); }
+                .t-stat.danger { border-color: rgba(239, 68, 68, 0.35); }
 
-                .t-label { font-size: 0.7rem; font-weight: 900; color: #94a3b8; letter-spacing: 1px; margin-bottom: 5px; }
-                .t-value { font-size: 1.8rem; font-family: 'Orbitron', sans-serif; font-weight: 900; }
+                .t-label { 
+                    font-size: 0.68rem; 
+                    font-weight: 800; 
+                    color: #94a3b8; 
+                    letter-spacing: 0.3px; 
+                    margin-bottom: 6px; 
+                    line-height: 1.35;
+                    word-break: normal;
+                    overflow-wrap: break-word;
+                    white-space: normal;
+                }
+                .t-value { 
+                    font-size: 1.6rem; 
+                    font-family: 'Orbitron', sans-serif; 
+                    font-weight: 900; 
+                    line-height: 1.1;
+                }
                 .t-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--neon-blue); transition: width 1s; }
                 .highlighted .t-progress { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
                 .danger .t-progress { background: var(--neon-red); }
+
+                @media (max-width: 768px) {
+                    .tactical-stats-bar {
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 8px !important;
+                        margin-bottom: 14px !important;
+                    }
+
+                    .t-stat {
+                        padding: 10px 10px !important;
+                    }
+
+                    .t-stat:last-child:nth-child(odd) {
+                        grid-column: 1 / -1 !important;
+                        flex-direction: row !important;
+                        align-items: center !important;
+                        justify-content: space-between !important;
+                    }
+
+                    .t-stat:last-child:nth-child(odd) .t-label {
+                        margin-bottom: 0 !important;
+                    }
+
+                    .t-label {
+                        font-size: 0.62rem !important;
+                        letter-spacing: 0.2px !important;
+                        line-height: 1.3 !important;
+                    }
+
+                    .t-value {
+                        font-size: 1.35rem !important;
+                    }
+                }
 
                 .tactical-grid-container {
                     display: grid;
@@ -919,9 +948,10 @@ const EventDayAdmin = () => {
 
                 .tactical-grid-side {
                     display: grid;
-                    grid-template-columns: repeat(4, 1fr);
+                    grid-template-columns: repeat(4, minmax(0, 1fr));
                     gap: 5px;
                     flex: 1;
+                    min-width: 0;
                     direction: rtl; /* Start numbering from right side (top-right) */
                 }
 
@@ -986,6 +1016,8 @@ const EventDayAdmin = () => {
                     cursor: pointer;
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                     position: relative;
+                    min-width: 0;
+                    overflow: hidden;
                 }
 
                 .tactical-cell:hover {
@@ -1461,9 +1493,131 @@ const EventDayAdmin = () => {
                 @media (max-width: 1024px) {
                     .tactical-grid-container {
                         grid-template-columns: 1fr;
+                        gap: 16px;
                     }
                     .ops-sidebar {
                         order: 2;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .tactical-grid-container {
+                        gap: 12px !important;
+                    }
+
+                    .main-ops-interface.glass-box,
+                    .glass-box {
+                        padding: 10px 6px !important;
+                        border-radius: 12px !important;
+                    }
+
+                    .grid-section {
+                        width: 100% !important;
+                        box-sizing: border-box !important;
+                    }
+
+                    .tactical-header-sub {
+                        flex-wrap: wrap !important;
+                        gap: 8px !important;
+                        padding-bottom: 10px !important;
+                        margin-bottom: 10px !important;
+                    }
+
+                    .tactical-header-sub h3 {
+                        font-size: 0.82rem !important;
+                        letter-spacing: 0.5px !important;
+                    }
+
+                    .legend-pills {
+                        display: flex !important;
+                        gap: 6px !important;
+                        align-items: center !important;
+                    }
+
+                    .pill {
+                        font-size: 0.55rem !important;
+                        padding: 3px 8px !important;
+                    }
+
+                    .tactical-grid-wrapper {
+                        display: flex !important;
+                        justify-content: space-between !important;
+                        align-items: flex-start !important;
+                        gap: 3px !important;
+                        padding: 2px 0 !important;
+                        width: 100% !important;
+                        box-sizing: border-box !important;
+                        overflow-x: auto !important;
+                        -webkit-overflow-scrolling: touch !important;
+                    }
+
+                    .tactical-grid-side {
+                        display: grid !important;
+                        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                        gap: 3px !important;
+                        flex: 1 1 0 !important;
+                        min-width: 0 !important;
+                    }
+
+                    .tactical-road {
+                        width: 18px !important;
+                        min-width: 18px !important;
+                        align-self: stretch !important;
+                        position: relative !important;
+                    }
+
+                    .tactical-road::after {
+                        font-size: 0.38rem !important;
+                        letter-spacing: 2px !important;
+                    }
+
+                    .tactical-horizontal-road {
+                        height: 22px !important;
+                        margin: 3px 0 !important;
+                        gap: 6px !important;
+                    }
+
+                    .tactical-horizontal-road span {
+                        font-size: 0.42rem !important;
+                        letter-spacing: 1.5px !important;
+                    }
+
+                    .tactical-cell {
+                        aspect-ratio: 1 !important;
+                        border-radius: 4px !important;
+                        padding: 1px !important;
+                        min-width: 0 !important;
+                        width: 100% !important;
+                        box-sizing: border-box !important;
+                    }
+
+                    .cell-corner {
+                        width: 3px !important;
+                        height: 3px !important;
+                    }
+
+                    .cell-num {
+                        font-size: 0.68rem !important;
+                        font-weight: 800 !important;
+                        line-height: 1 !important;
+                    }
+
+                    .tactical-cell.occupied .cell-num {
+                        font-size: 0.62rem !important;
+                        transform: translateY(-4px) !important;
+                    }
+
+                    .cell-occupant {
+                        padding: 1px 1px !important;
+                        border-radius: 0 0 3px 3px !important;
+                    }
+
+                    .occ-name {
+                        font-size: 0.42rem !important;
+                        line-height: 1 !important;
+                        letter-spacing: -0.2px !important;
+                        max-width: 100% !important;
+                        text-align: center !important;
                     }
                 }
             `}</style>

@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import { FaQrcode, FaCamera, FaTimes, FaCheckCircle, FaExclamationTriangle, FaSync, FaUtensils, FaUserTie } from 'react-icons/fa';
+import { 
+    FaQrcode, FaCamera, FaTimes, FaCheckCircle, FaExclamationTriangle, 
+    FaSync, FaUtensils, FaUserTie, FaChevronDown, FaChevronUp, FaCheck, FaUser,
+    FaCalendarAlt, FaChevronLeft, FaChevronRight 
+} from 'react-icons/fa';
 import '../Styles/admin_qr_scanner.css';
+
+const MONTH_NAMES = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 const getTodayDateStr = () => {
     const now = new Date();
@@ -11,14 +20,38 @@ const getTodayDateStr = () => {
     return `${y}-${m}-${d}`;
 };
 
+const formatDisplayDate = (dateStr) => {
+    if (!dateStr) return 'Select Date';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]} - ${parts[1]} - ${parts[0]}`;
+    }
+    return dateStr;
+};
+
+const COORDINATOR_LIST = [
+    { id: 'mess_head', name: 'Main Mess Head', role: 'Catering Incharge', image: null },
+    { id: 'canteen_head', name: 'Canteen Incharge', role: 'Food Station Duty', image: null },
+    { id: 'other', name: 'Custom Name...', role: 'Field Operative', image: null }
+];
+
 const AdminQRScanner = () => {
-    const [coordinator, setCoordinator] = useState('Coordinator 1');
+    const [coordinator, setCoordinator] = useState('Main Mess Head');
     const [customCoordinator, setCustomCoordinator] = useState('');
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
     const [overrideMealSlot, setOverrideMealSlot] = useState('AUTO'); // 'AUTO' | 'BREAKFAST' | 'LUNCH' | 'DINNER'
     const [selectedDate, setSelectedDate] = useState(getTodayDateStr());
     const [dateHistory, setDateHistory] = useState([]);
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [isLockedForNext, setIsLockedForNext] = useState(false);
+
+    // Custom Cyberpunk Themed Calendar State
+    const [calendarOpen, setCalendarOpen] = useState(false);
+    const calendarRef = useRef(null);
+    const todayStr = getTodayDateStr();
+    const [calendarYear, setCalendarYear] = useState(() => new Date().getFullYear());
+    const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
 
     const [statusData, setStatusData] = useState({
         activeSlot: null,
@@ -45,6 +78,140 @@ const AdminQRScanner = () => {
     const lastScanTimeRef = useRef(0);
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+    // Click outside listener to close custom coordinator dropdown
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        };
+        if (dropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [dropdownOpen]);
+
+    // Click outside listener for custom calendar popover
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+                setCalendarOpen(false);
+            }
+        };
+        if (calendarOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [calendarOpen]);
+
+    const toggleCalendar = () => {
+        if (!calendarOpen && selectedDate) {
+            const parts = selectedDate.split('-');
+            if (parts.length === 3) {
+                const y = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10) - 1;
+                if (!isNaN(y) && !isNaN(m)) {
+                    setCalendarYear(y);
+                    setCalendarMonth(m);
+                }
+            }
+        }
+        setCalendarOpen(prev => !prev);
+    };
+
+    const handlePrevMonth = () => {
+        if (calendarMonth === 0) {
+            setCalendarMonth(11);
+            setCalendarYear(prev => prev - 1);
+        } else {
+            setCalendarMonth(prev => prev - 1);
+        }
+    };
+
+    const handleNextMonth = () => {
+        if (calendarMonth === 11) {
+            setCalendarMonth(0);
+            setCalendarYear(prev => prev + 1);
+        } else {
+            setCalendarMonth(prev => prev + 1);
+        }
+    };
+
+    const handleSelectDate = (dateStr) => {
+        setSelectedDate(dateStr);
+        fetchStatusAndStats(dateStr);
+        setCalendarOpen(false);
+    };
+
+    const handleSelectPrevMonthDay = (day) => {
+        const prevYear = calendarMonth === 0 ? calendarYear - 1 : calendarYear;
+        const prevMonth = calendarMonth === 0 ? 11 : calendarMonth - 1;
+        const dateStr = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        setCalendarYear(prevYear);
+        setCalendarMonth(prevMonth);
+        handleSelectDate(dateStr);
+    };
+
+    const handleSelectNextMonthDay = (day) => {
+        const nextYear = calendarMonth === 11 ? calendarYear + 1 : calendarYear;
+        const nextMonth = calendarMonth === 11 ? 0 : calendarMonth + 1;
+        const dateStr = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        setCalendarYear(nextYear);
+        setCalendarMonth(nextMonth);
+        handleSelectDate(dateStr);
+    };
+
+    const handleGoToday = () => {
+        const today = getTodayDateStr();
+        setSelectedDate(today);
+        fetchStatusAndStats(today);
+        const now = new Date();
+        setCalendarYear(now.getFullYear());
+        setCalendarMonth(now.getMonth());
+        setCalendarOpen(false);
+    };
+
+    // Calculate calendar days grid
+    const daysInCurrentMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const firstDayIndex = new Date(calendarYear, calendarMonth, 1).getDay(); // 0 for Sunday
+    const daysInPrevMonth = new Date(calendarYear, calendarMonth, 0).getDate();
+
+    const prevMonthDays = [];
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+        prevMonthDays.push({ day: daysInPrevMonth - i });
+    }
+
+    const currentMonthDays = [];
+    for (let d = 1; d <= daysInCurrentMonth; d++) {
+        const mStr = String(calendarMonth + 1).padStart(2, '0');
+        const dStr = String(d).padStart(2, '0');
+        currentMonthDays.push({
+            day: d,
+            dateStr: `${calendarYear}-${mStr}-${dStr}`
+        });
+    }
+
+    const totalSlots = Math.ceil((prevMonthDays.length + currentMonthDays.length) / 7) * 7;
+    const remainingSlots = totalSlots - (prevMonthDays.length + currentMonthDays.length);
+    const nextMonthDays = [];
+    for (let d = 1; d <= remainingSlots; d++) {
+        nextMonthDays.push({ day: d });
+    }
+
+    const selectedCoordObj = COORDINATOR_LIST.find(c => c.name === coordinator) || {
+        name: coordinator === 'Other' ? (customCoordinator || 'Custom Name...') : coordinator,
+        role: 'Field Operative',
+        image: null
+    };
 
     // Play Web Audio Sound (No external asset dependency)
     const playSound = (type = 'success') => {
@@ -316,29 +483,85 @@ const AdminQRScanner = () => {
             {/* Header / Active Slot Ribbon */}
             <div className="scanner-control-bar">
                 <div className="coordinator-selector-group">
-                    <span className="control-label"><FaUserTie /> Active Coordinator:</span>
-                    <select
-                        value={coordinator}
-                        onChange={(e) => setCoordinator(e.target.value)}
-                        className="coordinator-select"
-                    >
-                        {[...Array(10)].map((_, i) => (
-                            <option key={i} value={`Coordinator ${i + 1}`}>
-                                Coordinator #{i + 1}
-                            </option>
-                        ))}
-                        <option value="Main Mess Head">Main Mess Head</option>
-                        <option value="Canteen Incharge">Canteen Incharge</option>
-                        <option value="Other">Custom Name...</option>
-                    </select>
+                    <span className="control-label">
+                        <FaUserTie className="control-label-icon" /> Active Coordinator:
+                    </span>
+
+                    <div className="custom-coord-dropdown-container" ref={dropdownRef}>
+                        <button
+                            type="button"
+                            className={`custom-coord-trigger ${dropdownOpen ? 'open' : ''}`}
+                            onClick={() => setDropdownOpen(prev => !prev)}
+                            aria-haspopup="listbox"
+                            aria-expanded={dropdownOpen}
+                        >
+                            <div className="coord-trigger-content">
+                                {selectedCoordObj?.image ? (
+                                    <img src={selectedCoordObj.image} alt={coordinator} className="coord-trigger-avatar" />
+                                ) : (
+                                    <span className="coord-trigger-icon-badge"><FaUser /></span>
+                                )}
+                                <span className="coord-trigger-name">
+                                    {coordinator === 'Other' ? (customCoordinator || 'Custom Name...') : coordinator}
+                                </span>
+                            </div>
+                            <span className="coord-trigger-chevron">
+                                {dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
+                            </span>
+                        </button>
+
+                        {dropdownOpen && (
+                            <div className="custom-coord-dropdown-menu" role="listbox">
+                                <div className="custom-coord-dropdown-header">
+                                    <span>SELECT ACTIVE COORDINATOR</span>
+                                </div>
+                                <div className="custom-coord-dropdown-list">
+                                    {COORDINATOR_LIST.map((c) => {
+                                        const isSelected = c.name === coordinator || (c.id === 'other' && coordinator === 'Other');
+                                        return (
+                                            <button
+                                                key={c.id}
+                                                type="button"
+                                                className={`coord-dropdown-item ${isSelected ? 'selected' : ''}`}
+                                                onClick={() => {
+                                                    if (c.id === 'other') {
+                                                        setCoordinator('Other');
+                                                    } else {
+                                                        setCoordinator(c.name);
+                                                    }
+                                                    setDropdownOpen(false);
+                                                }}
+                                            >
+                                                <div className="coord-item-left">
+                                                    {c.image ? (
+                                                        <img src={c.image} alt={c.name} className="coord-item-avatar" />
+                                                    ) : (
+                                                        <div className="coord-item-avatar-placeholder">
+                                                            <FaUser />
+                                                        </div>
+                                                    )}
+                                                    <div className="coord-item-text">
+                                                        <div className="coord-item-name">{c.name}</div>
+                                                        <div className="coord-item-role">{c.role}</div>
+                                                    </div>
+                                                </div>
+                                                {isSelected && <FaCheck className="coord-item-check" />}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     {coordinator === 'Other' && (
                         <input
                             type="text"
-                            placeholder="Enter your name"
+                            placeholder="Enter custom coordinator name..."
                             value={customCoordinator}
                             onChange={(e) => setCustomCoordinator(e.target.value)}
                             className="custom-coord-input"
+                            autoFocus
                         />
                     )}
                 </div>
@@ -385,7 +608,11 @@ const AdminQRScanner = () => {
             {/* 📷 Central Camera Viewfinder with Futuristic Corner Brackets (Matching Image 4) */}
             <div className="viewfinder-main-wrapper">
                 <div className="viewfinder-container">
-                    <div id="qr-reader-viewport" className="qr-viewport"></div>
+                    <div 
+                        id="qr-reader-viewport" 
+                        className="qr-viewport"
+                        style={{ display: scanning ? 'flex' : 'none' }}
+                    ></div>
 
                     {/* Futuristic Corner Brackets */}
                     <div className="vf-corner top-left"></div>
@@ -546,18 +773,109 @@ const AdminQRScanner = () => {
             <div className="date-meal-filter-bar">
                 <div className="date-filter-left">
                     <span className="control-label">📅 Date Logs:</span>
-                    <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => {
-                            const newDate = e.target.value;
-                            if (newDate) {
-                                setSelectedDate(newDate);
-                                fetchStatusAndStats(newDate);
-                            }
-                        }}
-                        className="meal-date-picker"
-                    />
+                    <div className="cyber-date-picker-wrap" ref={calendarRef}>
+                        <button
+                            type="button"
+                            className={`cyber-date-trigger-btn ${calendarOpen ? 'open' : ''}`}
+                            onClick={toggleCalendar}
+                            aria-haspopup="dialog"
+                            aria-expanded={calendarOpen}
+                        >
+                            <span className="cyber-date-display">{formatDisplayDate(selectedDate)}</span>
+                            <span className="cyber-date-chevron">{calendarOpen ? <FaChevronUp /> : <FaChevronDown />}</span>
+                        </button>
+
+                        {calendarOpen && (
+                            <div className="cyber-calendar-popover" role="dialog" aria-label="Select Date">
+                                <div className="cyber-cal-header">
+                                    <button
+                                        type="button"
+                                        className="cyber-cal-nav-btn"
+                                        onClick={handlePrevMonth}
+                                        title="Previous Month"
+                                    >
+                                        <FaChevronLeft />
+                                    </button>
+                                    <div className="cyber-cal-title">
+                                        <span className="cyber-cal-month">{MONTH_NAMES[calendarMonth]}</span>
+                                        <span className="cyber-cal-year">{calendarYear}</span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="cyber-cal-nav-btn"
+                                        onClick={handleNextMonth}
+                                        title="Next Month"
+                                    >
+                                        <FaChevronRight />
+                                    </button>
+                                </div>
+
+                                <div className="cyber-cal-weekdays">
+                                    {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
+                                        <span key={d} className="cyber-cal-weekday">{d}</span>
+                                    ))}
+                                </div>
+
+                                <div className="cyber-cal-days-grid">
+                                    {prevMonthDays.map((p, idx) => (
+                                        <button
+                                            key={`prev-${idx}`}
+                                            type="button"
+                                            className="cyber-cal-day-cell outside-month"
+                                            onClick={() => handleSelectPrevMonthDay(p.day)}
+                                        >
+                                            {p.day}
+                                        </button>
+                                    ))}
+
+                                    {currentMonthDays.map((item) => {
+                                        const isSelected = item.dateStr === selectedDate;
+                                        const isToday = item.dateStr === todayStr;
+                                        return (
+                                            <button
+                                                key={item.dateStr}
+                                                type="button"
+                                                className={`cyber-cal-day-cell ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''}`}
+                                                onClick={() => handleSelectDate(item.dateStr)}
+                                            >
+                                                <span>{item.day}</span>
+                                                {isToday && !isSelected && <span className="today-dot"></span>}
+                                            </button>
+                                        );
+                                    })}
+
+                                    {nextMonthDays.map((n, idx) => (
+                                        <button
+                                            key={`next-${idx}`}
+                                            type="button"
+                                            className="cyber-cal-day-cell outside-month"
+                                            onClick={() => handleSelectNextMonthDay(n.day)}
+                                        >
+                                            {n.day}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="cyber-cal-footer">
+                                    <button
+                                        type="button"
+                                        className="cyber-cal-foot-btn close-btn"
+                                        onClick={() => setCalendarOpen(false)}
+                                    >
+                                        Close
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="cyber-cal-foot-btn today-btn"
+                                        onClick={handleGoToday}
+                                    >
+                                        Today
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <button
                         className={`btn-date-today ${selectedDate === getTodayDateStr() ? 'active' : ''}`}
                         onClick={() => {

@@ -34,11 +34,12 @@ import FoodScannerPage from "./Pages/FoodScannerPage";
 import BreakTimer from "./Pages/BreakTimer";
 import EventDayAdmin from "./Pages/EventDayAdmin";
 import AdminMaintenance from "./Pages/AdminMaintenance";
+import authStorage from "./utils/authStorage";
 
 // Security Protected Guard: Block unauthorized access without valid session token
 const ProtectedDutyRoute = ({ children }) => {
-  const token = typeof window !== 'undefined' ? sessionStorage.getItem('adminToken') : null;
-  if (!token) {
+  const session = authStorage.getAdminSession();
+  if (!session?.token) {
     return <Navigate to="/coordinator" replace />;
   }
   return children;
@@ -47,6 +48,11 @@ const ProtectedDutyRoute = ({ children }) => {
 function App() {
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
+
+  // Sync persistent JWT sessions on application mount
+  useEffect(() => {
+    authStorage.syncSessions();
+  }, []);
 
   // Detect whether running inside the Capacitor Android APK or in Coordinator App mode
   const [isAppMode, setIsAppMode] = useState(() => {

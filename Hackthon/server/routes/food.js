@@ -301,6 +301,18 @@ router.post('/scan', async (req, res) => {
 
         await newScan.save();
 
+        try {
+            const io = req.app.get('io');
+            if (io) {
+                io.emit('meal-scanned', {
+                    participantId: newScan.participantId,
+                    teamId: newScan.teamId,
+                    participantName: newScan.participantName,
+                    mealType: newScan.mealType
+                });
+            }
+        } catch (_) {}
+
         return res.json({
             success: true,
             status: 'APPROVED',
@@ -375,6 +387,44 @@ router.post('/participant-pass', async (req, res) => {
         }
 
         const dateStr = getTodayDateStr();
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+        const escapeRegex = (str) => String(str || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        // Helper to find all scans for a member (by pid regex, teamId + name, dateStr or last 24h)
+        const findScans = async (pid, memberName) => {
+            const basePid = pid.replace(/-(L|LEADER)$/i, '');
+            const isLeader = /-(L|LEADER)$/i.test(pid);
+            const safeBase = escapeRegex(basePid);
+            const pidRegex = isLeader 
+                ? new RegExp(`^${safeBase}-(L|LEADER)$`, 'i')
+                : new RegExp(`^${escapeRegex(pid)}$`, 'i');
+
+            const teamIdMatches = [String(team._id)];
+            if (team.teamId) teamIdMatches.push(String(team.teamId));
+
+            const nameConditions = memberName ? [
+                { teamId: { $in: teamIdMatches }, participantName: new RegExp(`^${escapeRegex(memberName)}$`, 'i') },
+                { teamName: new RegExp(`^${escapeRegex(team.teamName)}$`, 'i'), participantName: new RegExp(`^${escapeRegex(memberName)}$`, 'i') }
+            ] : [];
+
+            return await MealScan.find({
+                $and: [
+                    {
+                        $or: [
+                            { participantId: { $regex: pidRegex } },
+                            ...nameConditions
+                        ]
+                    },
+                    {
+                        $or: [
+                            { dateStr: dateStr },
+                            { scannedAt: { $gte: twentyFourHoursAgo } }
+                        ]
+                    }
+                ]
+            });
+        };
 
         // Build passes for Leader + Members
         const participants = [];
@@ -387,7 +437,7 @@ router.post('/participant-pass', async (req, res) => {
             margin: 4, 
             width: 400 
         });
-        const leaderScans = await MealScan.find({ participantId: leaderPid, dateStr });
+        const leaderScans = await findScans(leaderPid, team.leaderName);
 
         participants.push({
             participantId: leaderPid,
@@ -399,9 +449,9 @@ router.post('/participant-pass', async (req, res) => {
             qrCodeUrl: leaderQrUrl,
             qrData: leaderQrPayload,
             todayMeals: {
-                breakfast: leaderScans.some(s => s.mealType === 'BREAKFAST'),
-                lunch: leaderScans.some(s => s.mealType === 'LUNCH'),
-                dinner: leaderScans.some(s => s.mealType === 'DINNER')
+                breakfast: leaderScans.some(s => (s.mealType || '').toUpperCase() === 'BREAKFAST'),
+                lunch: leaderScans.some(s => (s.mealType || '').toUpperCase() === 'LUNCH'),
+                dinner: leaderScans.some(s => (s.mealType || '').toUpperCase() === 'DINNER')
             }
         });
 
@@ -416,7 +466,7 @@ router.post('/participant-pass', async (req, res) => {
                     margin: 4, 
                     width: 400 
                 });
-                const memScans = await MealScan.find({ participantId: memPid, dateStr });
+                const memScans = await findScans(memPid, mem.name);
 
                 participants.push({
                     participantId: memPid,
@@ -428,9 +478,9 @@ router.post('/participant-pass', async (req, res) => {
                     qrCodeUrl: memQrUrl,
                     qrData: memQrPayload,
                     todayMeals: {
-                        breakfast: memScans.some(s => s.mealType === 'BREAKFAST'),
-                        lunch: memScans.some(s => s.mealType === 'LUNCH'),
-                        dinner: memScans.some(s => s.mealType === 'DINNER')
+                        breakfast: memScans.some(s => (s.mealType || '').toUpperCase() === 'BREAKFAST'),
+                        lunch: memScans.some(s => (s.mealType || '').toUpperCase() === 'LUNCH'),
+                        dinner: memScans.some(s => (s.mealType || '').toUpperCase() === 'DINNER')
                     }
                 });
             }

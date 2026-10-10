@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Registration = require('../models/Registration');
 const sendEmail = require('../utils/email');
+const { signTeamToken } = require('../utils/authMiddleware');
 
 // Configurable Problem Statement edit deadline (e.g. Oct 25, 2026 23:59 IST)
 const PS_CHANGE_DEADLINE = new Date('2026-10-25T23:59:59+05:30');
@@ -136,8 +137,11 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Incorrect password. Try using "Forgot Password" if you lost it.' });
         }
 
+        const token = signTeamToken(team);
+
         res.json({
             success: true,
+            token,
             team: {
                 id: team._id,
                 teamId: team.teamId || `SQUAD${String(team._id).slice(-3).toUpperCase()}`,

@@ -30,7 +30,7 @@ const AdminMaintenance = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     const fetchData = async () => {
-        const token = sessionStorage.getItem('adminToken');
+            const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
         if (!token) return;
         
         try {
@@ -97,7 +97,7 @@ const AdminMaintenance = () => {
 
     const handleUpdateEntry = async (id, updates) => {
         try {
-            const token = sessionStorage.getItem('adminToken');
+                const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
             const res = await fetch(`${API_URL}/api/admin/update-registration/${id}`, {
                 method: 'PUT',
                 headers: {

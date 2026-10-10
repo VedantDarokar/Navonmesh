@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaUserShield, FaUsers, FaQrcode, FaLock, FaSave, FaSignOutAlt, FaPlus, FaTrash, FaCheckCircle, FaExclamationTriangle, FaUtensils, FaClock, FaDownload } from 'react-icons/fa';
 import '../Styles/team_dashboard.css';
 import '../Styles/team_pass.css';
+import authStorage from '../utils/authStorage';
 
 const TeamDashboard = () => {
     const navigate = useNavigate();
@@ -33,17 +34,12 @@ const TeamDashboard = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     useEffect(() => {
-        const raw = sessionStorage.getItem('teamData');
-        if (!raw) {
+        const teamSession = authStorage.getTeamSession();
+        if (!teamSession?.teamData) {
             navigate('/team-login');
             return;
         }
-        try {
-            const data = JSON.parse(raw);
-            loadTeamProfile(data.id || data._id);
-        } catch (e) {
-            navigate('/team-login');
-        }
+        loadTeamProfile(teamSession.teamData.id || teamSession.teamData._id);
     }, []);
 
     const loadTeamProfile = async (id) => {
@@ -52,7 +48,11 @@ const TeamDashboard = () => {
             const data = await res.json();
             if (res.ok && data.success) {
                 setTeam(data.team);
-                sessionStorage.setItem('teamData', JSON.stringify(data.team));
+                authStorage.setTeamSession({
+                    teamToken: localStorage.getItem('teamToken') || sessionStorage.getItem('teamToken'),
+                    teamData: data.team,
+                    teamId: data.team.teamId
+                });
 
                 // Populate form
                 setTeamName(data.team.teamName || '');
@@ -182,9 +182,7 @@ const TeamDashboard = () => {
     };
 
     const handleLogout = () => {
-        sessionStorage.removeItem('teamToken');
-        sessionStorage.removeItem('teamData');
-        sessionStorage.removeItem('teamId');
+        authStorage.clearTeamSession();
         navigate('/team-login');
     };
 

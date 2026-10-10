@@ -59,7 +59,7 @@ const BreakTimer = () => {
 
     const updateServer = async (updates) => {
         try {
-            const token = sessionStorage.getItem('adminToken');
+            const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
             await fetch(`${API_URL}/api/admin/timer/update`, {
                 method: 'POST',
                 headers: {
@@ -75,7 +75,7 @@ const BreakTimer = () => {
     };
 
     const handleActionRequest = (action) => {
-        const token = sessionStorage.getItem('adminToken');
+        const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
         if (!token) {
             setError('ADMIN SESSION EXPIRED. PLEASE RE-LOGIN.');
             return;

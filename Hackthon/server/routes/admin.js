@@ -12,6 +12,7 @@ const CoordinatorTask = require('../models/CoordinatorTask');
 
 const coreMembersUtil = require('../utils/coreMembers');
 const accessControl = require('../utils/accessControl');
+const { isValidAdminAuth, signCoordinatorToken } = require('../utils/authMiddleware');
 
 router.post('/login', (req, res) => {
     const { id, password } = req.body;
@@ -58,9 +59,10 @@ router.post('/login', (req, res) => {
     }
 
     if (adminUser) {
+        const token = signCoordinatorToken(adminUser);
         return res.json({
             success: true,
-            token: 'admin_secret_token_navonmesh',
+            token,
             adminInfo: {
                 id: adminUser.id || cleanId,
                 name: adminUser.name,
@@ -73,11 +75,20 @@ router.post('/login', (req, res) => {
     }
 });
 
+// GET /api/admin/verify-token - Persistent session validity check
+router.get('/verify-token', (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!isValidAdminAuth(authHeader)) {
+        return res.status(401).json({ valid: false, message: 'Session expired or invalid' });
+    }
+    res.json({ valid: true });
+});
+
 // GET Access Control Status (Master Admin Only)
 router.get('/access-control', (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+    if (!isValidAdminAuth(authHeader) || adminId !== 'nihal.navonmesh') {
         return res.status(403).json({ error: 'Unauthorized: Only Master Admin (nihal.navonmesh) can view access control.' });
     }
     const config = accessControl.getAccessConfig();
@@ -88,7 +99,7 @@ router.get('/access-control', (req, res) => {
 router.post('/access-control/toggle-lockdown', (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+    if (!isValidAdminAuth(authHeader) || adminId !== 'nihal.navonmesh') {
         return res.status(403).json({ error: 'Unauthorized: Only Master Admin (nihal.navonmesh) can manage lockdown.' });
     }
     const { enabled } = req.body;
@@ -100,7 +111,7 @@ router.post('/access-control/toggle-lockdown', (req, res) => {
 router.post('/access-control/block-id', (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+    if (!isValidAdminAuth(authHeader) || adminId !== 'nihal.navonmesh') {
         return res.status(403).json({ error: 'Unauthorized: Only Master Admin (nihal.navonmesh) can block logins.' });
     }
     const { targetId, block } = req.body;
@@ -111,7 +122,7 @@ router.post('/access-control/block-id', (req, res) => {
 // GET Core Members (Only nihal.navonmesh has clearance to view cleartext passwords)
 router.get('/core-members', (req, res) => {
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
     const requesterId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
@@ -135,7 +146,7 @@ router.get('/core-members', (req, res) => {
 // POST Core Members Upload / Update
 router.post('/core-members/upload', (req, res) => {
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -171,7 +182,7 @@ router.post('/core-members/upload', (req, res) => {
 // DELETE Core Members Clear
 router.delete('/core-members/clear', (req, res) => {
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
     coreMembersUtil.saveCoreMembers([]);
@@ -199,7 +210,7 @@ router.post('/shift-to-2026', async (req, res) => {
 router.get('/data', async (req, res) => {
     // Auth Check
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -272,7 +283,7 @@ router.get('/data', async (req, res) => {
 router.post('/send-confirmation/:id', async (req, res) => {
     // Auth Check
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -378,7 +389,7 @@ router.post('/send-confirmation/:id', async (req, res) => {
 router.post('/cultural/send-confirmation/:id', async (req, res) => {
     // Auth Check
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -477,7 +488,7 @@ router.post('/cultural/send-confirmation/:id', async (req, res) => {
 router.post('/accommodation/send-confirmation/:id', async (req, res) => {
     // Auth Check
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -661,7 +672,7 @@ function formatEmailBodyHtml(rawText) {
 router.post('/send-bulk-email', async (req, res) => {
     // Auth Check
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -1047,7 +1058,7 @@ router.post('/send-bulk-email', async (req, res) => {
 router.put('/update-registration/:id', async (req, res) => {
     // Auth Check
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 
@@ -1082,7 +1093,7 @@ router.post('/committee/add', async (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
 
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+    if (!isValidAdminAuth(authHeader) || adminId !== 'nihal.navonmesh') {
         return res.status(401).json({ error: 'Unauthorized Access. Only Master Admin (nihal.navonmesh) can add members.' });
     }
 
@@ -1100,7 +1111,7 @@ router.delete('/committee/:id', async (req, res) => {
     const authHeader = req.headers.authorization;
     const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
 
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+    if (!isValidAdminAuth(authHeader) || adminId !== 'nihal.navonmesh') {
         return res.status(401).json({ error: 'Unauthorized Access. Only Master Admin (nihal.navonmesh) can remove members.' });
     }
 
@@ -1128,7 +1139,7 @@ router.get('/timer', async (req, res) => {
 
 router.post('/timer/update', async (req, res) => {
     const authHeader = req.headers.authorization;
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
+    if (!isValidAdminAuth(authHeader)) {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
 

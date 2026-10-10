@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { 
     FaShieldAlt, FaUserCheck, FaBell, FaCheckCircle, FaExclamationTriangle, 
     FaTasks, FaQrcode, FaClock, FaChair, FaChartBar, FaSync, FaUtensils, 
@@ -17,10 +18,29 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
     // Duty Tabs: 'hub' | 'scanner' | 'timer' | 'seats' | 'issues' | 'admin_full'
     const [dutyTab, setDutyTab] = useState('hub');
 
+    const dutyTabRef = useRef(dutyTab);
+    const showAssignModalRef = useRef(false);
+    const showAlertModalRef = useRef(false);
+
+    useEffect(() => {
+        dutyTabRef.current = dutyTab;
+    }, [dutyTab]);
+
+    const navigateToTab = (tab) => {
+        if (tab !== dutyTab) {
+            try {
+                if (typeof window !== 'undefined' && window.history) {
+                    window.history.pushState({ dutyTab: tab }, '');
+                }
+            } catch (e) {}
+            setDutyTab(tab);
+        }
+    };
+
     // Coordinator Identity
-    const adminName = sessionStorage.getItem('adminName') || 'Coordinator';
-    const adminSubRole = sessionStorage.getItem('adminSubRole') || 'Field Coordinator';
-    const adminId = sessionStorage.getItem('adminId') || 'nihal.navonmesh';
+    const adminName = localStorage.getItem('adminName') || sessionStorage.getItem('adminName') || 'Coordinator';
+    const adminSubRole = localStorage.getItem('adminSubRole') || sessionStorage.getItem('adminSubRole') || 'Field Coordinator';
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId') || 'nihal.navonmesh';
     const profile = getCoordinatorProfile(adminId);
 
     // Tasks & Alerts State
@@ -30,8 +50,73 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
     const [showTaskAlertModal, setShowTaskAlertModal] = useState(false);
     const [alertDismissed, setAlertDismissed] = useState(false);
 
+    useEffect(() => {
+        showAlertModalRef.current = showTaskAlertModal;
+    }, [showTaskAlertModal]);
+
     // Master Admin Task Assignment Modal State (Nihal Kankal)
     const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
+
+    useEffect(() => {
+        showAssignModalRef.current = showAssignTaskModal;
+    }, [showAssignTaskModal]);
+
+    // ANDROID HARDWARE BACK BUTTON & BROWSER BACK HANDLER:
+    // If on ANY tab other than Duty Hub ('hub'), redirect to Duty Hub.
+    // If on Duty Hub, close/exit the app!
+    useEffect(() => {
+        let listenerHandle = null;
+
+        const handleBackAction = () => {
+            // 1. Close open modals first
+            if (showAssignModalRef.current) {
+                setShowAssignTaskModal(false);
+                return;
+            }
+            if (showAlertModalRef.current) {
+                setShowTaskAlertModal(false);
+                return;
+            }
+
+            // 2. If anywhere other than Duty Hub, return to Duty Hub ('hub')
+            if (dutyTabRef.current !== 'hub') {
+                setDutyTab('hub');
+                return;
+            }
+
+            // 3. If on Duty Hub ('hub'), close the app!
+            try {
+                CapacitorApp.exitApp();
+            } catch (err) {
+                console.warn('exitApp called outside native environment:', err);
+            }
+        };
+
+        const setupBackListener = async () => {
+            try {
+                listenerHandle = await CapacitorApp.addListener('backButton', () => {
+                    handleBackAction();
+                });
+            } catch (err) {
+                console.warn('Capacitor backButton setup:', err);
+            }
+        };
+
+        setupBackListener();
+
+        const onPopState = () => {
+            handleBackAction();
+        };
+
+        window.addEventListener('popstate', onPopState);
+
+        return () => {
+            if (listenerHandle?.remove) {
+                listenerHandle.remove();
+            }
+            window.removeEventListener('popstate', onPopState);
+        };
+    }, []);
     const [newTaskData, setNewTaskData] = useState({
         assignedTo: 'all',
         title: '',
@@ -358,46 +443,48 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             )}
 
             {/* ---------------------------------------------------- */}
-            {/* SUB-NAVIGATION BAR FOR COORDINATORS                  */}
+            {/* SUB-NAVIGATION BAR FOR COORDINATORS (DUTY HUB)       */}
             {/* ---------------------------------------------------- */}
-            <div className="coor-duty-nav">
-                <button 
-                    className={`coor-nav-pill ${dutyTab === 'hub' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('hub')}
-                >
-                    <FaTasks /> Duty Hub {pendingTasksCount > 0 && <span className="nav-badge-alert">{pendingTasksCount}</span>}
-                </button>
-                <button 
-                    className={`coor-nav-pill ${dutyTab === 'scanner' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('scanner')}
-                >
-                    <FaQrcode /> Scanner
-                </button>
-                <button 
-                    className={`coor-nav-pill ${dutyTab === 'timer' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('timer')}
-                >
-                    <FaClock /> Timer
-                </button>
-                <button 
-                    className={`coor-nav-pill ${dutyTab === 'seats' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('seats')}
-                >
-                    <FaChair /> Seating
-                </button>
-                <button 
-                    className={`coor-nav-pill ${dutyTab === 'issues' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('issues')}
-                >
-                    <FaExclamationTriangle /> Distress {stats.activeIssues > 0 && <span className="nav-badge-urgent">{stats.activeIssues}</span>}
-                </button>
-                <button 
-                    className={`coor-nav-pill ${dutyTab === 'admin_full' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('admin_full')}
-                >
-                    <FaChartBar /> Control
-                </button>
-            </div>
+            {dutyTab === 'hub' && (
+                <div className="coor-duty-nav">
+                    <button 
+                        className={`coor-nav-pill ${dutyTab === 'hub' ? 'active' : ''}`}
+                        onClick={() => navigateToTab('hub')}
+                    >
+                        <FaTasks /> Duty Hub {pendingTasksCount > 0 && <span className="nav-badge-alert">{pendingTasksCount}</span>}
+                    </button>
+                    <button 
+                        className={`coor-nav-pill ${dutyTab === 'scanner' ? 'active' : ''}`}
+                        onClick={() => navigateToTab('scanner')}
+                    >
+                        <FaQrcode /> Scanner
+                    </button>
+                    <button 
+                        className={`coor-nav-pill ${dutyTab === 'timer' ? 'active' : ''}`}
+                        onClick={() => navigateToTab('timer')}
+                    >
+                        <FaClock /> Timer
+                    </button>
+                    <button 
+                        className={`coor-nav-pill ${dutyTab === 'seats' ? 'active' : ''}`}
+                        onClick={() => navigateToTab('seats')}
+                    >
+                        <FaChair /> Seating
+                    </button>
+                    <button 
+                        className={`coor-nav-pill ${dutyTab === 'issues' ? 'active' : ''}`}
+                        onClick={() => navigateToTab('issues')}
+                    >
+                        <FaExclamationTriangle /> Distress {stats.activeIssues > 0 && <span className="nav-badge-urgent">{stats.activeIssues}</span>}
+                    </button>
+                    <button 
+                        className={`coor-nav-pill ${dutyTab === 'admin_full' ? 'active' : ''}`}
+                        onClick={() => navigateToTab('admin_full')}
+                    >
+                        <FaChartBar /> Control
+                    </button>
+                </div>
+            )}
 
             {/* ==================================================== */}
             {/* VIEW 1: 📋 DUTY HUB (MATCHING IMAGE 3 MOCKUP)       */}
@@ -639,7 +726,7 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             {/* VIEW 4: 🪑 WORKSTATIONS & SEATING                   */}
             {/* ==================================================== */}
             {dutyTab === 'seats' && (
-                <div className="coor-pane-view">
+                <div className="coor-pane-view coor-admin-mobile-wrapper">
                     <EventDayAdmin />
                 </div>
             )}
@@ -713,7 +800,7 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             <nav className="coor-bottom-nav">
                 <button 
                     className={`coor-bottom-tab ${dutyTab === 'hub' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('hub')}
+                    onClick={() => navigateToTab('hub')}
                 >
                     <FaTasks className="bottom-icon" />
                     <span>Duty Hub</span>
@@ -721,28 +808,28 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                 </button>
                 <button 
                     className={`coor-bottom-tab ${dutyTab === 'scanner' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('scanner')}
+                    onClick={() => navigateToTab('scanner')}
                 >
                     <FaQrcode className="bottom-icon" />
                     <span>Scanner</span>
                 </button>
                 <button 
                     className={`coor-bottom-tab ${dutyTab === 'timer' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('timer')}
+                    onClick={() => navigateToTab('timer')}
                 >
                     <FaClock className="bottom-icon" />
                     <span>Timer</span>
                 </button>
                 <button 
                     className={`coor-bottom-tab ${dutyTab === 'seats' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('seats')}
+                    onClick={() => navigateToTab('seats')}
                 >
                     <FaChair className="bottom-icon" />
                     <span>Seating</span>
                 </button>
                 <button 
                     className={`coor-bottom-tab ${dutyTab === 'issues' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('issues')}
+                    onClick={() => navigateToTab('issues')}
                 >
                     <FaExclamationTriangle className="bottom-icon" />
                     <span>Distress</span>
@@ -750,7 +837,7 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                 </button>
                 <button 
                     className={`coor-bottom-tab ${dutyTab === 'admin_full' ? 'active' : ''}`}
-                    onClick={() => setDutyTab('admin_full')}
+                    onClick={() => navigateToTab('admin_full')}
                 >
                     <FaChartBar className="bottom-icon" />
                     <span>Control</span>

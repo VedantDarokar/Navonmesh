@@ -40,6 +40,15 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
     const [issues, setIssues] = useState([]);
     const [loadingIssues, setLoadingIssues] = useState(false);
 
+    // Live Meal Distribution Stats State
+    const [mealStats, setMealStats] = useState({
+        breakfast: 0,
+        lunch: 0,
+        dinner: 0,
+        total: 0,
+        dateStr: ''
+    });
+
     const API_URL = getApiUrl();
 
     // Fetch Assigned Tasks by Admin
@@ -83,6 +92,26 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
         }
     };
 
+    // Fetch Live Meal Distribution Stats
+    const fetchMealStats = async () => {
+        try {
+            const res = await fetch(`${API_URL}/api/food/stats`);
+            const data = await res.json();
+            if (res.ok && data.success && data.counts) {
+                setMealStats({
+                    breakfast: data.counts.breakfast || 0,
+                    lunch: data.counts.lunch || 0,
+                    dinner: data.counts.dinner || 0,
+                    total: data.counts.total || 0,
+                    dateStr: data.dateStr || ''
+                });
+                setStats(prev => ({ ...prev, mealsScanned: data.counts.total || 0 }));
+            }
+        } catch (err) {
+            console.error('Failed to load meal stats:', err);
+        }
+    };
+
     // Mark Task Completed
     const handleToggleTaskStatus = async (taskId, currentStatus) => {
         const nextStatus = currentStatus === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
@@ -117,10 +146,12 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
     useEffect(() => {
         fetchTasks();
         fetchIssues();
+        fetchMealStats();
         const interval = setInterval(() => {
             fetchTasks();
             fetchIssues();
-        }, 15000); // 15-sec background sync
+            fetchMealStats();
+        }, 12000); // 12-sec background sync
         return () => clearInterval(interval);
     }, []);
 
@@ -296,6 +327,49 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                             <span className="stat-progress" onClick={() => setDutyTab('issues')} style={{ cursor: 'pointer', color: '#00f0ff' }}>
                                 View Tickets →
                             </span>
+                        </div>
+                    </div>
+
+                    {/* LIVE MEALS BREAKDOWN CARD (BREAKFAST, LUNCH, DINNER) */}
+                    <div className="coor-meal-overview-card">
+                        <div className="meal-card-header">
+                            <div>
+                                <span className="section-micro-tag">LIVE MESS / CANTEEN COUNTS</span>
+                                <h4 className="meal-card-title">🍱 Participant Meals Served ({mealStats.dateStr || 'Today'})</h4>
+                            </div>
+                            <button className="coor-mini-action-btn" onClick={() => setDutyTab('scanner')}>
+                                Open Scanner ➔
+                            </button>
+                        </div>
+                        <div className="meal-mini-grid">
+                            <div className="meal-mini-pill breakfast">
+                                <span className="mini-icon">🌅</span>
+                                <div className="mini-content">
+                                    <span className="mini-label">Breakfast</span>
+                                    <strong className="mini-val">{mealStats.breakfast}</strong>
+                                </div>
+                            </div>
+                            <div className="meal-mini-pill lunch">
+                                <span className="mini-icon">🍛</span>
+                                <div className="mini-content">
+                                    <span className="mini-label">Lunch</span>
+                                    <strong className="mini-val">{mealStats.lunch}</strong>
+                                </div>
+                            </div>
+                            <div className="meal-mini-pill dinner">
+                                <span className="mini-icon">🌙</span>
+                                <div className="mini-content">
+                                    <span className="mini-label">Dinner</span>
+                                    <strong className="mini-val">{mealStats.dinner}</strong>
+                                </div>
+                            </div>
+                            <div className="meal-mini-pill total">
+                                <span className="mini-icon">🍱</span>
+                                <div className="mini-content">
+                                    <span className="mini-label">Total</span>
+                                    <strong className="mini-val">{mealStats.total}</strong>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

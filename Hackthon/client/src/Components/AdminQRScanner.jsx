@@ -3,10 +3,23 @@ import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { FaQrcode, FaCamera, FaTimes, FaCheckCircle, FaExclamationTriangle, FaSync, FaUtensils, FaUserTie } from 'react-icons/fa';
 import '../Styles/admin_qr_scanner.css';
 
+const getTodayDateStr = () => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
+
 const AdminQRScanner = () => {
     const [coordinator, setCoordinator] = useState('Coordinator 1');
     const [customCoordinator, setCustomCoordinator] = useState('');
     const [overrideMealSlot, setOverrideMealSlot] = useState('AUTO'); // 'AUTO' | 'BREAKFAST' | 'LUNCH' | 'DINNER'
+    const [selectedDate, setSelectedDate] = useState(getTodayDateStr());
+    const [dateHistory, setDateHistory] = useState([]);
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    const [isLockedForNext, setIsLockedForNext] = useState(false);
+
     const [statusData, setStatusData] = useState({
         activeSlot: null,
         activeSlotLabel: 'Checking...',
@@ -27,6 +40,8 @@ const AdminQRScanner = () => {
 
     const html5QrCodeRef = useRef(null);
     const isScanningRef = useRef(false);
+    const isLockedRef = useRef(false);
+    const lastScannedQrRef = useRef('');
     const lastScanTimeRef = useRef(0);
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -62,15 +77,17 @@ const AdminQRScanner = () => {
         }
     };
 
-    // Fetch initial status & stats
-    const fetchStatusAndStats = async () => {
+    // Fetch initial status & stats (supports any selected date)
+    const fetchStatusAndStats = async (dateToFetch = selectedDate) => {
         try {
-            const [statusRes, statsRes] = await Promise.all([
+            const [statusRes, statsRes, histRes] = await Promise.all([
                 fetch(`${API_URL}/api/food/status`),
-                fetch(`${API_URL}/api/food/stats`)
+                fetch(`${API_URL}/api/food/stats?date=${dateToFetch}`),
+                fetch(`${API_URL}/api/food/stats/history`)
             ]);
             const sData = await statusRes.json();
             const stData = await statsRes.json();
+            const hData = await histRes.json();
 
             if (sData.success) {
                 setStatusData(sData);
@@ -79,16 +96,19 @@ const AdminQRScanner = () => {
                 setStats(stData.counts);
                 setRecentScans(stData.recentScans || []);
             }
+            if (hData.success) {
+                setDateHistory(hData.history || []);
+            }
         } catch (err) {
             console.error('Error fetching food data:', err);
         }
     };
 
     useEffect(() => {
-        fetchStatusAndStats();
-        const interval = setInterval(fetchStatusAndStats, 8000);
+        fetchStatusAndStats(selectedDate);
+        const interval = setInterval(() => fetchStatusAndStats(selectedDate), 8000);
         return () => clearInterval(interval);
-    }, []);
+    }, [selectedDate]);
 
     // Start QR Camera Scanner with hardware acceleration and wide scan area
     const startScanner = async () => {
@@ -187,12 +207,33 @@ const AdminQRScanner = () => {
 
     // Handle scanned string
     const handleDecodedQR = (rawText) => {
+        // 1. If scanner is currently paused for reviewing previous scan, block immediately
+        if (isLockedRef.current) return;
+
+        // 2. Prevent camera from immediately detecting the exact same QR again
+        if (lastScannedQrRef.current === rawText) return;
+
         const now = Date.now();
-        // Prevent rapid repeated fire within 2.5s for same code
-        if (now - lastScanTimeRef.current < 2500) return;
+        if (now - lastScanTimeRef.current < 1500) return;
         lastScanTimeRef.current = now;
 
+        // Freeze camera scanning so subsequent frames do not re-scan
+        isLockedRef.current = true;
+        setIsLockedForNext(true);
+        lastScannedQrRef.current = rawText;
+
         submitScan(rawText);
+    };
+
+    // Unlock scanner to proceed to the next participant QR
+    const handleGoForNextQr = () => {
+        setScanResult(null);
+        setIsLockedForNext(false);
+        isLockedRef.current = false;
+        // Keep a short cooldown on the previous QR code so camera does not re-detect same phone if still held
+        setTimeout(() => {
+            lastScannedQrRef.current = '';
+        }, 3000);
     };
 
     // Submit Scan to API
@@ -263,6 +304,9 @@ const AdminQRScanner = () => {
     const handleManualSubmit = (e) => {
         e.preventDefault();
         if (!manualId.trim()) return;
+        isLockedRef.current = true;
+        setIsLockedForNext(true);
+        lastScannedQrRef.current = manualId.trim();
         submitScan(manualId.trim());
         setManualId('');
     };
@@ -313,14 +357,54 @@ const AdminQRScanner = () => {
                     </select>
                 </div>
 
-                <button className="refresh-stats-btn" onClick={fetchStatusAndStats} title="Refresh Live Data">
+                <button className="refresh-stats-btn" onClick={() => fetchStatusAndStats(selectedDate)} title="Refresh Live Data">
                     <FaSync />
                 </button>
             </div>
 
-            {/* Live Count KPI Strip */}
+            {/* 📅 Date Filter & All-Dates Breakdown Bar */}
+            <div className="date-meal-filter-bar">
+                <div className="date-filter-left">
+                    <span className="control-label">📅 Filter Date:</span>
+                    <input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => {
+                            const newDate = e.target.value;
+                            if (newDate) {
+                                setSelectedDate(newDate);
+                                fetchStatusAndStats(newDate);
+                            }
+                        }}
+                        className="meal-date-picker"
+                    />
+                    <button
+                        className={`btn-date-today ${selectedDate === getTodayDateStr() ? 'active' : ''}`}
+                        onClick={() => {
+                            const today = getTodayDateStr();
+                            setSelectedDate(today);
+                            fetchStatusAndStats(today);
+                        }}
+                    >
+                        Today
+                    </button>
+                </div>
+
+                <div className="date-filter-info">
+                    Showing Data For: <strong className="highlight-date">{selectedDate}</strong>
+                </div>
+
+                <button
+                    className="btn-open-history"
+                    onClick={() => setShowHistoryModal(true)}
+                >
+                    📊 All Dates History ({dateHistory.length} Recorded)
+                </button>
+            </div>
+
+            {/* Live Count KPI Strip (Shows counts on selectedDate) */}
             <div className="food-kpi-grid">
-                <div className={`food-kpi-card ${statusData.activeSlot === 'BREAKFAST' ? 'active-slot' : ''}`}>
+                <div className={`food-kpi-card ${statusData.activeSlot === 'BREAKFAST' && selectedDate === getTodayDateStr() ? 'active-slot' : ''}`}>
                     <div className="kpi-icon">🌅</div>
                     <div className="kpi-info">
                         <span className="kpi-title">BREAKFAST</span>
@@ -329,7 +413,7 @@ const AdminQRScanner = () => {
                     </div>
                 </div>
 
-                <div className={`food-kpi-card ${statusData.activeSlot === 'LUNCH' ? 'active-slot' : ''}`}>
+                <div className={`food-kpi-card ${statusData.activeSlot === 'LUNCH' && selectedDate === getTodayDateStr() ? 'active-slot' : ''}`}>
                     <div className="kpi-icon">🍛</div>
                     <div className="kpi-info">
                         <span className="kpi-title">LUNCH</span>
@@ -338,7 +422,7 @@ const AdminQRScanner = () => {
                     </div>
                 </div>
 
-                <div className={`food-kpi-card ${statusData.activeSlot === 'DINNER' ? 'active-slot' : ''}`}>
+                <div className={`food-kpi-card ${statusData.activeSlot === 'DINNER' && selectedDate === getTodayDateStr() ? 'active-slot' : ''}`}>
                     <div className="kpi-icon">🌙</div>
                     <div className="kpi-info">
                         <span className="kpi-title">DINNER</span>
@@ -350,9 +434,9 @@ const AdminQRScanner = () => {
                 <div className="food-kpi-card total-card">
                     <div className="kpi-icon">🍱</div>
                     <div className="kpi-info">
-                        <span className="kpi-title">TOTAL TODAY</span>
+                        <span className="kpi-title">TOTAL MEALS</span>
                         <span className="kpi-value">{stats.total}</span>
-                        <span className="kpi-sub">Meals Distributed</span>
+                        <span className="kpi-sub">{selectedDate === getTodayDateStr() ? 'Distributed Today' : `On ${selectedDate}`}</span>
                     </div>
                 </div>
             </div>
@@ -388,6 +472,19 @@ const AdminQRScanner = () => {
                             <div className="scanner-active-overlay">
                                 <div id="qr-image-scan-helper" style={{ display: 'none' }}></div>
                                 <div className="laser-scan-line"></div>
+
+                                {/* When scan result is awaiting review, overlay pause banner */}
+                                {isLockedForNext && (
+                                    <div className="scanner-locked-indicator">
+                                        <div className="locked-pill">
+                                            <span>⏸️ Scanner Paused for Verification</span>
+                                            <button className="btn-locked-next" onClick={handleGoForNextQr}>
+                                                Scan Next QR ➔
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="camera-tools">
                                     <button className="cam-tool-btn" onClick={toggleCameraFacing} title="Flip Camera">
                                         Flip Camera ({cameraFacing === 'environment' ? 'Rear' : 'Front'})
@@ -436,7 +533,7 @@ const AdminQRScanner = () => {
                                     <FaExclamationTriangle className="result-icon reject" />
                                 )}
                                 <h4>{scanResult.title}</h4>
-                                <button className="close-result-btn" onClick={() => setScanResult(null)}>
+                                <button className="close-result-btn" onClick={handleGoForNextQr} title="Dismiss and Scan Next">
                                     <FaTimes />
                                 </button>
                             </div>
@@ -495,6 +592,16 @@ const AdminQRScanner = () => {
                                     ✅ VERIFIED • SERVE 1 MEAL PLATE
                                 </div>
                             )}
+
+                            {/* ➡️ PROMINENT GO FOR NEXT QR ACTION BUTTON */}
+                            <div className="next-qr-action-box">
+                                <button className="btn-scan-next-qr" onClick={handleGoForNextQr}>
+                                    <span>➡️ GO FOR NEXT QR (पुढील QR स्कॅन करा)</span>
+                                </button>
+                                <p className="next-qr-hint">
+                                    Scanner paused to prevent re-detecting the same QR. Tap above to scan the next participant.
+                                </p>
+                            </div>
                         </div>
                     ) : (
                         <div className="idle-instruction-box">
@@ -512,13 +619,13 @@ const AdminQRScanner = () => {
                     {/* Recent Scans Table */}
                     <div className="recent-scans-box">
                         <div className="recent-header">
-                            <h5>Recent Scans Today ({recentScans.length})</h5>
-                            <button className="sync-sm-btn" onClick={fetchStatusAndStats}><FaSync /></button>
+                            <h5>Recent Scans ({selectedDate}) • {recentScans.length}</h5>
+                            <button className="sync-sm-btn" onClick={() => fetchStatusAndStats(selectedDate)}><FaSync /></button>
                         </div>
 
                         <div className="recent-scans-scroll">
                             {recentScans.length === 0 ? (
-                                <p className="no-scans-text">No scans recorded yet today.</p>
+                                <p className="no-scans-text">No scans recorded for {selectedDate}.</p>
                             ) : (
                                 <table className="mini-scans-table">
                                     <thead>
@@ -549,6 +656,74 @@ const AdminQRScanner = () => {
                     </div>
                 </div>
             </div>
+
+            {/* 📊 ALL-DATES BREAKDOWN MODAL */}
+            {showHistoryModal && (
+                <div className="meal-history-modal-overlay" onClick={() => setShowHistoryModal(false)}>
+                    <div className="meal-history-modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="history-modal-header">
+                            <div>
+                                <h4 style={{ margin: 0, fontFamily: 'Orbitron, sans-serif', color: '#10b981' }}>
+                                    📅 Date-wise Participant Meal Count History
+                                </h4>
+                                <p style={{ margin: '4px 0 0', color: '#94a3b8', fontSize: '0.8rem' }}>
+                                    How many participants took breakfast, lunch, and dinner on each date
+                                </p>
+                            </div>
+                            <button className="history-close-btn" onClick={() => setShowHistoryModal(false)}>
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div className="history-table-container">
+                            {dateHistory.length === 0 ? (
+                                <p style={{ color: '#94a3b8', textAlign: 'center', padding: '30px' }}>
+                                    No meal records found in database yet.
+                                </p>
+                            ) : (
+                                <table className="date-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>🌅 Breakfast</th>
+                                            <th>🍛 Lunch</th>
+                                            <th>🌙 Dinner</th>
+                                            <th>🍱 Total Meals</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dateHistory.map((item, idx) => (
+                                            <tr key={idx} className={item.dateStr === selectedDate ? 'selected-date-row' : ''}>
+                                                <td className="date-col">
+                                                    <strong>{item.dateStr}</strong>
+                                                    {item.dateStr === getTodayDateStr() && <span className="today-chip">TODAY</span>}
+                                                </td>
+                                                <td><span className="meal-pill breakfast">{item.breakfast}</span></td>
+                                                <td><span className="meal-pill lunch">{item.lunch}</span></td>
+                                                <td><span className="meal-pill dinner">{item.dinner}</span></td>
+                                                <td><span className="meal-pill total">{item.total}</span></td>
+                                                <td>
+                                                    <button
+                                                        className="btn-select-history-date"
+                                                        onClick={() => {
+                                                            setSelectedDate(item.dateStr);
+                                                            fetchStatusAndStats(item.dateStr);
+                                                            setShowHistoryModal(false);
+                                                        }}
+                                                    >
+                                                        {item.dateStr === selectedDate ? 'Viewing ✓' : 'View Logs'}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

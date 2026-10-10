@@ -8,13 +8,13 @@ const Preloader = ({ onLoaded }) => {
     const [fadeOut, setFadeOut] = useState(false);
 
     useEffect(() => {
-        // Fast, smooth initial entrance loader
+        // Minimum time to show loader
         const timer = setTimeout(() => {
             setFadeOut(true);
             setTimeout(() => {
                 if (onLoaded) onLoaded();
-            }, 400);
-        }, 800);
+            }, 800);
+        }, 2500);
 
         return () => clearTimeout(timer);
     }, []);

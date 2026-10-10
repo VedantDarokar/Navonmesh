@@ -97,6 +97,55 @@ router.get('/stats', async (req, res) => {
     }
 });
 
+// GET /api/food/stats/history - Date-wise breakdown of meals across all recorded dates
+router.get('/stats/history', async (req, res) => {
+    try {
+        const history = await MealScan.aggregate([
+            {
+                $group: {
+                    _id: { dateStr: "$dateStr", mealType: "$mealType" },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.dateStr",
+                    meals: {
+                        $push: {
+                            mealType: "$_id.mealType",
+                            count: "$count"
+                        }
+                    },
+                    total: { $sum: "$count" }
+                }
+            },
+            { $sort: { _id: -1 } }
+        ]);
+
+        const formatted = history.map(item => {
+            const dateStr = item._id;
+            let breakfast = 0, lunch = 0, dinner = 0;
+            (item.meals || []).forEach(m => {
+                if (m.mealType === 'BREAKFAST') breakfast = m.count;
+                if (m.mealType === 'LUNCH') lunch = m.count;
+                if (m.mealType === 'DINNER') dinner = m.count;
+            });
+            return {
+                dateStr,
+                breakfast,
+                lunch,
+                dinner,
+                total: item.total
+            };
+        });
+
+        res.json({ success: true, history: formatted });
+    } catch (err) {
+        console.error('Error fetching food history stats:', err);
+        res.status(500).json({ error: 'Failed to fetch food history stats' });
+    }
+});
+
 // POST /api/food/scan - Scan & verify participant QR
 router.post('/scan', async (req, res) => {
     try {

@@ -70,4 +70,21 @@ router.post('/resolve/:id', async (req, res) => {
     }
 });
 
+// @route   PUT /api/issues/:id/resolve
+// @desc    Admin marks an issue as resolved (PUT fallback)
+router.put('/:id/resolve', async (req, res) => {
+    try {
+        const issue = await Issue.findById(req.params.id);
+        if (!issue) {
+            return res.status(404).json({ error: 'Issue not found' });
+        }
+        issue.status = 'resolved';
+        await issue.save();
+        res.status(200).json({ message: 'Issue resolved successfully', issue });
+    } catch (error) {
+        console.error('Error resolving issue:', error);
+        res.status(500).json({ error: 'Server error while resolving issue' });
+    }
+});
+
 module.exports = router;

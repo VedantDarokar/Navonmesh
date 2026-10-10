@@ -342,30 +342,210 @@ const AdminQRScanner = () => {
                         />
                     )}
                 </div>
+            </div>
 
-                <div className="meal-slot-override-group">
-                    <span className="control-label"><FaUtensils /> Meal Slot:</span>
-                    <select
-                        value={overrideMealSlot}
-                        onChange={(e) => setOverrideMealSlot(e.target.value)}
-                        className={`meal-slot-select ${overrideMealSlot !== 'AUTO' ? 'manual-override' : ''}`}
+            {/* 🍱 Meal Slot Selector Pills (Matching Image 4 Mockup) */}
+            <div className="meal-slot-pill-bar">
+                <span className="meal-slot-bar-label">Meal Slot Selector</span>
+                <div className="meal-slot-pill-group">
+                    <button
+                        type="button"
+                        className={`meal-slot-pill ${overrideMealSlot === 'BREAKFAST' || (overrideMealSlot === 'AUTO' && statusData.activeSlot === 'BREAKFAST') ? 'active breakfast' : ''}`}
+                        onClick={() => setOverrideMealSlot('BREAKFAST')}
                     >
-                        <option value="AUTO">AUTO (Clock: {statusData.activeSlotLabel || 'Detecting'})</option>
-                        <option value="BREAKFAST">Force: Breakfast (8:00–9:30 AM)</option>
-                        <option value="LUNCH">Force: Lunch (11:00 AM–2:00 PM)</option>
-                        <option value="DINNER">Force: Dinner (7:00–9:30 PM)</option>
-                    </select>
+                        <span>🌅</span> Breakfast
+                    </button>
+                    <button
+                        type="button"
+                        className={`meal-slot-pill ${overrideMealSlot === 'LUNCH' || (overrideMealSlot === 'AUTO' && statusData.activeSlot === 'LUNCH') ? 'active lunch' : ''}`}
+                        onClick={() => setOverrideMealSlot('LUNCH')}
+                    >
+                        <span>🍛</span> Lunch
+                    </button>
+                    <button
+                        type="button"
+                        className={`meal-slot-pill ${overrideMealSlot === 'DINNER' || (overrideMealSlot === 'AUTO' && statusData.activeSlot === 'DINNER') ? 'active dinner' : ''}`}
+                        onClick={() => setOverrideMealSlot('DINNER')}
+                    >
+                        <span>🌙</span> Dinner
+                    </button>
+                    {overrideMealSlot !== 'AUTO' && (
+                        <button
+                            type="button"
+                            className="meal-slot-pill auto-reset"
+                            onClick={() => setOverrideMealSlot('AUTO')}
+                            title="Reset to Clock Auto-Detect"
+                        >
+                            ↺ Auto ({statusData.activeSlotLabel || 'Clock'})
+                        </button>
+                    )}
                 </div>
+            </div>
 
-                <button className="refresh-stats-btn" onClick={() => fetchStatusAndStats(selectedDate)} title="Refresh Live Data">
+            {/* 📷 Central Camera Viewfinder with Futuristic Corner Brackets (Matching Image 4) */}
+            <div className="viewfinder-main-wrapper">
+                <div className="viewfinder-container">
+                    <div id="qr-reader-viewport" className="qr-viewport"></div>
+
+                    {/* Futuristic Corner Brackets */}
+                    <div className="vf-corner top-left"></div>
+                    <div className="vf-corner top-right"></div>
+                    <div className="vf-corner bottom-left"></div>
+                    <div className="vf-corner bottom-right"></div>
+
+                    {!scanning && (
+                        <div className="scanner-start-overlay">
+                            <div id="qr-image-scan-helper" style={{ display: 'none' }}></div>
+                            <FaQrcode className="big-qr-icon" />
+                            <h3>Mess & Canteen QR Scanner</h3>
+                            <p>Scan participant's dynamic QR code to verify and claim meal.</p>
+                            <button className="start-scan-btn" onClick={startScanner}>
+                                <FaCamera /> START CAMERA SCANNER
+                            </button>
+                            <label className="btn-pick-qr-file">
+                                🖼️ Or Pick QR from Image/Gallery
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleImageUpload}
+                                />
+                            </label>
+                        </div>
+                    )}
+
+                    {scanning && (
+                        <div className="scanner-active-overlay">
+                            <div id="qr-image-scan-helper" style={{ display: 'none' }}></div>
+                            <div className="laser-scan-line"></div>
+
+                            {/* When scan result is awaiting review, overlay pause banner */}
+                            {isLockedForNext && (
+                                <div className="scanner-locked-indicator">
+                                    <div className="locked-pill">
+                                        <span>⏸️ Scanner Paused for Verification</span>
+                                        <button className="btn-locked-next" onClick={handleGoForNextQr}>
+                                            Scan Next QR ➔
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="camera-tools">
+                                <button className="cam-tool-btn" onClick={toggleCameraFacing} title="Flip Camera">
+                                    Flip ({cameraFacing === 'environment' ? 'Rear' : 'Front'})
+                                </button>
+                                <label className="cam-tool-btn" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                    🖼️ File
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        onChange={handleImageUpload}
+                                    />
+                                </label>
+                                <button className="cam-tool-btn stop-btn" onClick={stopScanner}>
+                                    <FaTimes /> Stop
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* 📋 Scan Result Card - Immediately below Viewfinder (Matching Image 4) */}
+            {scanResult && (
+                <div className={`scan-result-card ${scanResult.status.toLowerCase()}`}>
+                    <div className="result-header">
+                        <div className="result-status-title">
+                            {scanResult.status === 'APPROVED' ? (
+                                <>
+                                    <FaCheckCircle className="result-icon success" />
+                                    <span className="status-text approved">VALID MEAL PASS</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FaExclamationTriangle className="result-icon reject" />
+                                    <span className="status-text reject">
+                                        {scanResult.status === 'ALREADY_SCANNED' ? 'ALREADY CLAIMED' : 'INVALID PASS'}
+                                    </span>
+                                </>
+                            )}
+                        </div>
+                        <button className="close-result-btn" onClick={handleGoForNextQr} title="Dismiss and Scan Next">
+                            <FaTimes />
+                        </button>
+                    </div>
+
+                    <p className="result-message">{scanResult.message}</p>
+
+                    {scanResult.scanInfo && (
+                        <div className="result-details-box">
+                            <div className="detail-row">
+                                <span className="d-label">Participant:</span>
+                                <span className="d-val strong">{scanResult.scanInfo.participantName}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span className="d-label">Squad ID:</span>
+                                <span className="d-val squad-id-val">{scanResult.scanInfo.teamName}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span className="d-label">Meal:</span>
+                                <span className="d-val meal-tag">{scanResult.scanInfo.mealType}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span className="d-label">Scanned At:</span>
+                                <span className="d-val time-tag">
+                                    {new Date(scanResult.scanInfo.scannedAt).toLocaleTimeString('en-IN', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit'
+                                    })}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    {scanResult.status === 'ALREADY_SCANNED' && (
+                        <div className="conflict-warning-badge">
+                            ⛔ DO NOT SERVE AGAIN • ALREADY CLAIMED
+                        </div>
+                    )}
+
+                    {/* ➡️ PROMINENT "GO FOR NEXT QR" ACTION (Matching Image 4) */}
+                    <div className="next-qr-action-box">
+                        <div className="next-qr-callout">
+                            <span className="next-qr-english">➔ GO FOR NEXT QR</span>
+                            <span className="next-qr-marathi">(पुढील QR स्कॅन करा)</span>
+                        </div>
+                        <button className="btn-scan-next-qr" onClick={handleGoForNextQr}>
+                            <FaQrcode style={{ marginRight: '8px' }} /> Scan Next
+                        </button>
+                        <p className="next-qr-hint">
+                            Scanner locked so the same QR is not detected twice. Tap above to scan the next participant.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* 📊 Compact Stats Strip (Matching Image 4: "Today: 10 Oct 2026 | Stats: Breakfast: 320 | Lunch: 450 | Dinner: 180") */}
+            <div className="scanner-status-strip">
+                <span className="strip-date">📅 Today: {selectedDate}</span>
+                <span className="strip-separator">|</span>
+                <span className="strip-stat bf">Stats: Breakfast: <strong>{stats.breakfast}</strong></span>
+                <span className="strip-separator">|</span>
+                <span className="strip-stat ln">Lunch: <strong>{stats.lunch}</strong></span>
+                <span className="strip-separator">|</span>
+                <span className="strip-stat dn">Dinner: <strong>{stats.dinner}</strong></span>
+                <button className="strip-sync-btn" onClick={() => fetchStatusAndStats(selectedDate)} title="Refresh Live Data">
                     <FaSync />
                 </button>
             </div>
 
-            {/* 📅 Date Filter & All-Dates Breakdown Bar */}
+            {/* 📅 Date Filter & Historical Logs Bar (On Scroll) */}
             <div className="date-meal-filter-bar">
                 <div className="date-filter-left">
-                    <span className="control-label">📅 Filter Date:</span>
+                    <span className="control-label">📅 Date Logs:</span>
                     <input
                         type="date"
                         value={selectedDate}
@@ -390,270 +570,64 @@ const AdminQRScanner = () => {
                     </button>
                 </div>
 
-                <div className="date-filter-info">
-                    Showing Data For: <strong className="highlight-date">{selectedDate}</strong>
-                </div>
-
                 <button
                     className="btn-open-history"
                     onClick={() => setShowHistoryModal(true)}
                 >
-                    📊 All Dates History ({dateHistory.length} Recorded)
+                    📊 All Dates History ({dateHistory.length} Days)
                 </button>
             </div>
 
-            {/* Live Count KPI Strip (Shows counts on selectedDate) */}
-            <div className="food-kpi-grid">
-                <div className={`food-kpi-card ${statusData.activeSlot === 'BREAKFAST' && selectedDate === getTodayDateStr() ? 'active-slot' : ''}`}>
-                    <div className="kpi-icon">🌅</div>
-                    <div className="kpi-info">
-                        <span className="kpi-title">BREAKFAST</span>
-                        <span className="kpi-value">{stats.breakfast}</span>
-                        <span className="kpi-sub">08:00 AM – 09:30 AM</span>
-                    </div>
+            {/* Manual ID Input fallback */}
+            <form className="manual-scan-form" onSubmit={handleManualSubmit}>
+                <input
+                    type="text"
+                    placeholder="Or enter Participant ID manually (e.g. NM-P-1024)..."
+                    value={manualId}
+                    onChange={(e) => setManualId(e.target.value)}
+                    className="manual-input"
+                />
+                <button type="submit" className="manual-submit-btn" disabled={loading}>
+                    {loading ? 'CHECKING...' : 'VERIFY & REDEEM'}
+                </button>
+            </form>
+
+            {/* Recent Scans Table */}
+            <div className="recent-scans-box">
+                <div className="recent-header">
+                    <h5>Recent Scans ({selectedDate}) • {recentScans.length}</h5>
+                    <button className="sync-sm-btn" onClick={() => fetchStatusAndStats(selectedDate)}><FaSync /></button>
                 </div>
 
-                <div className={`food-kpi-card ${statusData.activeSlot === 'LUNCH' && selectedDate === getTodayDateStr() ? 'active-slot' : ''}`}>
-                    <div className="kpi-icon">🍛</div>
-                    <div className="kpi-info">
-                        <span className="kpi-title">LUNCH</span>
-                        <span className="kpi-value">{stats.lunch}</span>
-                        <span className="kpi-sub">11:00 AM – 02:00 PM</span>
-                    </div>
-                </div>
-
-                <div className={`food-kpi-card ${statusData.activeSlot === 'DINNER' && selectedDate === getTodayDateStr() ? 'active-slot' : ''}`}>
-                    <div className="kpi-icon">🌙</div>
-                    <div className="kpi-info">
-                        <span className="kpi-title">DINNER</span>
-                        <span className="kpi-value">{stats.dinner}</span>
-                        <span className="kpi-sub">07:00 PM – 09:30 PM</span>
-                    </div>
-                </div>
-
-                <div className="food-kpi-card total-card">
-                    <div className="kpi-icon">🍱</div>
-                    <div className="kpi-info">
-                        <span className="kpi-title">TOTAL MEALS</span>
-                        <span className="kpi-value">{stats.total}</span>
-                        <span className="kpi-sub">{selectedDate === getTodayDateStr() ? 'Distributed Today' : `On ${selectedDate}`}</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Scanner Area & Result Modal */}
-            <div className="scanner-main-panel">
-                <div className="camera-viewfinder-column">
-                    <div className="viewfinder-container">
-                        <div id="qr-reader-viewport" className="qr-viewport"></div>
-
-                        {!scanning && (
-                            <div className="scanner-start-overlay">
-                                <div id="qr-image-scan-helper" style={{ display: 'none' }}></div>
-                                <FaQrcode className="big-qr-icon" />
-                                <h3>Mess & Canteen QR Scanner</h3>
-                                <p>Scan participant's dynamic QR code to verify and claim meal.</p>
-                                <button className="start-scan-btn" onClick={startScanner}>
-                                    <FaCamera /> START CAMERA SCANNER
-                                </button>
-                                <label style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '8px', color: '#94a3b8', fontSize: '0.8rem', background: 'rgba(255, 255, 255, 0.05)', padding: '6px 14px', borderRadius: '20px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
-                                    🖼️ Or Pick QR from Image/Gallery
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
-                                        onChange={handleImageUpload}
-                                    />
-                                </label>
-                            </div>
-                        )}
-
-                        {scanning && (
-                            <div className="scanner-active-overlay">
-                                <div id="qr-image-scan-helper" style={{ display: 'none' }}></div>
-                                <div className="laser-scan-line"></div>
-
-                                {/* When scan result is awaiting review, overlay pause banner */}
-                                {isLockedForNext && (
-                                    <div className="scanner-locked-indicator">
-                                        <div className="locked-pill">
-                                            <span>⏸️ Scanner Paused for Verification</span>
-                                            <button className="btn-locked-next" onClick={handleGoForNextQr}>
-                                                Scan Next QR ➔
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="camera-tools">
-                                    <button className="cam-tool-btn" onClick={toggleCameraFacing} title="Flip Camera">
-                                        Flip Camera ({cameraFacing === 'environment' ? 'Rear' : 'Front'})
-                                    </button>
-                                    <label className="cam-tool-btn" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                        🖼️ Scan File
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            style={{ display: 'none' }}
-                                            onChange={handleImageUpload}
-                                        />
-                                    </label>
-                                    <button className="cam-tool-btn stop-btn" onClick={stopScanner}>
-                                        <FaTimes /> Stop
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Manual ID Input fallback */}
-                    <form className="manual-scan-form" onSubmit={handleManualSubmit}>
-                        <input
-                            type="text"
-                            placeholder="Or enter Participant ID manually (e.g. NAV27-SRJ-102-L)..."
-                            value={manualId}
-                            onChange={(e) => setManualId(e.target.value)}
-                            className="manual-input"
-                        />
-                        <button type="submit" className="manual-submit-btn" disabled={loading}>
-                            {loading ? 'CHECKING...' : 'VERIFY & REDEEM'}
-                        </button>
-                    </form>
-                </div>
-
-                {/* Right Column: Scan Result Card & Recent History */}
-                <div className="scanner-result-column">
-                    {/* Big Result Display */}
-                    {scanResult ? (
-                        <div className={`scan-result-card ${scanResult.status.toLowerCase()}`}>
-                            <div className="result-header">
-                                {scanResult.status === 'APPROVED' ? (
-                                    <FaCheckCircle className="result-icon success" />
-                                ) : (
-                                    <FaExclamationTriangle className="result-icon reject" />
-                                )}
-                                <h4>{scanResult.title}</h4>
-                                <button className="close-result-btn" onClick={handleGoForNextQr} title="Dismiss and Scan Next">
-                                    <FaTimes />
-                                </button>
-                            </div>
-
-                            <p className="result-message">{scanResult.message}</p>
-
-                            {scanResult.scanInfo && (
-                                <div className="result-details-box">
-                                    <div className="detail-row">
-                                        <span className="d-label">Participant:</span>
-                                        <span className="d-val strong">{scanResult.scanInfo.participantName}</span>
-                                    </div>
-                                    <div className="detail-row">
-                                        <span className="d-label">Role:</span>
-                                        <span className="d-val">{scanResult.scanInfo.participantRole}</span>
-                                    </div>
-                                    <div className="detail-row">
-                                        <span className="d-label">Team:</span>
-                                        <span className="d-val">{scanResult.scanInfo.teamName}</span>
-                                    </div>
-                                    {scanResult.scanInfo.college && (
-                                        <div className="detail-row">
-                                            <span className="d-label">College:</span>
-                                            <span className="d-val">{scanResult.scanInfo.college}</span>
-                                        </div>
-                                    )}
-                                    <div className="detail-row">
-                                        <span className="d-label">Meal Slot:</span>
-                                        <span className="d-val meal-tag">{scanResult.scanInfo.mealType}</span>
-                                    </div>
-                                    <div className="detail-row">
-                                        <span className="d-label">Scanned At:</span>
-                                        <span className="d-val time-tag">
-                                            {new Date(scanResult.scanInfo.scannedAt).toLocaleTimeString('en-IN', {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                second: '2-digit'
-                                            })}
-                                        </span>
-                                    </div>
-                                    <div className="detail-row">
-                                        <span className="d-label">Coordinator:</span>
-                                        <span className="d-val">{scanResult.scanInfo.scannedBy}</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {scanResult.status === 'ALREADY_SCANNED' && (
-                                <div className="conflict-warning-badge">
-                                    ⛔ DO NOT SERVE AGAIN • ALREADY CLAIMED
-                                </div>
-                            )}
-
-                            {scanResult.status === 'APPROVED' && (
-                                <div className="approved-badge">
-                                    ✅ VERIFIED • SERVE 1 MEAL PLATE
-                                </div>
-                            )}
-
-                            {/* ➡️ PROMINENT GO FOR NEXT QR ACTION BUTTON */}
-                            <div className="next-qr-action-box">
-                                <button className="btn-scan-next-qr" onClick={handleGoForNextQr}>
-                                    <span>➡️ GO FOR NEXT QR (पुढील QR स्कॅन करा)</span>
-                                </button>
-                                <p className="next-qr-hint">
-                                    Scanner paused to prevent re-detecting the same QR. Tap above to scan the next participant.
-                                </p>
-                            </div>
-                        </div>
+                <div className="recent-scans-scroll">
+                    {recentScans.length === 0 ? (
+                        <p className="no-scans-text">No scans recorded for {selectedDate}.</p>
                     ) : (
-                        <div className="idle-instruction-box">
-                            <FaUtensils className="idle-icon" />
-                            <h4>Ready to Scan</h4>
-                            <p>Point camera at the participant's QR pass or type their ID below to verify eligibility.</p>
-                            <div className="timing-bullet-list">
-                                <div>🌅 <strong>Breakfast:</strong> 08:00 AM – 09:30 AM (1 scan)</div>
-                                <div>🍛 <strong>Lunch:</strong> 11:00 AM – 02:00 PM (1 scan)</div>
-                                <div>🌙 <strong>Dinner:</strong> 07:00 PM – 09:30 PM (1 scan)</div>
-                            </div>
-                        </div>
+                        <table className="mini-scans-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Participant</th>
+                                    <th>Squad</th>
+                                    <th>Meal</th>
+                                    <th>Coordinator</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentScans.map((s, idx) => (
+                                    <tr key={s._id || idx}>
+                                        <td className="time-td">
+                                            {new Date(s.scannedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                                        </td>
+                                        <td className="strong">{s.participantName}</td>
+                                        <td>{s.teamName}</td>
+                                        <td><span className={`mini-meal-tag ${s.mealType.toLowerCase()}`}>{s.mealType}</span></td>
+                                        <td>{s.scannedBy}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     )}
-
-                    {/* Recent Scans Table */}
-                    <div className="recent-scans-box">
-                        <div className="recent-header">
-                            <h5>Recent Scans ({selectedDate}) • {recentScans.length}</h5>
-                            <button className="sync-sm-btn" onClick={() => fetchStatusAndStats(selectedDate)}><FaSync /></button>
-                        </div>
-
-                        <div className="recent-scans-scroll">
-                            {recentScans.length === 0 ? (
-                                <p className="no-scans-text">No scans recorded for {selectedDate}.</p>
-                            ) : (
-                                <table className="mini-scans-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Time</th>
-                                            <th>Participant</th>
-                                            <th>Team</th>
-                                            <th>Meal</th>
-                                            <th>Coordinator</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {recentScans.map((s, idx) => (
-                                            <tr key={s._id || idx}>
-                                                <td className="time-td">
-                                                    {new Date(s.scannedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                                                </td>
-                                                <td className="strong">{s.participantName}</td>
-                                                <td>{s.teamName}</td>
-                                                <td><span className={`mini-meal-tag ${s.mealType.toLowerCase()}`}>{s.mealType}</span></td>
-                                                <td>{s.scannedBy}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
 

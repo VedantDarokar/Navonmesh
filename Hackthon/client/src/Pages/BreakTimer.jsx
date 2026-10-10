@@ -9,7 +9,7 @@ const BreakTimer = () => {
     const [password, setPassword] = useState('');
     const [pendingAction, setPendingAction] = useState(null); // 'start', 'pause', or 'reset'
     const [error, setError] = useState('');
-    
+
     // Server Endpoints
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     const CORRECT_PASSWORD = 'Nihal@1512';
@@ -38,10 +38,10 @@ const BreakTimer = () => {
         try {
             const res = await fetch(`${API_URL}/api/admin/timer`);
             const data = await res.json();
-            
+
             const now = Date.now();
             const serverEndTime = new Date(data.endTime).getTime();
-            
+
             if (data.isActive) {
                 const remaining = Math.max(0, Math.floor((serverEndTime - now) / 1000));
                 setTimeLeft(remaining);
@@ -62,7 +62,7 @@ const BreakTimer = () => {
             const token = sessionStorage.getItem('adminToken');
             await fetch(`${API_URL}/api/admin/timer/update`, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
@@ -125,11 +125,12 @@ const BreakTimer = () => {
         <div className="simple-timer-page">
             <div className="timer-wrapper">
                 <div className="timer-header">
-                    <div className="timer-logo-container">
-                        <img src={NavonmeshLogo} alt="Navonmesh" className="timer-navonmesh-logo" />
-                        <div className={`status-glow-text ${isActive ? 'active' : ''}`}>
-                            {isActive ? 'BREAK RUNNING' : 'BREAK PAUSED'}
-                        </div>
+                    <div className="timer-badge-pill">
+                        ⏱️ OFFICIAL FEST EVENT TIMER
+                    </div>
+                    <h2 className="timer-main-title">Hackathon Round & Break Timer</h2>
+                    <div className={`status-glow-text ${isActive ? 'active' : ''}`}>
+                        {isActive ? '● COUNTDOWN RUNNING' : '⏸ TIMER PAUSED'}
                     </div>
                 </div>
 
@@ -192,9 +193,9 @@ const BreakTimer = () => {
                         <h3>Security Check</h3>
                         <p>Enter password to {pendingAction}</p>
                         <form onSubmit={handlePasswordSubmit}>
-                            <input 
-                                type="password" 
-                                placeholder="Password" 
+                            <input
+                                type="password"
+                                placeholder="Password"
                                 autoFocus
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}

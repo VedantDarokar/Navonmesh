@@ -5,6 +5,7 @@ import './Styles/coordinator_app.css'
 import './Styles/coordinator_duty_portal.css'
 import './Styles/participant_portal.css'
 import './Styles/admin_qr_scanner.css'
+import './Styles/breakTimer.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(

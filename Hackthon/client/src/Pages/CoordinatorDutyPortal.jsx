@@ -6,7 +6,7 @@ import {
 } from 'react-icons/fa';
 import '../Styles/coordinator_duty_portal.css';
 import { getApiUrl } from '../utils/apiConfig';
-import { getCoordinatorProfile } from '../utils/coordinatorProfiles';
+import { getCoordinatorProfile, COORDINATOR_PROFILES } from '../utils/coordinatorProfiles';
 
 import FoodScannerPage from './FoodScannerPage';
 import BreakTimer from './BreakTimer';
@@ -29,6 +29,17 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
     const [loadingTasks, setLoadingTasks] = useState(false);
     const [showTaskAlertModal, setShowTaskAlertModal] = useState(false);
     const [alertDismissed, setAlertDismissed] = useState(false);
+
+    // Master Admin Task Assignment Modal State (Nihal Kankal)
+    const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
+    const [newTaskData, setNewTaskData] = useState({
+        assignedTo: 'all',
+        title: '',
+        description: '',
+        priority: 'HIGH',
+        dueTime: '12:00 PM'
+    });
+    const [submittingTask, setSubmittingTask] = useState(false);
 
     // Live Metrics State
     const [stats, setStats] = useState({
@@ -68,6 +79,43 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             console.error('Failed to load coordinator tasks:', err);
         } finally {
             setLoadingTasks(false);
+        }
+    };
+
+    // Create New Task (Master Admin Nihal)
+    const handleCreateTask = async (e) => {
+        e.preventDefault();
+        if (!newTaskData.title.trim()) return;
+        setSubmittingTask(true);
+        try {
+            const assignedProfile = getCoordinatorProfile(newTaskData.assignedTo);
+            const res = await fetch(`${API_URL}/api/admin/coordinator-tasks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    assignedTo: newTaskData.assignedTo,
+                    coordinatorName: assignedProfile.name || (newTaskData.assignedTo === 'all' ? 'All Coordinators' : newTaskData.assignedTo),
+                    title: newTaskData.title.trim(),
+                    description: newTaskData.description.trim(),
+                    priority: newTaskData.priority,
+                    dueTime: newTaskData.dueTime
+                })
+            });
+            if (res.ok) {
+                setShowAssignTaskModal(false);
+                setNewTaskData({
+                    assignedTo: 'all',
+                    title: '',
+                    description: '',
+                    priority: 'HIGH',
+                    dueTime: '12:00 PM'
+                });
+                fetchTasks();
+            }
+        } catch (err) {
+            console.error('Failed to create task:', err);
+        } finally {
+            setSubmittingTask(false);
         }
     };
 
@@ -216,6 +264,100 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             )}
 
             {/* ---------------------------------------------------- */}
+            {/* ASSIGN DUTY TASK MODAL (MASTER ADMIN NIHAL)          */}
+            {/* ---------------------------------------------------- */}
+            {showAssignTaskModal && (
+                <div className="coor-alert-overlay" onClick={() => setShowAssignTaskModal(false)}>
+                    <div className="coor-alert-modal assign-task-modal-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="alert-modal-header">
+                            <span className="alert-bell-icon">📋</span>
+                            <div>
+                                <h3 className="alert-modal-title" style={{ color: '#fbbf24' }}>ASSIGN DUTY DIRECTIVE</h3>
+                                <p className="alert-modal-sub">Dispatch task to coordinator</p>
+                            </div>
+                            <button className="close-alert-btn" onClick={() => setShowAssignTaskModal(false)}>
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleCreateTask} className="assign-task-form">
+                            <div className="coor-form-group">
+                                <label className="coor-form-label">Assign To Coordinator:</label>
+                                <select 
+                                    className="coor-form-select"
+                                    value={newTaskData.assignedTo}
+                                    onChange={(e) => setNewTaskData({ ...newTaskData, assignedTo: e.target.value })}
+                                >
+                                    <option value="all">📢 All Floor Coordinators</option>
+                                    {Object.entries(COORDINATOR_PROFILES).map(([cid, cp]) => (
+                                        <option key={cid} value={cid}>
+                                            {cp.name} ({cp.subRole})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="coor-form-group">
+                                <label className="coor-form-label">Directive Title:</label>
+                                <input 
+                                    type="text" 
+                                    className="coor-form-input" 
+                                    placeholder="e.g. Inspect Mess Counter 3 Rush" 
+                                    value={newTaskData.title}
+                                    onChange={(e) => setNewTaskData({ ...newTaskData, title: e.target.value })}
+                                    required
+                                />
+                            </div>
+
+                            <div className="coor-form-row">
+                                <div className="coor-form-group half">
+                                    <label className="coor-form-label">Priority:</label>
+                                    <select 
+                                        className="coor-form-select"
+                                        value={newTaskData.priority}
+                                        onChange={(e) => setNewTaskData({ ...newTaskData, priority: e.target.value })}
+                                    >
+                                        <option value="URGENT">🔴 Urgent</option>
+                                        <option value="HIGH">🟡 High</option>
+                                        <option value="MEDIUM">🔵 Medium</option>
+                                    </select>
+                                </div>
+                                <div className="coor-form-group half">
+                                    <label className="coor-form-label">Due Time:</label>
+                                    <input 
+                                        type="text" 
+                                        className="coor-form-input" 
+                                        placeholder="e.g. 01:30 PM" 
+                                        value={newTaskData.dueTime}
+                                        onChange={(e) => setNewTaskData({ ...newTaskData, dueTime: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="coor-form-group">
+                                <label className="coor-form-label">Details / Instructions:</label>
+                                <textarea 
+                                    className="coor-form-textarea" 
+                                    placeholder="Specific directives or location notes..."
+                                    rows={3}
+                                    value={newTaskData.description}
+                                    onChange={(e) => setNewTaskData({ ...newTaskData, description: e.target.value })}
+                                />
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                className="coor-submit-directive-btn"
+                                disabled={submittingTask}
+                            >
+                                {submittingTask ? 'DISPATCHING...' : 'DISPATCH TASK DIRECTIVE ➔'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ---------------------------------------------------- */}
             {/* SUB-NAVIGATION BAR FOR COORDINATORS                  */}
             {/* ---------------------------------------------------- */}
             <div className="coor-duty-nav">
@@ -258,11 +400,11 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             </div>
 
             {/* ==================================================== */}
-            {/* VIEW 1: 📋 DUTY HUB (WELCOME, TASKS & NOTIFICATIONS) */}
+            {/* VIEW 1: 📋 DUTY HUB (MATCHING IMAGE 3 MOCKUP)       */}
             {/* ==================================================== */}
             {dutyTab === 'hub' && (
                 <div className="coor-pane-hub">
-                    {/* WELCOME COORDINATOR HERO CARD */}
+                    {/* 1. WELCOME COORDINATOR HERO CARD */}
                     <div className="coor-welcome-hero-card">
                         <div className="hero-top-row">
                             <div className="hero-profile-wrap">
@@ -275,14 +417,11 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                                         Welcome, {profile.name}!
                                     </h2>
                                     <p className="hero-duty-sub">
-                                        Assigned Role: <strong>{profile.subRole || adminSubRole}</strong>
+                                        {profile.subRole || adminSubRole}
                                     </p>
                                     <div className="hero-meta-pills">
                                         <span className="duty-status-badge on-duty">
                                             ● ACTIVE SHIFT ON-DUTY
-                                        </span>
-                                        <span className="duty-id-badge">
-                                            ID: {adminId}
                                         </span>
                                     </div>
                                 </div>
@@ -311,38 +450,16 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                         </div>
                     )}
 
-                    {/* LIVE FEST METRICS OVERVIEW */}
-                    <div className="coor-stats-grid">
-                        <div className="stat-card">
-                            <span className="stat-label">Checked-In Squads</span>
-                            <span className="stat-number">{stats.checkedIn} / {stats.totalSquads}</span>
-                            <span className="stat-progress">76% Reported</span>
-                        </div>
-                        <div className="stat-card">
-                            <span className="stat-label">Meals Scanned Today</span>
-                            <span className="stat-number">{stats.mealsScanned}</span>
-                            <span className="stat-progress">Counters 1–4 Active</span>
-                        </div>
-                        <div className="stat-card">
-                            <span className="stat-label">Distress Tickets</span>
-                            <span className="stat-number urgent">{stats.activeIssues} Open</span>
-                            <span className="stat-progress" onClick={() => setDutyTab('issues')} style={{ cursor: 'pointer', color: '#00f0ff' }}>
-                                View Tickets →
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* LIVE MEALS BREAKDOWN CARD (BREAKFAST, LUNCH, DINNER) */}
+                    {/* 2. 🍱 LIVE MEALS BREAKDOWN CARD (MATCHING IMAGE 3 MOCKUP) */}
                     <div className="coor-meal-overview-card">
                         <div className="meal-card-header">
                             <div>
-                                <span className="section-micro-tag">LIVE MESS / CANTEEN COUNTS</span>
-                                <h4 className="meal-card-title">🍱 Participant Meals Served ({mealStats.dateStr || 'Today'})</h4>
+                                <h3 className="meal-card-title">Live Meals Breakdown</h3>
+                                <span className="section-micro-tag">REAL-TIME MESS VERIFICATIONS</span>
                             </div>
-                            <button className="coor-mini-action-btn" onClick={() => setDutyTab('scanner')}>
-                                Open Scanner ➔
-                            </button>
                         </div>
+
+                        {/* 4 Pills in a Single Mobile Row */}
                         <div className="meal-mini-grid">
                             <div className="meal-mini-pill breakfast">
                                 <span className="mini-icon">🌅</span>
@@ -373,32 +490,96 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Full Width Food Scanner Button (Matching Image 3) */}
+                        <button 
+                            className="coor-open-scanner-action-btn"
+                            onClick={() => setDutyTab('scanner')}
+                        >
+                            Open Food Scanner (Next QR Ready)
+                        </button>
                     </div>
 
-                    {/* ASSIGNED TASKS CHECKLIST SECTION */}
+                    {/* 3. 📊 THREE METRIC CARDS (SCREENSHOT 3 - DISTINCT COLORS, NO GLOW) */}
+                    <div className="coor-metric-grid">
+                        <div className="coor-metric-card squads-card">
+                            <span className="coor-metric-label">Checked-In Squads</span>
+                            <span className="coor-metric-val">{stats.checkedIn} / {stats.totalSquads}</span>
+                            <span className="coor-metric-sub">76% Reported</span>
+                        </div>
+                        <div className="coor-metric-card meals-card">
+                            <span className="coor-metric-label">Meals Scanned</span>
+                            <span className="coor-metric-val">{mealStats.total || stats.mealsScanned}</span>
+                            <span className="coor-metric-sub">Counters 1–4 Active</span>
+                        </div>
+                        <div className="coor-metric-card distress-card" onClick={() => setDutyTab('issues')}>
+                            <span className="coor-metric-label">Distress Tickets</span>
+                            <span className="coor-metric-val">{stats.activeIssues} Open</span>
+                            <span className="coor-metric-sub">View Tickets →</span>
+                        </div>
+                    </div>
+
+                    {/* 4. 🚀 2x2 QUICK ACTION LAUNCHPAD (MATCHING IMAGE 3) */}
+                    <div className="quick-duty-launchpad">
+                        <div className="launchpad-grid">
+                            <div className="launch-card" onClick={() => setDutyTab('scanner')}>
+                                <FaQrcode className="launch-icon scanner" />
+                                <h4>Mess Scanner</h4>
+                                <p>QR verification for meals</p>
+                            </div>
+                            <div className="launch-card" onClick={() => setDutyTab('timer')}>
+                                <FaClock className="launch-icon timer" />
+                                <h4>Break Timer</h4>
+                                <p>Synchronized clock count</p>
+                            </div>
+                            <div className="launch-card" onClick={() => setDutyTab('seats')}>
+                                <FaChair className="launch-icon seats" />
+                                <h4>Seating Matrix</h4>
+                                <p>Table allocations & squads</p>
+                            </div>
+                            <div className="launch-card" onClick={() => setDutyTab('issues')}>
+                                <FaExclamationTriangle className="launch-icon issues" />
+                                <h4>Distress Desk</h4>
+                                <p>Participant table tickets</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 5. 📝 ASSIGNED TASKS CHECKLIST (WITH ASSIGN MODAL FOR NIHAT / MASTER ADMIN) */}
                     <div className="tasks-section-container">
                         <div className="section-header-flex">
                             <div>
                                 <span className="section-micro-tag">ADMIN DIRECTIVES</span>
                                 <h3 className="section-main-heading">
-                                    <FaTasks /> Assigned Coordinator Tasks ({tasks.length})
+                                    <FaTasks /> Assigned Tasks ({tasks.length})
                                 </h3>
                             </div>
-                            <button className="coor-mini-action-btn" onClick={fetchTasks}>
-                                <FaSync /> Sync
-                            </button>
+                            <div style={{ display: 'flex', gap: '6px' }}>
+                                {adminId.toLowerCase().includes('nihal') && (
+                                    <button 
+                                        className="coor-mini-action-btn assign-btn"
+                                        onClick={() => setShowAssignTaskModal(true)}
+                                        title="Assign New Task to Coordinator"
+                                    >
+                                        ➕ Assign
+                                    </button>
+                                )}
+                                <button className="coor-mini-action-btn" onClick={fetchTasks}>
+                                    <FaSync />
+                                </button>
+                            </div>
                         </div>
 
                         {loadingTasks ? (
                             <div className="tasks-loading-state">
                                 <div className="pulse-spinner" />
-                                <p>Loading assigned tasks from Admin Command...</p>
+                                <p>Syncing assigned duty directives...</p>
                             </div>
                         ) : tasks.length === 0 ? (
                             <div className="tasks-empty-state">
                                 <FaCheckCircle className="empty-check-icon" />
-                                <h4>All Duties Cleared!</h4>
-                                <p>No pending operational tasks assigned currently. Stand by for floor alerts.</p>
+                                <h4>All Floor Duties Cleared!</h4>
+                                <p>No pending operational tasks assigned currently.</p>
                             </div>
                         ) : (
                             <div className="tasks-card-list">
@@ -419,7 +600,7 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                                             )}
 
                                             <div className="task-card-footer">
-                                                <span className="task-assigned-by">By: {task.assignedBy}</span>
+                                                <span className="task-assigned-by">To: {task.coordinatorName || task.assignedTo}</span>
                                                 <button 
                                                     className={`task-toggle-btn ${isDone ? 'done' : 'pending'}`}
                                                     onClick={() => handleToggleTaskStatus(task._id, task.status)}
@@ -432,35 +613,6 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                                 })}
                             </div>
                         )}
-                    </div>
-
-                    {/* QUICK ACTION LAUNCHPAD */}
-                    <div className="quick-duty-launchpad">
-                        <span className="section-micro-tag">OPERATIONAL TOOLS</span>
-                        <h3 className="section-main-heading">Quick Tool Launchpad</h3>
-
-                        <div className="launchpad-grid">
-                            <div className="launch-card" onClick={() => setDutyTab('scanner')}>
-                                <FaQrcode className="launch-icon scanner" />
-                                <h4>Mess Scanner</h4>
-                                <p>Scan participant QR codes for breakfast, lunch, or dinner.</p>
-                            </div>
-                            <div className="launch-card" onClick={() => setDutyTab('timer')}>
-                                <FaClock className="launch-icon timer" />
-                                <h4>Break Timer</h4>
-                                <p>Mobile-optimized countdown for lunch & coding sprints.</p>
-                            </div>
-                            <div className="launch-card" onClick={() => setDutyTab('seats')}>
-                                <FaChair className="launch-icon seats" />
-                                <h4>Seating Allocations</h4>
-                                <p>Verify squad workstations and table numbers.</p>
-                            </div>
-                            <div className="launch-card" onClick={() => setDutyTab('issues')}>
-                                <FaExclamationTriangle className="launch-icon issues" />
-                                <h4>Distress Desk</h4>
-                                <p>Resolve table alerts for LAN, power, or medical help.</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             )}
@@ -552,7 +704,7 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
             {/* VIEW 6: 🎛️ FULL ADMIN CONTROL                      */}
             {/* ==================================================== */}
             {dutyTab === 'admin_full' && (
-                <div className="coor-pane-view">
+                <div className="coor-pane-view coor-admin-mobile-wrapper">
                     <Admin />
                 </div>
             )}

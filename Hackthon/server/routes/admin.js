@@ -1172,47 +1172,16 @@ router.get('/coordinator-tasks', async (req, res) => {
     try {
         const { coordinatorId } = req.query;
         let query = {};
-        if (coordinatorId) {
+        const cleanId = String(coordinatorId || '').trim().toLowerCase();
+        if (cleanId && cleanId !== 'nihal.navonmesh') {
             query = {
                 $or: [
                     { assignedTo: 'all' },
-                    { assignedTo: String(coordinatorId).trim().toLowerCase() }
+                    { assignedTo: cleanId }
                 ]
             };
         }
-        let tasks = await CoordinatorTask.find(query).sort({ createdAt: -1 });
-
-        // Seed initial event day operational tasks if none exist
-        if (tasks.length === 0) {
-            const seedTasks = [
-                {
-                    assignedTo: 'all',
-                    title: 'Verify Breakfast & Lunch QR Scans at Central Mess Counter 2',
-                    description: 'Ensure each squad member scans their individual pass once per meal slot.',
-                    priority: 'HIGH',
-                    dueTime: '08:30 AM - 09:30 AM',
-                    status: 'PENDING'
-                },
-                {
-                    assignedTo: 'all',
-                    title: 'Distribute Lab Workstation WiFi Credentials & Kit to Tables 1-20',
-                    description: 'Verify team lanyards and supply LAN cables at CSE Dept Lab 3.',
-                    priority: 'URGENT',
-                    dueTime: '10:00 AM - 11:00 AM',
-                    status: 'PENDING'
-                },
-                {
-                    assignedTo: 'all',
-                    title: 'Collect Checkpoint 1 Evaluation Rubric Sheets from Industry Mentors',
-                    description: 'Collect signed jury sheets from Rooms 101, 102 & submit to Admin Room.',
-                    priority: 'HIGH',
-                    dueTime: '03:30 PM - 04:30 PM',
-                    status: 'PENDING'
-                }
-            ];
-            tasks = await CoordinatorTask.insertMany(seedTasks);
-        }
-
+        const tasks = await CoordinatorTask.find(query).sort({ createdAt: -1 });
         const pendingTasks = tasks.filter(t => t.status !== 'COMPLETED');
 
         res.json({

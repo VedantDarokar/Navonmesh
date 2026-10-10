@@ -9,14 +9,11 @@ import '../Styles/participant_portal.css';
 import { getApiUrl } from '../utils/apiConfig';
 import QRCode from 'qrcode';
 
-// Official Problem Statements List
+// Official Problem Statements List (Restricted to 3 Tracks as requested)
 const OFFICIAL_PROBLEM_STATEMENTS = [
-    { id: 'PS01', title: 'Smart & Sustainable Technologies', category: 'Hardware/IoT', desc: 'Innovating for greener, sustainable living and smart urban energy management.' },
-    { id: 'PS02', title: 'AI, ML, & Cyber Security', category: 'Software/AI', desc: 'Neural intelligence, threat detection, and encrypted privacy solutions.' },
-    { id: 'PS03', title: 'Renewable Energy & EVs', category: 'CleanTech', desc: 'Battery management systems, renewable generation, and electric transit.' },
-    { id: 'PS04', title: 'Healthcare & Medical Tech', category: 'BioTech/Health', desc: 'Remote health diagnostics, tele-medicine, and portable monitoring gear.' },
-    { id: 'PS05', title: 'Rural & Agricultural Innovation', category: 'AgriTech', desc: 'Multimodal crop diagnosis, automated precision farming, and cold-chain monitoring.' },
-    { id: 'PS06', title: 'Open Innovation / Deep Tech', category: 'General Tech', desc: 'Breakthrough applications in robotics, automation, and futuristic technologies.' }
+    { id: 'PS01', title: 'Student Innovation', category: 'Innovation Track', desc: 'Open category for student projects, research ideas, and creative technical prototypes.' },
+    { id: 'PS02', title: 'Problem Statement 1', category: 'Domain Track 1', desc: 'Hardware, software, and engineering innovation statement 1.' },
+    { id: 'PS03', title: 'Problem Statement 2', category: 'Domain Track 2', desc: 'Advanced technical challenge problem statement 2.' }
 ];
 
 const ParticipantPortal = ({ teamData, onLogout }) => {
@@ -744,8 +741,8 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
                                         >
                                             <option value="">-- Choose Problem Statement --</option>
                                             {OFFICIAL_PROBLEM_STATEMENTS.map((ps) => (
-                                                <option key={ps.id} value={`${ps.title} (${ps.category})`}>
-                                                    {ps.title} — {ps.category}
+                                                <option key={ps.id} value={ps.title}>
+                                                    {ps.title}
                                                 </option>
                                             ))}
                                         </select>

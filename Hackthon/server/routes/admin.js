@@ -26,9 +26,15 @@ router.post('/login', (req, res) => {
         });
     }
 
-    // Single Root Master Admin & Coordinator Credentials
+    // Coordinator & Administrator Credentials List
     const admins = [
-        { id: 'nihal.navonmesh', password: 'Nihal&15', name: 'Nihal', subRole: 'Overall Head & Master Administrator' }
+        { id: 'nihal.navonmesh', password: 'Nihal&15', name: 'Nihal Kankal', subRole: 'Overall Head & Master Administrator', avatarKey: 'nihal' },
+        { id: 'vedant.navonmesh', password: 'Vedu#15', name: 'Vedant Darokar', subRole: 'Overall Head', avatarKey: 'vedant' },
+        { id: 'abhishek.navonmesh', password: 'Abhi@03', name: 'Abhishek Kanherkar', subRole: 'Publicity Head', avatarKey: 'abhishek' },
+        { id: 'omkonde.navonmesh', password: 'om@2005', name: 'Om Konde', subRole: 'Discipline Head', avatarKey: 'omkonde' },
+        { id: 'atharva.navonmesh', password: 'Atharva@2004', name: 'Atharva Tayade', subRole: 'HEAD (सृजन)', avatarKey: 'atharva' },
+        { id: 'rutuja.navonmesh', password: 'RuRu#@15', name: 'Rutuja Deshmukh', subRole: 'Overall Head', avatarKey: 'rutuja' },
+        { id: 'krushna.navonmesh', password: 'krushna@2004', name: 'Krushna Kokate', subRole: 'HEAD (अंकुर)', avatarKey: 'krushna' }
     ];
 
     let adminUser = admins.find(a => a.id.toLowerCase() === cleanId && a.password === cleanPassword);
@@ -58,7 +64,8 @@ router.post('/login', (req, res) => {
             adminInfo: {
                 id: adminUser.id || cleanId,
                 name: adminUser.name,
-                subRole: adminUser.subRole
+                subRole: adminUser.subRole,
+                avatarKey: adminUser.avatarKey || 'default'
             }
         });
     } else {

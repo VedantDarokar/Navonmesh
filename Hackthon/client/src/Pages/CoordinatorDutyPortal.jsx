@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import '../Styles/coordinator_duty_portal.css';
 import { getApiUrl } from '../utils/apiConfig';
+import { getCoordinatorProfile } from '../utils/coordinatorProfiles';
 
 import FoodScannerPage from './FoodScannerPage';
 import BreakTimer from './BreakTimer';
@@ -20,6 +21,7 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
     const adminName = sessionStorage.getItem('adminName') || 'Coordinator';
     const adminSubRole = sessionStorage.getItem('adminSubRole') || 'Field Coordinator';
     const adminId = sessionStorage.getItem('adminId') || 'nihal.navonmesh';
+    const profile = getCoordinatorProfile(adminId);
 
     // Tasks & Alerts State
     const [tasks, setTasks] = useState([]);
@@ -263,21 +265,26 @@ const CoordinatorDutyPortal = ({ onLogout }) => {
                     {/* WELCOME COORDINATOR HERO CARD */}
                     <div className="coor-welcome-hero-card">
                         <div className="hero-top-row">
-                            <div>
-                                <span className="hero-role-tag">OFFICIAL FEST DUTY</span>
-                                <h2 className="hero-name-title">
-                                    Welcome, Coordinator {adminName}!
-                                </h2>
-                                <p className="hero-duty-sub">
-                                    Assigned Role: <strong>{adminSubRole}</strong>
-                                </p>
-                                <div className="hero-meta-pills">
-                                    <span className="duty-status-badge on-duty">
-                                        ● ACTIVE SHIFT ON-DUTY
-                                    </span>
-                                    <span className="duty-id-badge">
-                                        ID: {adminId}
-                                    </span>
+                            <div className="hero-profile-wrap">
+                                <div className="coor-profile-circle-frame" title={profile.name}>
+                                    <img src={profile.image} alt={profile.name} className="coor-profile-img" />
+                                </div>
+                                <div className="hero-profile-details">
+                                    <span className="hero-role-tag">OFFICIAL FEST DUTY</span>
+                                    <h2 className="hero-name-title">
+                                        Welcome, {profile.name}!
+                                    </h2>
+                                    <p className="hero-duty-sub">
+                                        Assigned Role: <strong>{profile.subRole || adminSubRole}</strong>
+                                    </p>
+                                    <div className="hero-meta-pills">
+                                        <span className="duty-status-badge on-duty">
+                                            ● ACTIVE SHIFT ON-DUTY
+                                        </span>
+                                        <span className="duty-id-badge">
+                                            ID: {adminId}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                             <button className="refresh-duty-btn" onClick={fetchTasks} title="Refresh Tasks">

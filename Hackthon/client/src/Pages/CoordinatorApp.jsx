@@ -9,6 +9,7 @@ import '../Styles/coordinator_duty_portal.css';
 import '../Styles/participant_portal.css';
 import navonmeshLogo from '../assets/navonmesh_official_logo.png';
 import { getApiUrl } from '../utils/apiConfig';
+import { getCoordinatorProfile } from '../utils/coordinatorProfiles';
 
 // Import Duty Components & Participant Portal
 import Admin from './Admin';
@@ -177,6 +178,8 @@ const CoordinatorApp = () => {
     };
 
     const adminSubRole = sessionStorage.getItem('adminSubRole') || 'Coordinator';
+    const activeAdminId = sessionStorage.getItem('adminId') || 'nihal.navonmesh';
+    const coorProfile = getCoordinatorProfile(activeAdminId);
 
     return (
         <div className={`coordinator-app-container ${theme}`}>
@@ -190,13 +193,20 @@ const CoordinatorApp = () => {
                         <h1 className="coor-brand-title">NAVONMESH MITRA</h1>
                         <p className="coor-brand-sub">
                             {isLoggedIn 
-                                ? (userRole === 'participant' ? `SQUAD: ${teamData?.teamName?.toUpperCase() || 'PORTAL'}` : `DUTY: ${adminSubRole.toUpperCase()}`)
+                                ? (userRole === 'participant' ? `SQUAD: ${teamData?.teamName?.toUpperCase() || 'PORTAL'}` : `DUTY: ${(coorProfile.subRole || adminSubRole).toUpperCase()}`)
                                 : 'FEST COMPANION'}
                         </p>
                     </div>
                 </div>
 
                 <div className="coor-header-actions">
+                    {/* Coordinator Profile Avatar in Circle Frame (No glow) */}
+                    {isLoggedIn && userRole === 'coordinator' && (
+                        <div className="coor-header-profile-avatar" title={`${coorProfile.name} (${coorProfile.subRole})`}>
+                            <img src={coorProfile.image} alt={coorProfile.name} className="coor-header-profile-img" />
+                        </div>
+                    )}
+
                     {/* Theme Switcher Button */}
                     <button
                         className="coor-theme-btn"

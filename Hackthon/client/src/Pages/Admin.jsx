@@ -60,6 +60,9 @@ const Admin = () => {
     const [revisedFilter, setRevisedFilter] = useState('ALL'); // 'ALL', 'REVISED', 'PENDING'
     const [editingPS, setEditingPS] = useState(null); // { id: '', value: '' }
     const [updatingPS, setUpdatingPS] = useState(false);
+    const [accessConfig, setAccessConfig] = useState({ lockdownAllOthers: false, blockedLogins: [] });
+    const [accessLoading, setAccessLoading] = useState(false);
+    const [blockInputId, setBlockInputId] = useState('');
 
     const detailPanelRef = useRef(null);
 
@@ -213,6 +216,101 @@ const Admin = () => {
         XLSX.writeFile(wb, `${filePrefix}_data_${new Date().toISOString().split('T')[0]}.xlsx`);
     };
 
+    const fetchAccessControl = async (token) => {
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const t = token || sessionStorage.getItem('adminToken');
+            const aid = (adminId || sessionStorage.getItem('adminId') || '').toLowerCase().trim();
+            if (aid !== 'nihal.navonmesh') return;
+
+            const res = await fetch(`${API_URL}/api/admin/access-control`, {
+                headers: {
+                    'Authorization': `Bearer ${t}`,
+                    'x-admin-id': aid
+                }
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setAccessConfig(data.config);
+            }
+        } catch (err) {
+            console.error('Access control fetch error:', err);
+        }
+    };
+
+    const handleToggleLockdown = async () => {
+        const nextState = !accessConfig.lockdownAllOthers;
+        const confirmMsg = nextState
+            ? '⚠️ ENGAGE GLOBAL LOCKDOWN?\n\nThis will IMMEDIATELY BLOCK ALL OTHER coordinators and members from logging in.\n\nOnly Master Admin (nihal.navonmesh) will have access.'
+            : '🛡️ DISENGAGE GLOBAL LOCKDOWN?\n\nThis will restore login access for authorized coordinators and core members.';
+
+        if (!window.confirm(confirmMsg)) return;
+
+        setAccessLoading(true);
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/admin/access-control/toggle-lockdown`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`,
+                    'x-admin-id': (adminId || sessionStorage.getItem('adminId') || '').toLowerCase().trim()
+                },
+                body: JSON.stringify({ enabled: nextState })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setAccessConfig(data.config);
+                fetchCoreMembers();
+                alert(nextState ? '🚨 GLOBAL LOCKDOWN ENGAGED: All other logins are now blocked!' : '🛡️ Global lockdown lifted: Standard login access restored.');
+            } else {
+                alert(data.error || 'Failed to toggle lockdown');
+            }
+        } catch (err) {
+            alert('Network error communicating with access control.');
+        } finally {
+            setAccessLoading(false);
+        }
+    };
+
+    const handleToggleBlockId = async (targetId, isCurrentlyBlocked) => {
+        const nextBlocked = !isCurrentlyBlocked;
+        const confirmMsg = nextBlocked
+            ? `BLOCK LOGIN ID "${targetId}"?\nThis user will not be allowed to log in until unblocked.`
+            : `UNBLOCK LOGIN ID "${targetId}"?\nThis user will regain normal access.`;
+
+        if (!window.confirm(confirmMsg)) return;
+
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const res = await fetch(`${API_URL}/api/admin/access-control/block-id`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`,
+                    'x-admin-id': (adminId || sessionStorage.getItem('adminId') || '').toLowerCase().trim()
+                },
+                body: JSON.stringify({ targetId, block: nextBlocked })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setAccessConfig(data.config);
+                fetchCoreMembers();
+            } else {
+                alert(data.message || data.error || 'Action failed.');
+            }
+        } catch (err) {
+            alert('Network error updating block status.');
+        }
+    };
+
+    const handleBlockCustomId = async (e) => {
+        e.preventDefault();
+        if (!blockInputId.trim()) return;
+        await handleToggleBlockId(blockInputId.trim(), false);
+        setBlockInputId('');
+    };
+
     const fetchData = async (token) => {
         setLoading(true);
         try {
@@ -226,6 +324,7 @@ const Admin = () => {
                 fetchCommittee();
                 fetchRecruitment(token);
                 fetchCoreMembers(token);
+                fetchAccessControl(token);
             } else {
                 handleLogout();
             }
@@ -257,7 +356,7 @@ const Admin = () => {
             const t = token || sessionStorage.getItem('adminToken');
             const aid = adminId || sessionStorage.getItem('adminId') || '';
             const res = await fetch(`${API_URL}/api/admin/core-members`, {
-                headers: { 
+                headers: {
                     'Authorization': `Bearer ${t}`,
                     'x-admin-id': aid
                 }
@@ -283,7 +382,7 @@ const Admin = () => {
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-                
+
                 if (!rawRows || rawRows.length === 0) {
                     alert('Uploaded file contains no data rows');
                     return;
@@ -367,7 +466,7 @@ const Admin = () => {
         }
     };
 
-    const isPasswordAuthorized = ['nihal.ssgmce', 'nihal1512'].includes((adminId || sessionStorage.getItem('adminId') || '').toLowerCase().trim());
+    const isPasswordAuthorized = (adminId || sessionStorage.getItem('adminId') || '').toLowerCase().trim() === 'nihal.navonmesh';
 
     const downloadCoreMembersExcel = () => {
         if (!coreMembers || coreMembers.length === 0) {
@@ -588,11 +687,11 @@ const Admin = () => {
             });
 
         const MAX_LOGO_W = 36;  // maximum allowed width (mm)
-        const LOGO_H     = 22;  // fixed max height (mm)
+        const LOGO_H = 22;  // fixed max height (mm)
 
         // Load both logos in parallel, preserving aspect ratio
         const [ssgmce, navonmesh] = await Promise.all([
-            fitLogo(ssgmceLogo,   MAX_LOGO_W, LOGO_H),
+            fitLogo(ssgmceLogo, MAX_LOGO_W, LOGO_H),
             fitLogo(navonmeshLogo, MAX_LOGO_W, LOGO_H),
         ]);
 
@@ -602,24 +701,24 @@ const Admin = () => {
         const marginX = 12;
 
         // ── Layout constants ────────────────────────────────────────────
-        const LOGO_Y        = 7;                          // top margin for logos
+        const LOGO_Y = 7;                          // top margin for logos
         const HEADER_BOTTOM = LOGO_Y + LOGO_H + 4;       // ~33mm — divider line
         const TABLE_START_Y = HEADER_BOTTOM + 2;          // ~35mm — table starts
-        const CENTER_X      = pageW / 2;
+        const CENTER_X = pageW / 2;
 
         // Helper: draw full header (page 1 only)
         const drawHeader = () => {
             // ── SSGMCE logo — TOP LEFT (vertically centred in logo zone) ─
             if (ssgmce) {
                 const ly = LOGO_Y + (LOGO_H - ssgmce.h) / 2;  // vertically center
-                try { doc.addImage(ssgmce.src, 'PNG', marginX, ly, ssgmce.w, ssgmce.h); } catch (_) {}
+                try { doc.addImage(ssgmce.src, 'PNG', marginX, ly, ssgmce.w, ssgmce.h); } catch (_) { }
             }
 
             // ── Navonmesh logo — TOP RIGHT (vertically centred) ──────────
             if (navonmesh) {
                 const ly = LOGO_Y + (LOGO_H - navonmesh.h) / 2;
                 const lx = pageW - marginX - navonmesh.w;
-                try { doc.addImage(navonmesh.src, 'PNG', lx, ly, navonmesh.w, navonmesh.h); } catch (_) {}
+                try { doc.addImage(navonmesh.src, 'PNG', lx, ly, navonmesh.w, navonmesh.h); } catch (_) { }
             }
 
             // ── Center title text ────────────────────────────────────────
@@ -654,15 +753,15 @@ const Admin = () => {
         // ── Table ────────────────────────────────────────────────────────
         const head = [[
             { content: 'Sr. No.', styles: { halign: 'center' } },
-            { content: 'Name',    styles: { halign: 'center' } },
-            { content: 'Year',   styles: { halign: 'center' } },
+            { content: 'Name', styles: { halign: 'center' } },
+            { content: 'Year', styles: { halign: 'center' } },
             { content: 'Branch', styles: { halign: 'center' } },
             { content: 'Designation', styles: { halign: 'center' } },
             { content: 'Communication', styles: { halign: 'center' } },
-            { content: 'Attitude',  styles: { halign: 'center' } },
-            { content: 'Teamwork',  styles: { halign: 'center' } },
+            { content: 'Attitude', styles: { halign: 'center' } },
+            { content: 'Teamwork', styles: { halign: 'center' } },
             { content: 'Technical', styles: { halign: 'center' } },
-            { content: 'Planning',  styles: { halign: 'center' } },
+            { content: 'Planning', styles: { halign: 'center' } },
         ]];
 
         const body = filtered.map((e, i) => [
@@ -792,7 +891,7 @@ const Admin = () => {
 
     const handleManagementAuth = (e) => {
         e.preventDefault();
-        if (managementAuth.password === 'Nihal@1512') {
+        if (managementAuth.password === 'Nihal&15') {
             setManagementAuth({ ...managementAuth, verified: true, error: '', open: false });
             setActiveTab('management');
         } else {
@@ -819,11 +918,11 @@ const Admin = () => {
             // Better to send specific recipient list to avoid any confusion
             const recipientsToSend = getAllAvailableRecipients()
                 .filter(r => selectedRecipientIds.includes(r.id))
-                .map(r => ({ 
-                    id: r.id, 
-                    email: r.email, 
-                    name: r.name, 
-                    team: r.team, 
+                .map(r => ({
+                    id: r.id,
+                    email: r.email,
+                    name: r.name,
+                    team: r.team,
                     designation: r.designation || '',
                     loginId: r.loginId || '',
                     password: r.password || '',
@@ -831,7 +930,7 @@ const Admin = () => {
                     class: r.class || '',
                     dob: r.dob || '',
                     year: r.year || '',
-                    type: r.type 
+                    type: r.type
                 }));
 
             const res = await fetch(`${API_URL}/api/admin/send-bulk-email`, {
@@ -1326,7 +1425,7 @@ const Admin = () => {
                                     <option value="3rd">3rd Year</option>
                                     <option value="4th">4th Year</option>
                                 </select>
-                                
+
                                 <input
                                     type="file"
                                     ref={coreFileInputRef}
@@ -1510,7 +1609,7 @@ const Admin = () => {
                                     onChange={(e) => setRecruitFilter(e.target.value)}
                                 >
                                     <option value="ALL">All Designations</option>
-                                    {['Coordinator','Overall Head','Srijan Head','Ankur Head','Udbhav Head','Drone Head','Management Co-Head','Publicity Co-Head','Accommodation Co-Head','Logistics Co-Head','Technical Co-Head','Event Co-Head','Discipline Co-Head','Graphics Co-Head','Videography Co-Head','Social Media Co-Head'].map(d => (
+                                    {['Coordinator', 'Overall Head', 'Srijan Head', 'Ankur Head', 'Udbhav Head', 'Drone Head', 'Management Co-Head', 'Publicity Co-Head', 'Accommodation Co-Head', 'Logistics Co-Head', 'Technical Co-Head', 'Event Co-Head', 'Discipline Co-Head', 'Graphics Co-Head', 'Videography Co-Head', 'Social Media Co-Head'].map(d => (
                                         <option key={d} value={d}>{d}</option>
                                     ))}
                                 </select>
@@ -1579,7 +1678,7 @@ const Admin = () => {
                                         <table className="data-table">
                                             <thead>
                                                 <tr>
-                                                    {['#','Name','Contact No','Email','Year','Branch','Designation','Attendance','Action'].map(h => (
+                                                    {['#', 'Name', 'Contact No', 'Email', 'Year', 'Branch', 'Designation', 'Attendance', 'Action'].map(h => (
                                                         <th key={h} style={h === 'Attendance' ? { textAlign: 'center' } : {}}>{h}</th>
                                                     ))}
                                                 </tr>
@@ -2352,8 +2451,8 @@ const Admin = () => {
                             ))}
                         </div>
 
-                        <div className={`management-content-grid ${adminId === 'nihal1512' ? 'has-admin-form' : ''}`}>
-                            {adminId === 'nihal1512' && (
+                        <div className={`management-content-grid ${isPasswordAuthorized ? 'has-admin-form' : ''}`}>
+                            {isPasswordAuthorized && (
                                 <div className="add-member-form">
                                     <h3>Add to {activeManagementTab}</h3>
                                     <form onSubmit={handleAddMember}>
@@ -2392,7 +2491,7 @@ const Admin = () => {
                                                     <h4 style={{ margin: '0 0 4px 0', fontSize: '0.95rem' }}>{member.name}</h4>
                                                     <p style={{ margin: 0, color: '#00f3ff', fontSize: '0.85rem', fontFamily: 'Orbitron' }}>{member.phone}</p>
                                                 </div>
-                                                {adminId === 'nihal1512' && (
+                                                {isPasswordAuthorized && (
                                                     <button onClick={() => handleDeleteMember(member._id)} style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} title="Remove unit">
                                                         <FaTimes />
                                                     </button>
@@ -2469,7 +2568,7 @@ const Admin = () => {
                                                 <label style={{ color: '#c084fc', fontFamily: 'Orbitron', margin: 0, fontSize: '0.9rem' }}>Message Content</label>
                                                 <span style={{ fontSize: '0.72rem', color: '#00f3ff', fontFamily: 'Orbitron' }}>Click tag to insert</span>
                                             </div>
-                                            
+
                                             {/* Interactive Personalization Tag Chips */}
                                             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
                                                 {[
@@ -2709,14 +2808,14 @@ const Admin = () => {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div 
+                                                <div
                                                     className="recipient-type-badge"
                                                     style={
                                                         recipient.type === 'Recruitment'
                                                             ? { background: 'rgba(0, 243, 255, 0.15)', color: '#00f3ff', border: '1px solid rgba(0, 243, 255, 0.3)' }
                                                             : recipient.type === 'Core Member'
-                                                            ? { background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }
-                                                            : {}
+                                                                ? { background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.4)' }
+                                                                : {}
                                                     }
                                                 >
                                                     {recipient.type === 'Recruitment' ? 'REC' : (recipient.type === 'Core Member' ? 'CORE' : recipient.type.charAt(0))}

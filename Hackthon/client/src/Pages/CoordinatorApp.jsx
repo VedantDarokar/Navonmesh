@@ -5,6 +5,7 @@ import {
     FaRocket, FaCompass, FaCalendarAlt
 } from 'react-icons/fa';
 import '../Styles/coordinator_app.css';
+import '../Styles/participant_portal.css';
 import coordinatorLogo from '../assets/coordinator_logo.png';
 import { getApiUrl } from '../utils/apiConfig';
 
@@ -303,7 +304,7 @@ const CoordinatorApp = () => {
                                     <FaUser className="coor-input-icon" />
                                     <input
                                         type="text"
-                                        placeholder={loginRole === 'participant' ? 'e.g. SQUAD001 or phone' : 'e.g. food, admin, or id'}
+                                        placeholder={loginRole === 'participant' ? 'e.g. SQUAD001 or phone' : 'e.g. nihal.navonmesh'}
                                         className="coor-input-field"
                                         value={loginData.id}
                                         onChange={(e) => setLoginData({ ...loginData, id: e.target.value })}

@@ -231,122 +231,151 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
     return (
         <div className="participant-portal-container">
             {/* SUB-NAVIGATION PILLS */}
-            <div style={{
+            <div className="mitra-tabs-nav" style={{
                 display: 'flex',
-                gap: '6px',
+                gap: '8px',
                 overflowX: 'auto',
                 paddingBottom: '10px',
-                marginBottom: '10px',
-                scrollbarWidth: 'none'
+                marginBottom: '14px',
+                scrollbarWidth: 'none',
+                WebkitOverflowScrolling: 'touch'
             }}>
                 <button
                     onClick={() => setTab('home')}
+                    className={`mitra-tab-pill ${tab === 'home' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'home' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'home' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'home' ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'home' ? 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'home' ? '#070a13' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
                     🏠 Home
                 </button>
                 <button
                     onClick={() => setTab('explore')}
+                    className={`mitra-tab-pill ${tab === 'explore' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'explore' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'explore' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'explore' ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'explore' ? 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'explore' ? '#070a13' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
-                    🔍 Explore
+                    🧭 Arenas
                 </button>
                 <button
                     onClick={() => setTab('pass')}
+                    className={`mitra-tab-pill ${tab === 'pass' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'pass' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'pass' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'pass' ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'pass' ? 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'pass' ? '#070a13' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
                     🎫 My Pass
                 </button>
                 <button
                     onClick={() => setTab('schedule')}
+                    className={`mitra-tab-pill ${tab === 'schedule' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'schedule' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'schedule' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'schedule' ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'schedule' ? 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'schedule' ? '#070a13' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
-                    🗺️ Schedule
+                    📅 Schedule
                 </button>
                 <button
                     onClick={() => setTab('team')}
+                    className={`mitra-tab-pill ${tab === 'team' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'team' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'team' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'team' ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'team' ? 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'team' ? '#070a13' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
                     👥 Squad
                 </button>
                 <button
                     onClick={() => setTab('cert')}
+                    className={`mitra-tab-pill ${tab === 'cert' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'cert' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'cert' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'cert' ? '1px solid #fbbf24' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'cert' ? 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'cert' ? '#070a13' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
                     🏆 Certs
                 </button>
                 <button
                     onClick={() => setTab('support')}
+                    className={`mitra-tab-pill ${tab === 'support' ? 'active' : ''}`}
                     style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        border: '1px solid var(--coor-card-border)',
-                        background: tab === 'support' ? 'var(--coor-accent-bright)' : 'rgba(255,255,255,0.05)',
-                        color: tab === 'support' ? '#000' : '#fff',
-                        fontSize: '11px',
+                        padding: '7px 14px',
+                        borderRadius: '24px',
+                        border: tab === 'support' ? '1px solid #ef4444' : '1px solid rgba(255,255,255,0.12)',
+                        background: tab === 'support' ? '#ef4444' : 'rgba(18, 24, 40, 0.7)',
+                        color: tab === 'support' ? '#fff' : '#cbd5e1',
+                        fontSize: '11.5px',
                         fontWeight: 700,
                         whiteSpace: 'nowrap',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                     }}
                 >
                     🆘 Help
@@ -356,98 +385,436 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
             {/* TAB A: PARTICIPANT HOME */}
             {tab === 'home' && (
                 <>
-                    <div className="mitra-hero-card">
-                        <div className="mitra-hero-top">
+                    {/* HERO WELCOME CARD */}
+                    <div 
+                        className="mitra-hero-card"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(28, 37, 65, 0.9) 0%, rgba(11, 16, 30, 0.95) 100%)',
+                            border: '1px solid rgba(251, 191, 36, 0.3)',
+                            borderRadius: '18px',
+                            padding: '18px',
+                            marginBottom: '16px',
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+                        }}
+                    >
+                        <div 
+                            className="mitra-hero-top"
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                gap: '12px',
+                                marginBottom: '14px'
+                            }}
+                        >
                             <div>
-                                <h2 className="mitra-welcome-title">Welcome, {team?.teamName || 'Squad'}!</h2>
-                                <span className="mitra-team-badge">ID: {team?.teamId || 'SQUAD'}</span>
+                                <h2 
+                                    className="mitra-welcome-title"
+                                    style={{
+                                        fontFamily: 'Orbitron, sans-serif',
+                                        fontSize: '17px',
+                                        fontWeight: '800',
+                                        color: '#ffffff',
+                                        margin: '0 0 6px 0',
+                                        letterSpacing: '0.5px'
+                                    }}
+                                >
+                                    Welcome, {team?.teamName || 'Squad'}!
+                                </h2>
+                                <span 
+                                    className="mitra-team-badge"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        background: 'rgba(251, 191, 36, 0.12)',
+                                        border: '1px solid rgba(251, 191, 36, 0.4)',
+                                        color: '#fbbf24',
+                                        fontFamily: 'Space Mono, monospace',
+                                        fontSize: '11.5px',
+                                        fontWeight: '700',
+                                        padding: '3px 10px',
+                                        borderRadius: '12px',
+                                        letterSpacing: '0.8px'
+                                    }}
+                                >
+                                    ID: {team?.teamId || 'SQUAD'}
+                                </span>
                             </div>
-                            <span className="mitra-status-chip confirmed">
-                                ✓ VERIFIED PASS
+                            <span 
+                                className="mitra-status-chip confirmed"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    background: 'rgba(16, 185, 129, 0.18)',
+                                    border: '1px solid rgba(16, 185, 129, 0.45)',
+                                    color: '#34d399',
+                                    padding: '4px 10px',
+                                    borderRadius: '14px',
+                                    fontSize: '10.5px',
+                                    fontWeight: '800',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.6px',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                <FaCheckCircle /> VERIFIED PASS
                             </span>
                         </div>
 
-                        <div className="mitra-alert-strip">
-                            <span className="mitra-alert-tag">LIVE</span>
+                        {/* LIVE BULLETIN TICKER */}
+                        <div 
+                            className="mitra-alert-strip"
+                            style={{
+                                background: 'rgba(0, 0, 0, 0.45)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderLeft: '3px solid #fbbf24',
+                                borderRadius: '10px',
+                                padding: '9px 12px',
+                                fontSize: '11.5px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                color: '#cbd5e1',
+                                lineHeight: '1.4'
+                            }}
+                        >
+                            <span 
+                                className="mitra-alert-tag"
+                                style={{
+                                    background: '#fbbf24',
+                                    color: '#070a13',
+                                    fontWeight: '900',
+                                    fontSize: '9.5px',
+                                    padding: '2px 7px',
+                                    borderRadius: '4px',
+                                    letterSpacing: '0.6px',
+                                    flexShrink: 0
+                                }}
+                            >
+                                LIVE
+                            </span>
                             <span>Hackathon Problem Statements & Seating Matrix now active!</span>
                         </div>
                     </div>
 
-                    {/* COUNTDOWN TO EVENT */}
-                    <div className="mitra-section-header">
-                        <h3 className="mitra-section-title"><FaClock /> COUNTDOWN TO FEST</h3>
+                    {/* COUNTDOWN TO FEST */}
+                    <div 
+                        className="mitra-section-header"
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            margin: '18px 0 10px 0'
+                        }}
+                    >
+                        <h3 
+                            className="mitra-section-title"
+                            style={{
+                                fontFamily: 'Orbitron, sans-serif',
+                                fontSize: '13.5px',
+                                fontWeight: '800',
+                                color: '#fbbf24',
+                                letterSpacing: '0.8px',
+                                margin: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <FaClock /> COUNTDOWN TO FEST
+                        </h3>
                     </div>
-                    <div className="mitra-countdown-box">
-                        <div className="mitra-count-unit">
-                            <div className="mitra-count-num">{timeLeft.days}</div>
-                            <div className="mitra-count-lbl">Days</div>
+
+                    <div 
+                        className="mitra-countdown-box"
+                        style={{
+                            background: 'linear-gradient(135deg, rgba(17, 24, 43, 0.95) 0%, rgba(9, 13, 24, 0.98) 100%)',
+                            border: '1px solid rgba(251, 191, 36, 0.25)',
+                            borderRadius: '16px',
+                            padding: '14px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 1fr)',
+                            gap: '8px',
+                            margin: '12px 0 20px 0',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
+                        }}
+                    >
+                        <div 
+                            className="mitra-count-unit"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.03)',
+                                border: '1px solid rgba(255, 255, 255, 0.06)',
+                                borderRadius: '12px',
+                                padding: '10px 4px',
+                                textAlign: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <div className="mitra-count-num" style={{ fontFamily: 'Orbitron, monospace', fontSize: '22px', fontWeight: '900', color: '#fbbf24', lineHeight: '1.1' }}>{timeLeft.days}</div>
+                            <div className="mitra-count-lbl" style={{ fontSize: '9.5px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '4px' }}>Days</div>
                         </div>
-                        <div className="mitra-count-unit">
-                            <div className="mitra-count-num">{timeLeft.hours}</div>
-                            <div className="mitra-count-lbl">Hours</div>
+                        <div 
+                            className="mitra-count-unit"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.03)',
+                                border: '1px solid rgba(255, 255, 255, 0.06)',
+                                borderRadius: '12px',
+                                padding: '10px 4px',
+                                textAlign: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <div className="mitra-count-num" style={{ fontFamily: 'Orbitron, monospace', fontSize: '22px', fontWeight: '900', color: '#fbbf24', lineHeight: '1.1' }}>{timeLeft.hours}</div>
+                            <div className="mitra-count-lbl" style={{ fontSize: '9.5px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '4px' }}>Hours</div>
                         </div>
-                        <div className="mitra-count-unit">
-                            <div className="mitra-count-num">{timeLeft.minutes}</div>
-                            <div className="mitra-count-lbl">Mins</div>
+                        <div 
+                            className="mitra-count-unit"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.03)',
+                                border: '1px solid rgba(255, 255, 255, 0.06)',
+                                borderRadius: '12px',
+                                padding: '10px 4px',
+                                textAlign: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <div className="mitra-count-num" style={{ fontFamily: 'Orbitron, monospace', fontSize: '22px', fontWeight: '900', color: '#fbbf24', lineHeight: '1.1' }}>{timeLeft.minutes}</div>
+                            <div className="mitra-count-lbl" style={{ fontSize: '9.5px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '4px' }}>Mins</div>
                         </div>
-                        <div className="mitra-count-unit">
-                            <div className="mitra-count-num">{timeLeft.seconds}</div>
-                            <div className="mitra-count-lbl">Secs</div>
+                        <div 
+                            className="mitra-count-unit"
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.03)',
+                                border: '1px solid rgba(255, 255, 255, 0.06)',
+                                borderRadius: '12px',
+                                padding: '10px 4px',
+                                textAlign: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <div className="mitra-count-num" style={{ fontFamily: 'Orbitron, monospace', fontSize: '22px', fontWeight: '900', color: '#fbbf24', lineHeight: '1.1' }}>{timeLeft.seconds}</div>
+                            <div className="mitra-count-lbl" style={{ fontSize: '9.5px', fontWeight: '700', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginTop: '4px' }}>Secs</div>
                         </div>
                     </div>
 
-                    {/* FEATURED EVENTS */}
-                    <div className="mitra-section-header">
-                        <h3 className="mitra-section-title"><FaCompass /> FEATURED ARENAS</h3>
-                        <span className="mitra-section-link" onClick={() => setTab('explore')}>View All</span>
+                    {/* FEATURED ARENAS HEADER */}
+                    <div 
+                        className="mitra-section-header"
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            margin: '18px 0 12px 0'
+                        }}
+                    >
+                        <h3 
+                            className="mitra-section-title"
+                            style={{
+                                fontFamily: 'Orbitron, sans-serif',
+                                fontSize: '13.5px',
+                                fontWeight: '800',
+                                color: '#fbbf24',
+                                letterSpacing: '0.8px',
+                                margin: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <FaCompass /> FEATURED ARENAS
+                        </h3>
+                        <span 
+                            className="mitra-section-link"
+                            onClick={() => setTab('explore')}
+                            style={{
+                                fontSize: '11.5px',
+                                fontWeight: '700',
+                                color: '#38bdf8',
+                                cursor: 'pointer',
+                                textDecoration: 'none'
+                            }}
+                        >
+                            View All &rarr;
+                        </span>
                     </div>
 
-                    <div className="mitra-events-grid">
-                        <div className="mitra-event-card" onClick={() => setTab('explore')}>
+                    {/* FEATURED ARENAS CARDS */}
+                    <div 
+                        className="mitra-events-grid"
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                            gap: '12px',
+                            marginBottom: '20px'
+                        }}
+                    >
+                        <div 
+                            className="mitra-event-card"
+                            onClick={() => setTab('explore')}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.09)',
+                                borderRadius: '16px',
+                                padding: '14px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                cursor: 'pointer',
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.35)'
+                            }}
+                        >
                             <div>
-                                <span className="mitra-event-badge srijan">SRIJAN '27</span>
-                                <h4 className="mitra-event-name">National Hackathon</h4>
-                                <p className="mitra-event-desc">24-hour non-stop coding, hardware integration, and prototyping challenge.</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span className="mitra-event-badge srijan" style={{ background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.35)', padding: '3px 8px', borderRadius: '6px', fontSize: '9.5px', fontWeight: '800' }}>SRIJAN '27</span>
+                                    <span style={{ fontSize: '10px', color: '#38bdf8', fontWeight: '700' }}>24H HACKATHON</span>
+                                </div>
+                                <h4 className="mitra-event-name" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '14px', fontWeight: '800', color: '#ffffff', margin: '0 0 6px 0' }}>National Hackathon</h4>
+                                <p className="mitra-event-desc" style={{ fontSize: '11.5px', color: '#94a3b8', lineHeight: '1.4', margin: '0 0 12px 0' }}>24-hour non-stop coding, hardware integration, and prototyping challenge.</p>
                             </div>
-                            <div className="mitra-event-footer">
-                                <span>₹50,000+ Prizes</span>
-                                <span>CS Labs</span>
+                            <div 
+                                className="mitra-event-footer"
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                    paddingTop: '10px',
+                                    fontSize: '11px'
+                                }}
+                            >
+                                <span style={{ color: '#fbbf24', fontWeight: '700' }}>🏆 ₹50,000+ Prizes</span>
+                                <span style={{ color: '#38bdf8', fontWeight: '600' }}>📍 CS Dept Labs</span>
                             </div>
                         </div>
 
-                        <div className="mitra-event-card" onClick={() => setTab('explore')}>
+                        <div 
+                            className="mitra-event-card"
+                            onClick={() => setTab('explore')}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.09)',
+                                borderRadius: '16px',
+                                padding: '14px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                cursor: 'pointer',
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.35)'
+                            }}
+                        >
                             <div>
-                                <span className="mitra-event-badge ankur">ANKUR '27</span>
-                                <h4 className="mitra-event-name">Project Expo</h4>
-                                <p className="mitra-event-desc">Showcase working engineering projects, working prototypes & startup ideas.</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span className="mitra-event-badge ankur" style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.35)', padding: '3px 8px', borderRadius: '6px', fontSize: '9.5px', fontWeight: '800' }}>ANKUR '27</span>
+                                    <span style={{ fontSize: '10px', color: '#fbbf24', fontWeight: '700' }}>EXPO ARENA</span>
+                                </div>
+                                <h4 className="mitra-event-name" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '14px', fontWeight: '800', color: '#ffffff', margin: '0 0 6px 0' }}>Project Expo</h4>
+                                <p className="mitra-event-desc" style={{ fontSize: '11.5px', color: '#94a3b8', lineHeight: '1.4', margin: '0 0 12px 0' }}>Showcase working engineering projects, working prototypes & startup ideas.</p>
                             </div>
-                            <div className="mitra-event-footer">
-                                <span>₹30,000+ Prizes</span>
-                                <span>Mech Arena</span>
+                            <div 
+                                className="mitra-event-footer"
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                    paddingTop: '10px',
+                                    fontSize: '11px'
+                                }}
+                            >
+                                <span style={{ color: '#fbbf24', fontWeight: '700' }}>🏆 ₹30,000+ Prizes</span>
+                                <span style={{ color: '#fbbf24', fontWeight: '600' }}>📍 Mech Arena</span>
                             </div>
                         </div>
 
-                        <div className="mitra-event-card" onClick={() => setTab('explore')}>
+                        <div 
+                            className="mitra-event-card"
+                            onClick={() => setTab('explore')}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.09)',
+                                borderRadius: '16px',
+                                padding: '14px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                cursor: 'pointer',
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.35)'
+                            }}
+                        >
                             <div>
-                                <span className="mitra-event-badge udbhav">UDBHAV '27</span>
-                                <h4 className="mitra-event-name">National Conference</h4>
-                                <p className="mitra-event-desc">Research paper presentation, technical symposium and keynote lectures.</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span className="mitra-event-badge udbhav" style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#c084fc', border: '1px solid rgba(168, 85, 247, 0.35)', padding: '3px 8px', borderRadius: '6px', fontSize: '9.5px', fontWeight: '800' }}>UDBHAV '27</span>
+                                    <span style={{ fontSize: '10px', color: '#c084fc', fontWeight: '700' }}>CONFERENCE</span>
+                                </div>
+                                <h4 className="mitra-event-name" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '14px', fontWeight: '800', color: '#ffffff', margin: '0 0 6px 0' }}>National Conference</h4>
+                                <p className="mitra-event-desc" style={{ fontSize: '11.5px', color: '#94a3b8', lineHeight: '1.4', margin: '0 0 12px 0' }}>Research paper presentation, technical symposium and keynote lectures.</p>
                             </div>
-                            <div className="mitra-event-footer">
-                                <span>Certificates + Cash</span>
-                                <span>Seminar Hall</span>
+                            <div 
+                                className="mitra-event-footer"
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                    paddingTop: '10px',
+                                    fontSize: '11px'
+                                }}
+                            >
+                                <span style={{ color: '#fbbf24', fontWeight: '700' }}>📜 Certificates + Cash</span>
+                                <span style={{ color: '#c084fc', fontWeight: '600' }}>📍 Seminar Hall</span>
                             </div>
                         </div>
 
-                        <div className="mitra-event-card" onClick={() => setTab('explore')}>
+                        <div 
+                            className="mitra-event-card"
+                            onClick={() => setTab('explore')}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.09)',
+                                borderRadius: '16px',
+                                padding: '14px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                cursor: 'pointer',
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.35)'
+                            }}
+                        >
                             <div>
-                                <span className="mitra-event-badge cultural">RHYTHM '27</span>
-                                <h4 className="mitra-event-name">Cultural Night</h4>
-                                <p className="mitra-event-desc">Singing, Dance, Battle of Bands, and high-voltage celebrity DJ performance.</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span className="mitra-event-badge cultural" style={{ background: 'rgba(236, 72, 153, 0.15)', color: '#f472b6', border: '1px solid rgba(236, 72, 153, 0.35)', padding: '3px 8px', borderRadius: '6px', fontSize: '9.5px', fontWeight: '800' }}>RHYTHM '27</span>
+                                    <span style={{ fontSize: '10px', color: '#f472b6', fontWeight: '700' }}>CULTURAL NIGHT</span>
+                                </div>
+                                <h4 className="mitra-event-name" style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '14px', fontWeight: '800', color: '#ffffff', margin: '0 0 6px 0' }}>Grand Cultural Night</h4>
+                                <p className="mitra-event-desc" style={{ fontSize: '11.5px', color: '#94a3b8', lineHeight: '1.4', margin: '0 0 12px 0' }}>Singing, Dance, Battle of Bands, and high-voltage celebrity DJ performance.</p>
                             </div>
-                            <div className="mitra-event-footer">
-                                <span>Day 1 Evening</span>
-                                <span>Main Stage</span>
+                            <div 
+                                className="mitra-event-footer"
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                    paddingTop: '10px',
+                                    fontSize: '11px'
+                                }}
+                            >
+                                <span style={{ color: '#fbbf24', fontWeight: '700' }}>🎤 Day 1 Evening</span>
+                                <span style={{ color: '#f472b6', fontWeight: '600' }}>📍 Main Stage</span>
                             </div>
                         </div>
                     </div>
@@ -502,49 +869,121 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
 
             {/* TAB C: MY NAVONMESH PASS */}
             {tab === 'pass' && (
-                <div style={{ textAlign: 'center', padding: '10px 0' }}>
-                    <div className="mitra-hero-card" style={{ textAlign: 'center' }}>
-                        <span className="mitra-event-badge srijan">ACTIVE PASS</span>
-                        <h3 style={{ margin: '6px 0', color: '#fff', fontSize: '15px' }}>{team?.teamName || 'Squad Pass'}</h3>
-                        <p style={{ fontSize: '12px', color: '#fbbf24', fontFamily: 'monospace', fontWeight: 'bold' }}>
-                            {team?.teamId || 'SQUAD'}
+                <div className="mitra-pass-wrapper" style={{ textAlign: 'center', padding: '6px 0', maxWidth: '440px', margin: '0 auto' }}>
+                    <div 
+                        className="mitra-pass-card" 
+                        style={{ 
+                            background: 'linear-gradient(135deg, rgba(24, 32, 54, 0.95) 0%, rgba(10, 14, 25, 0.98) 100%)',
+                            border: '1px solid rgba(251, 191, 36, 0.4)',
+                            borderRadius: '22px',
+                            padding: '22px 18px',
+                            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)',
+                            position: 'relative'
+                        }}
+                    >
+                        <span 
+                            style={{ 
+                                display: 'inline-block',
+                                fontFamily: 'Orbitron, sans-serif',
+                                fontSize: '10px',
+                                fontWeight: 900,
+                                color: '#070a13',
+                                background: 'linear-gradient(135deg, #fbbf24, #d4af37)',
+                                padding: '4px 14px',
+                                borderRadius: '12px',
+                                letterSpacing: '1px',
+                                marginBottom: '10px'
+                            }}
+                        >
+                            OFFICIAL DIGITAL SQUAD PASS
+                        </span>
+
+                        <h3 style={{ margin: '4px 0', color: '#ffffff', fontSize: '18px', fontFamily: 'Orbitron, sans-serif', fontWeight: 800 }}>
+                            {team?.teamName || 'Squad Pass'}
+                        </h3>
+                        <div style={{ display: 'inline-block', margin: '4px 0 12px 0' }}>
+                            <span 
+                                style={{ 
+                                    fontFamily: 'Space Mono, monospace', 
+                                    fontSize: '12.5px', 
+                                    color: '#fbbf24', 
+                                    fontWeight: 'bold',
+                                    background: 'rgba(251, 191, 36, 0.1)',
+                                    border: '1px solid rgba(251, 191, 36, 0.35)',
+                                    padding: '3px 10px',
+                                    borderRadius: '8px'
+                                }}
+                            >
+                                SQUAD ID: {team?.teamId || 'SQUAD'}
+                            </span>
+                        </div>
+
+                        <p style={{ margin: '0 0 14px 0', fontSize: '11px', color: '#94a3b8' }}>
+                            {team?.college || 'SSGMCE Shegaon'} • {team?.event || 'National Tech Fest 2027'}
                         </p>
 
+                        {/* HIGH CONTRAST QR SCANNER BOX */}
                         <div style={{
-                            background: '#fff',
-                            borderRadius: '16px',
+                            background: '#ffffff',
+                            borderRadius: '18px',
                             padding: '14px',
                             display: 'inline-block',
-                            margin: '14px 0',
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.6)'
+                            margin: '4px 0 14px 0',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.55)'
                         }}>
                             {qrCodeUrl ? (
                                 <img src={qrCodeUrl} alt="QR Pass" style={{ width: '200px', height: '200px', display: 'block' }} />
                             ) : (
-                                <p style={{ color: '#000', fontSize: '12px' }}>Generating Dynamic QR...</p>
+                                <p style={{ color: '#000', fontSize: '12px', padding: '40px 20px' }}>Generating Dynamic QR...</p>
                             )}
                         </div>
 
+                        {/* ACCESS BADGES */}
                         <div style={{
                             display: 'flex',
                             justifyContent: 'center',
                             gap: '8px',
                             flexWrap: 'wrap',
-                            margin: '8px 0 16px'
+                            margin: '4px 0 16px 0'
                         }}>
-                            <span style={{ fontSize: '10px', background: 'rgba(16,185,129,0.15)', color: '#34d399', border: '1px solid rgba(16,185,129,0.3)', padding: '3px 8px', borderRadius: '10px' }}>
+                            <span style={{ fontSize: '10.5px', fontWeight: 700, background: 'rgba(16,185,129,0.18)', color: '#34d399', border: '1px solid rgba(16,185,129,0.4)', padding: '4px 10px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                 ✓ Main Gate Entry
                             </span>
-                            <span style={{ fontSize: '10px', background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)', padding: '3px 8px', borderRadius: '10px' }}>
+                            <span style={{ fontSize: '10.5px', fontWeight: 700, background: 'rgba(251,191,36,0.18)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.4)', padding: '4px 10px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                                 🍽️ Mess Canteen Linked
                             </span>
-                            <span style={{ fontSize: '10px', background: 'rgba(56,189,248,0.15)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.3)', padding: '3px 8px', borderRadius: '10px' }}>
-                                🪑 Lab Seat Assigned
+                            <span style={{ fontSize: '10.5px', fontWeight: 700, background: 'rgba(56,189,248,0.18)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.4)', padding: '4px 10px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                🪑 Lab Workstation Assigned
                             </span>
                         </div>
 
-                        <button className="mitra-save-btn" onClick={handleDownloadPass}>
-                            <FaDownload /> DOWNLOAD DIGITAL PASS
+                        <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: '14px' }}>
+                            Leader: <strong style={{ color: '#cbd5e1' }}>{team?.leaderName || 'N/A'}</strong> ({team?.leaderPhone || 'N/A'})
+                        </div>
+
+                        <button 
+                            className="mitra-save-btn" 
+                            onClick={handleDownloadPass}
+                            style={{
+                                background: 'linear-gradient(135deg, #fbbf24 0%, #d4af37 100%)',
+                                color: '#070a13',
+                                border: 'none',
+                                borderRadius: '12px',
+                                padding: '12px 20px',
+                                fontFamily: 'Orbitron, sans-serif',
+                                fontSize: '12px',
+                                fontWeight: 800,
+                                letterSpacing: '0.8px',
+                                cursor: 'pointer',
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                boxShadow: '0 4px 16px rgba(251, 191, 36, 0.35)'
+                            }}
+                        >
+                            <FaDownload /> SAVE PASS TO PHONE (PNG)
                         </button>
                     </div>
                 </div>

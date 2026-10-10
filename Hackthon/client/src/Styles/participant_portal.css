@@ -1,37 +1,89 @@
 /* ==========================================================================
-   NAVONMESH MITRA - PARTICIPANT PORTAL STYLESHEET
-   - Technical-fest modern mobile UI
-   - Micro-animations, responsive cards, glassmorphic layout
+   NAVONMESH MITRA - PARTICIPANT & SQUAD PORTAL STYLESHEET
+   - Technical-fest modern mobile & responsive UI
+   - High-contrast glassmorphic cards, gold/cyan neon accents
+   - Bulletproof alignment, zero text-squishing fallbacks
    ========================================================================== */
 
 .participant-portal-container {
     width: 100%;
-    max-width: 100%;
+    max-width: 650px;
     margin: 0 auto;
-    padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 76px) 14px;
+    padding: 14px 16px calc(env(safe-area-inset-bottom, 0px) + 80px) 16px;
     box-sizing: border-box;
+    color: #f8fafc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------------- TOP SUB-NAVIGATION PILLS ---------------- */
+.mitra-tabs-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px 12px 2px;
+    margin-bottom: 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mitra-tabs-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.mitra-tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(18, 24, 40, 0.7);
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+}
+
+.mitra-tab-pill:hover {
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.mitra-tab-pill.active {
+    background: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+    border-color: #fbbf24;
+    color: #070a13;
+    box-shadow: 0 4px 14px rgba(251, 191, 36, 0.35);
 }
 
 /* ---------------- HERO WELCOME CARD ---------------- */
 .mitra-hero-card {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(14, 20, 36, 0.85) 100%);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 16px;
-    padding: 16px;
+    background: linear-gradient(135deg, rgba(28, 37, 65, 0.9) 0%, rgba(11, 16, 30, 0.95) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 18px;
+    padding: 18px;
     margin-bottom: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .mitra-hero-card::after {
     content: '';
     position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, var(--coor-accent-glow) 0%, transparent 70%);
+    top: -60px;
+    right: -60px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -39,75 +91,87 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 12px;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 
 .mitra-welcome-title {
-    font-family: var(--coor-display-font);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--coor-text-main);
-    margin: 0 0 4px 0;
+    font-family: 'Orbitron', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.5px;
+    line-height: 1.25;
 }
 
 .mitra-team-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    background: rgba(251, 191, 36, 0.15);
-    border: 1px solid rgba(251, 191, 36, 0.35);
-    color: var(--coor-accent-bright);
-    font-family: monospace;
-    font-size: 11px;
+    gap: 6px;
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+    font-family: 'Space Mono', monospace, monospace;
+    font-size: 11.5px;
     font-weight: 700;
-    padding: 3px 8px;
+    padding: 3px 10px;
     border-radius: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .mitra-status-chip {
-    padding: 3px 9px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 10.5px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .mitra-status-chip.confirmed {
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid rgba(16, 185, 129, 0.45);
     color: #34d399;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
 }
 
 .mitra-status-chip.pending {
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.18);
+    border: 1px solid rgba(245, 158, 11, 0.45);
     color: #fbbf24;
 }
 
-/* Announcements Ticker */
+/* Announcements & Live Ticker */
 .mitra-alert-strip {
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 3px solid #fbbf24;
     border-radius: 10px;
-    padding: 8px 10px;
-    font-size: 11px;
+    padding: 9px 12px;
+    font-size: 11.5px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: var(--coor-text-sub);
+    gap: 10px;
+    color: #cbd5e1;
+    line-height: 1.4;
 }
 
 .mitra-alert-tag {
-    background: var(--coor-accent);
-    color: #000;
-    font-weight: 800;
-    font-size: 9px;
-    padding: 2px 5px;
+    background: #fbbf24;
+    color: #070a13;
+    font-weight: 900;
+    font-size: 9.5px;
+    padding: 2px 7px;
     border-radius: 4px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     flex-shrink: 0;
+    display: inline-block;
 }
 
 /* ---------------- SECTION HEADERS ---------------- */
@@ -115,45 +179,109 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 16px 0 10px 0;
+    margin: 20px 0 10px 0;
 }
 
 .mitra-section-title {
-    font-family: var(--coor-display-font);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--coor-accent-bright);
+    font-family: 'Orbitron', -apple-system, sans-serif;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #fbbf24;
     letter-spacing: 0.8px;
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    text-transform: uppercase;
 }
 
 .mitra-section-link {
-    font-size: 11px;
-    color: var(--coor-accent);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #38bdf8;
     cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.4px;
+    transition: color 0.2s ease;
+}
+
+.mitra-section-link:hover {
+    color: #7dd3fc;
     text-decoration: underline;
+}
+
+/* ---------------- COUNTDOWN BANNER ---------------- */
+.mitra-countdown-box {
+    background: linear-gradient(135deg, rgba(17, 24, 43, 0.9) 0%, rgba(9, 13, 24, 0.95) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 16px;
+    padding: 14px 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 12px 0 18px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.mitra-count-unit {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 10px 4px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.mitra-count-num {
+    font-family: 'Orbitron', monospace, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #fbbf24;
+    line-height: 1.1;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+}
+
+.mitra-count-lbl {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 4px;
 }
 
 /* ---------------- FEATURED EVENTS GRID ---------------- */
 .mitra-events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .mitra-event-card {
-    background: var(--coor-card-bg);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 14px;
-    padding: 12px;
+    background: linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.mitra-event-card:hover {
+    border-color: rgba(251, 191, 36, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
 }
 
 .mitra-event-card:active {
@@ -161,215 +289,357 @@
 }
 
 .mitra-event-badge {
+    display: inline-block;
     align-self: flex-start;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 6px;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 3px 8px;
     border-radius: 6px;
     margin-bottom: 8px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .mitra-event-badge.srijan {
     background: rgba(56, 189, 248, 0.15);
     color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.3);
+    border: 1px solid rgba(56, 189, 248, 0.35);
 }
 
 .mitra-event-badge.ankur {
     background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .mitra-event-badge.udbhav {
     background: rgba(168, 85, 247, 0.15);
     color: #c084fc;
-    border: 1px solid rgba(168, 85, 247, 0.3);
+    border: 1px solid rgba(168, 85, 247, 0.35);
 }
 
 .mitra-event-badge.cultural {
     background: rgba(236, 72, 153, 0.15);
     color: #f472b6;
-    border: 1px solid rgba(236, 72, 153, 0.3);
+    border: 1px solid rgba(236, 72, 153, 0.35);
 }
 
 .mitra-event-name {
-    font-family: var(--coor-display-font);
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 4px 0;
+    font-family: 'Orbitron', -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.3px;
 }
 
 .mitra-event-desc {
-    font-size: 11px;
-    color: var(--coor-text-sub);
-    line-height: 1.35;
-    margin: 0 0 10px 0;
+    font-size: 11.5px;
+    color: #94a3b8;
+    line-height: 1.4;
+    margin: 0 0 12px 0;
 }
 
 .mitra-event-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    padding-top: 8px;
-    font-size: 10px;
-    color: var(--coor-accent-bright);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 10px;
+    font-size: 10.5px;
+    color: #fbbf24;
+    font-weight: 700;
+}
+
+.mitra-event-footer span:last-child {
+    color: #38bdf8;
     font-weight: 600;
 }
 
-/* ---------------- COUNTDOWN BANNER ---------------- */
-.mitra-countdown-box {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 12px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    margin: 12px 0;
-}
-
-.mitra-count-unit {
+/* ---------------- DIGITAL SQUAD PASS TAB ---------------- */
+.mitra-pass-wrapper {
     text-align: center;
+    padding: 6px 0;
+    max-width: 440px;
+    margin: 0 auto;
 }
 
-.mitra-count-num {
-    font-family: var(--coor-display-font);
+.mitra-pass-card {
+    background: linear-gradient(135deg, rgba(24, 32, 54, 0.95) 0%, rgba(10, 14, 25, 0.98) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 22px;
+    padding: 22px 18px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.mitra-pass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37, #fbbf24, #10b981, #38bdf8);
+}
+
+.mitra-pass-header-tag {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    color: #070a13;
+    background: linear-gradient(135deg, #fbbf24, #d4af37);
+    padding: 4px 12px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.mitra-pass-team-title {
+    font-family: 'Orbitron', -apple-system, sans-serif;
     font-size: 18px;
     font-weight: 800;
-    color: var(--coor-accent-bright);
-    line-height: 1;
+    color: #ffffff;
+    margin: 4px 0;
+    letter-spacing: 0.5px;
 }
 
-.mitra-count-lbl {
-    font-size: 9px;
-    color: var(--coor-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 2px;
+.mitra-pass-id-banner {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 4px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+}
+
+.mitra-qr-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 14px;
+    display: inline-block;
+    margin: 8px 0 16px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.mitra-qr-image {
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 0 auto;
+}
+
+.mitra-pass-badges-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 8px 0 18px 0;
+}
+
+.mitra-pass-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mitra-pass-badge.gate {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.mitra-pass-badge.meal {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.mitra-pass-badge.seat {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.mitra-save-btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+    color: #070a13;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-family: 'Orbitron', -apple-system, sans-serif;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+    transition: all 0.2s ease;
+}
+
+.mitra-save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.45);
+}
+
+.mitra-save-btn:active {
+    transform: scale(0.98);
 }
 
 /* ---------------- SCHEDULE TIMELINE ---------------- */
 .mitra-timeline {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .mitra-timeline-item {
-    background: var(--coor-card-bg);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 12px;
-    padding: 10px 12px;
+    background: linear-gradient(135deg, rgba(20, 27, 47, 0.8) 0%, rgba(10, 14, 26, 0.9) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 12px 14px;
     display: flex;
-    gap: 12px;
+    gap: 14px;
     align-items: flex-start;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .mitra-time-chip {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 6px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 8px 10px;
     text-align: center;
     flex-shrink: 0;
-    min-width: 60px;
+    min-width: 65px;
 }
 
 .mitra-time-chip strong {
     display: block;
-    font-size: 11px;
-    color: var(--coor-accent-bright);
+    font-size: 11.5px;
+    color: #fbbf24;
+    font-family: 'Space Mono', monospace;
+    font-weight: 800;
 }
 
 .mitra-time-chip span {
-    font-size: 9px;
-    color: var(--coor-text-muted);
+    font-size: 9.5px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.mitra-timeline-details {
+    flex: 1;
 }
 
 .mitra-timeline-details h4 {
-    margin: 0 0 2px 0;
-    font-size: 12px;
-    color: #fff;
+    margin: 0 0 4px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
 }
 
 .mitra-timeline-details p {
-    margin: 0 0 4px 0;
-    font-size: 11px;
-    color: var(--coor-text-sub);
+    margin: 0 0 6px 0;
+    font-size: 11.5px;
+    color: #94a3b8;
+    line-height: 1.35;
 }
 
 .mitra-venue-tag {
     font-size: 10px;
     color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
 }
 
 /* ---------------- EDITABLE TEAM MANAGEMENT ---------------- */
 .mitra-team-editor-card {
-    background: var(--coor-card-bg);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .mitra-form-group {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .mitra-form-label {
     display: block;
     font-size: 11px;
-    font-weight: 600;
-    color: var(--coor-text-sub);
-    margin-bottom: 4px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 5px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
 }
 
 .mitra-form-input {
     width: 100%;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.45);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    padding: 8px 10px;
-    color: #fff;
-    font-size: 12.5px;
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 13px;
     font-family: inherit;
     outline: none;
     box-sizing: border-box;
+    transition: border-color 0.2s ease;
 }
 
 .mitra-form-input:focus {
-    border-color: var(--coor-accent-bright);
+    border-color: #fbbf24;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
 }
 
 .mitra-member-row {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    position: relative;
+    gap: 8px;
 }
 
 .mitra-member-row-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--coor-accent);
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #fbbf24;
 }
 
 .mitra-delete-btn {
@@ -378,105 +648,108 @@
     color: #f87171;
     cursor: pointer;
     font-size: 13px;
-    padding: 2px 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s ease;
 }
 
-.mitra-save-btn {
-    background: linear-gradient(135deg, var(--coor-accent), var(--coor-accent-bright));
-    color: #070a13;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 16px;
-    font-family: var(--coor-display-font);
-    font-size: 12px;
+.mitra-delete-btn:hover {
+    background: rgba(248, 113, 113, 0.15);
+}
+
+.mitra-add-member-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(251, 191, 36, 0.35);
+    color: #f8fafc;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: 0.8px;
     cursor: pointer;
     width: 100%;
-    margin-top: 10px;
+    margin: 10px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
+    transition: all 0.2s ease;
 }
 
-.mitra-add-member-btn {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px dashed var(--coor-card-border);
-    color: var(--coor-text-main);
-    border-radius: 10px;
-    padding: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    margin: 8px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+.mitra-add-member-btn:hover {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: #fbbf24;
+    color: #fbbf24;
 }
 
-/* ---------------- CERTIFICATE DOWNLOAD CARD ---------------- */
+/* ---------------- CERTIFICATES & SUPPORT CARDS ---------------- */
 .mitra-cert-card {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(14, 20, 36, 0.8) 100%);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 16px;
-    padding: 16px;
+    background: linear-gradient(135deg, rgba(28, 37, 65, 0.9) 0%, rgba(11, 16, 30, 0.95) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 18px;
+    padding: 24px 18px;
     text-align: center;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .mitra-cert-icon {
-    font-size: 32px;
-    color: var(--coor-accent-bright);
-    margin-bottom: 8px;
+    font-size: 38px;
+    color: #fbbf24;
+    margin-bottom: 10px;
 }
 
 .mitra-cert-title {
-    font-family: var(--coor-display-font);
-    font-size: 14px;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 4px 0;
+    font-family: 'Orbitron', -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.5px;
 }
 
 .mitra-cert-sub {
-    font-size: 11px;
-    color: var(--coor-text-sub);
-    margin: 0 0 12px 0;
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin: 0 0 14px 0;
+    line-height: 1.4;
 }
 
 .mitra-download-cert-btn {
     background: rgba(251, 191, 36, 0.15);
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    color: var(--coor-accent-bright);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 11px;
-    font-weight: 700;
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    color: #fbbf24;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 11.5px;
+    font-weight: 800;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    transition: all 0.2s ease;
 }
 
-/* ---------------- CAMPUS GUIDE & HELPDESK ---------------- */
+.mitra-download-cert-btn:hover {
+    background: rgba(251, 191, 36, 0.25);
+    transform: translateY(-1px);
+}
+
 .mitra-help-card {
-    background: var(--coor-card-bg);
-    border: 1px solid var(--coor-card-border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(20, 27, 47, 0.85) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
 }
 
 .mitra-contact-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 11px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 12px;
 }
 
 .mitra-contact-item:last-child {

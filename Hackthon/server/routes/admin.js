@@ -10,20 +10,29 @@ const CommitteeMember = require('../models/CommitteeMember');
 const Recruitment = require('../models/Recruitment');
 
 const coreMembersUtil = require('../utils/coreMembers');
+const accessControl = require('../utils/accessControl');
 
 router.post('/login', (req, res) => {
     const { id, password } = req.body;
     const cleanId = (id || '').trim().toLowerCase();
     const cleanPassword = (password || '').trim();
 
+    // Check if this login has been blocked by master admin
+    if (cleanId !== 'nihal.navonmesh' && accessControl.isLoginBlocked(cleanId)) {
+        return res.status(403).json({
+            success: false,
+            message: 'Access Denied: Your login has been blocked by Master Administrator (nihal.navonmesh).'
+        });
+    }
+
+    // Single Root Master Admin & Coordinator Credentials
     const admins = [
-        { id: 'nihal1512', password: 'rutuja1512', name: 'Nihal', subRole: 'Overall Head' },
-        { id: 'vedant1510', password: 'Vedant@15', name: 'Vedant', subRole: 'Overall Head' }
+        { id: 'nihal.navonmesh', password: 'Nihal&15', name: 'Nihal', subRole: 'Overall Head & Master Administrator' }
     ];
 
     let adminUser = admins.find(a => a.id.toLowerCase() === cleanId && a.password === cleanPassword);
 
-    // Also check core members
+    // Also check core members (if not in lockdown/blocked)
     if (!adminUser) {
         const coreMembers = coreMembersUtil.getCoreMembers();
         const member = coreMembers.find(m => 
@@ -34,6 +43,7 @@ router.post('/login', (req, res) => {
 
         if (member && member.password === cleanPassword) {
             adminUser = {
+                id: member.loginId || cleanId,
                 name: member.name,
                 subRole: `Core Member (${member.class || member.year || 'SSGMCE'})`
             };
@@ -55,20 +65,61 @@ router.post('/login', (req, res) => {
     }
 });
 
-// GET Core Members (Only nihal.ssgmce has clearance to view cleartext passwords)
+// GET Access Control Status (Master Admin Only)
+router.get('/access-control', (req, res) => {
+    const authHeader = req.headers.authorization;
+    const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+        return res.status(403).json({ error: 'Unauthorized: Only Master Admin (nihal.navonmesh) can view access control.' });
+    }
+    const config = accessControl.getAccessConfig();
+    res.json({ success: true, config });
+});
+
+// POST Toggle Lockdown (Block/unblock all other logins)
+router.post('/access-control/toggle-lockdown', (req, res) => {
+    const authHeader = req.headers.authorization;
+    const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+        return res.status(403).json({ error: 'Unauthorized: Only Master Admin (nihal.navonmesh) can manage lockdown.' });
+    }
+    const { enabled } = req.body;
+    const config = accessControl.toggleLockdown(enabled);
+    res.json({ success: true, config });
+});
+
+// POST Block or Unblock specific login ID
+router.post('/access-control/block-id', (req, res) => {
+    const authHeader = req.headers.authorization;
+    const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+        return res.status(403).json({ error: 'Unauthorized: Only Master Admin (nihal.navonmesh) can block logins.' });
+    }
+    const { targetId, block } = req.body;
+    const result = accessControl.toggleBlockId(targetId, block);
+    res.json(result);
+});
+
+// GET Core Members (Only nihal.navonmesh has clearance to view cleartext passwords)
 router.get('/core-members', (req, res) => {
     const authHeader = req.headers.authorization;
     if (authHeader !== 'Bearer admin_secret_token_navonmesh') {
         return res.status(401).json({ error: 'Unauthorized Access' });
     }
     const requesterId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
-    const isAuthorized = ['nihal.ssgmce', 'nihal1512'].includes(requesterId);
+    const isAuthorized = requesterId === 'nihal.navonmesh';
+    const config = accessControl.getAccessConfig();
     const members = coreMembersUtil.getCoreMembers();
 
-    const formattedMembers = members.map(m => ({
-        ...m,
-        password: isAuthorized ? m.password : '••••••••'
-    }));
+    const formattedMembers = members.map(m => {
+        const memberLogin = (m.loginId || '').toLowerCase();
+        const isBlocked = config.lockdownAllOthers || (Array.isArray(config.blockedLogins) && config.blockedLogins.map(b => b.toLowerCase()).includes(memberLogin));
+        return {
+            ...m,
+            password: isAuthorized ? m.password : '••••••••',
+            isBlocked: isBlocked
+        };
+    });
 
     res.json({ success: true, count: formattedMembers.length, entries: formattedMembers });
 });
@@ -1021,10 +1072,10 @@ router.get('/committee', async (req, res) => {
 
 router.post('/committee/add', async (req, res) => {
     const authHeader = req.headers.authorization;
-    const adminId = req.headers['x-admin-id']; // Special header to check who is performing the action
+    const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
 
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal1512') {
-        return res.status(401).json({ error: 'Unauthorized Access. Only Nihal can add members.' });
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+        return res.status(401).json({ error: 'Unauthorized Access. Only Master Admin (nihal.navonmesh) can add members.' });
     }
 
     try {
@@ -1039,10 +1090,10 @@ router.post('/committee/add', async (req, res) => {
 
 router.delete('/committee/:id', async (req, res) => {
     const authHeader = req.headers.authorization;
-    const adminId = req.headers['x-admin-id'];
+    const adminId = (req.headers['x-admin-id'] || '').toLowerCase().trim();
 
-    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal1512') {
-        return res.status(401).json({ error: 'Unauthorized Access. Only Nihal can remove members.' });
+    if (authHeader !== 'Bearer admin_secret_token_navonmesh' || adminId !== 'nihal.navonmesh') {
+        return res.status(401).json({ error: 'Unauthorized Access. Only Master Admin (nihal.navonmesh) can remove members.' });
     }
 
     try {

@@ -237,22 +237,68 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 480px) {
-    .time-val {
-        font-size: 9rem;
-    }
-
+@media (max-width: 768px) {
     .timer-wrapper {
-        padding: 4vh 20px;
+        width: 95vw;
+        height: auto;
+        min-height: auto;
+        max-height: calc(100vh - 120px);
+        padding: 16px 14px;
+        border-radius: 16px;
+        gap: 12px;
+        justify-content: space-around;
     }
-}
 
-@media (max-height: 800px) {
-    .time-val {
-        font-size: 8rem;
+    .timer-header {
+        margin-bottom: 6px;
+    }
+
+    .timer-navonmesh-logo {
+        height: 48px;
+    }
+
+    .status-glow-text {
+        font-size: 0.72rem;
+        letter-spacing: 2px;
+        padding: 4px 14px;
     }
 
     .time-display-vertical {
-        gap: 20px;
+        gap: 8px;
+    }
+
+    .time-val {
+        font-size: 4.8rem;
+    }
+
+    .time-lab {
+        font-size: 0.75rem;
+        letter-spacing: 5px;
+        margin-top: 2px;
+    }
+
+    .time-divider {
+        width: 50%;
+    }
+
+    .timer-actions {
+        gap: 8px;
+    }
+
+    .main-btn {
+        min-width: 200px;
+        padding: 10px 24px;
+        font-size: 0.95rem;
+    }
+
+    .reset-btn {
+        padding: 8px 24px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .time-val {
+        font-size: 4.2rem;
     }
 }

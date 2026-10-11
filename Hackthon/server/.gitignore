@@ -13,3 +13,4 @@ yarn-error.log*
 # misc
 .DS_Store
 .vscode/
+firebase-service-account*.json

@@ -25,7 +25,10 @@ function loadServiceAccount() {
     const fileName = process.env.FIREBASE_SERVICE_ACCOUNT_FILE || 'firebase-service-account.json';
     const candidatePaths = [
         path.resolve(__dirname, '..', fileName),
+        path.resolve(__dirname, '..', 'firebase-service-account.json'),
+        path.resolve(__dirname, '..', 'firebase-service-account.json.json'),
         path.resolve(process.cwd(), fileName),
+        path.resolve(process.cwd(), 'firebase-service-account.json.json'),
         path.resolve(__dirname, '..', '..', 'client', 'android', 'app', 'google-services.json')
     ];
 

@@ -478,8 +478,10 @@ const AdminQRScanner = () => {
         setManualId('');
     };
 
+    const activeScannerTheme = typeof window !== 'undefined' ? (localStorage.getItem('coor_theme') || 'theme-light') : 'theme-light';
+
     return (
-        <div className="admin-qr-scanner-wrapper">
+        <div className={`admin-qr-scanner-wrapper ${activeScannerTheme}`}>
             {/* Header / Active Slot Ribbon */}
             <div className="scanner-control-bar">
                 <div className="coordinator-selector-group">

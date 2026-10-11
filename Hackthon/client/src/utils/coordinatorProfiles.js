@@ -30,7 +30,7 @@ export const COORDINATOR_PROFILES = {
     },
     'atharva.navonmesh': {
         name: 'Atharva Tayade',
-        subRole: 'HEAD (सृजन)',
+        subRole: 'Insitute Navonmesh Co-ordinator',
         image: atharvaImg
     },
     'rutuja.navonmesh': {

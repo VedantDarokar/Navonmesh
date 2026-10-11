@@ -1998,3 +1998,1034 @@
     color: #f87171;
 }
 
+/* ==========================================================================
+   PARTICIPANT PORTAL - LIGHT THEME (MATCHING IMAGE 2 MULTICOLOR PALETTE)
+   - Zero black or dark navy cards on white canvas
+   - Pure white cards (#ffffff) with soft borders (#e2e8f0) & subtle shadows
+   - Harmonious pastel multicolor accents: Amber, Sky Blue, Lavender, Mint Emerald
+   - High legibility typography: Slate #0f172a, #475569, #64748b
+   ========================================================================== */
+
+.theme-light.participant-portal-container,
+.theme-light .participant-portal-container,
+.coordinator-app-container.theme-light .participant-portal-container {
+    color: #0f172a;
+}
+
+/* ---------------- 1. TOP SUB-NAVIGATION PILLS ---------------- */
+.theme-light .mitra-tab-pill,
+.coordinator-app-container.theme-light .mitra-tab-pill {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .mitra-tab-pill:hover,
+.coordinator-app-container.theme-light .mitra-tab-pill:hover {
+    border-color: #0284c7 !important;
+    color: #0284c7 !important;
+    transform: translateY(-1px);
+}
+
+.theme-light .mitra-tab-pill.active,
+.coordinator-app-container.theme-light .mitra-tab-pill.active {
+    background: #0284c7 !important;
+    border-color: #0284c7 !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3) !important;
+}
+
+/* ---------------- 2. HERO WELCOME SQUAD CARD ---------------- */
+.theme-light .mitra-hero-card,
+.coordinator-app-container.theme-light .mitra-hero-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.theme-light .mitra-hero-card::after,
+.coordinator-app-container.theme-light .mitra-hero-card::after {
+    display: none !important;
+}
+
+.theme-light .squad-salutation,
+.coordinator-app-container.theme-light .squad-salutation {
+    color: #ea580c !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    display: block !important;
+    margin-bottom: 3px !important;
+}
+
+.theme-light .mitra-welcome-title,
+.coordinator-app-container.theme-light .mitra-welcome-title {
+    color: #0f172a !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .mitra-team-badge,
+.coordinator-app-container.theme-light .mitra-team-badge {
+    background: #fff7ed !important;
+    border: 1px solid #fed7aa !important;
+    color: #c2410c !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .mitra-status-chip.confirmed,
+.coordinator-app-container.theme-light .mitra-status-chip.confirmed {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    color: #059669 !important;
+    box-shadow: none !important;
+}
+
+.theme-light .refresh-mini-btn,
+.coordinator-app-container.theme-light .refresh-mini-btn {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+.theme-light .refresh-mini-btn:hover,
+.coordinator-app-container.theme-light .refresh-mini-btn:hover {
+    background: #e0f2fe !important;
+    border-color: #0284c7 !important;
+    color: #0284c7 !important;
+}
+
+/* ---------------- 3. OFFICIAL REGISTRATION EVENT CARD ---------------- */
+.theme-light .registered-event-card,
+.coordinator-app-container.theme-light .registered-event-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.theme-light .section-micro-tag,
+.coordinator-app-container.theme-light .section-micro-tag {
+    color: #0284c7 !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .event-tag-badge,
+.coordinator-app-container.theme-light .event-tag-badge {
+    background: #ecfeff !important;
+    border: 1px solid #a5f3fc !important;
+    color: #0e7490 !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .event-title-display,
+.coordinator-app-container.theme-light .event-title-display {
+    color: #0f172a !important;
+    font-size: 16.5px !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .event-college-sub,
+.coordinator-app-container.theme-light .event-college-sub {
+    color: #475569 !important;
+    font-size: 11.5px !important;
+}
+
+/* ---------------- 4. MULTICOLOR PASTEL INFO BOXES (MATCHING IMAGE 2) ---------------- */
+/* Box 1: Assigned Problem Statement (Soft Amber Pastel) */
+.theme-light .reg-info-grid .info-box:nth-child(1),
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(1) {
+    background: #fff7ed !important;
+    border: 1px solid #fed7aa !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(1) .info-label,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(1) .info-label {
+    color: #c2410c !important;
+    font-weight: 700 !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(1) .info-val,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(1) .info-val {
+    color: #9a3412 !important;
+    font-weight: 800 !important;
+}
+
+/* Box 2: Table & Workstation (Soft Sky Blue Pastel) */
+.theme-light .reg-info-grid .info-box:nth-child(2),
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(2) {
+    background: #f0f9ff !important;
+    border: 1px solid #bae6fd !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(2) .info-label,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(2) .info-label {
+    color: #0284c7 !important;
+    font-weight: 700 !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(2) .info-val,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(2) .info-val {
+    color: #0369a1 !important;
+    font-weight: 800 !important;
+}
+
+/* Box 3: Team Leader (Soft Lavender / Violet Pastel) */
+.theme-light .reg-info-grid .info-box:nth-child(3),
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(3) {
+    background: #faf5ff !important;
+    border: 1px solid #e9d5ff !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(3) .info-label,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(3) .info-label {
+    color: #7e22ce !important;
+    font-weight: 700 !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(3) .info-val,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(3) .info-val {
+    color: #581c87 !important;
+    font-weight: 800 !important;
+}
+
+/* Box 4: Squad Strength (Soft Mint / Emerald Pastel) */
+.theme-light .reg-info-grid .info-box:nth-child(4),
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(4) {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(4) .info-label,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(4) .info-label {
+    color: #059669 !important;
+    font-weight: 700 !important;
+}
+
+.theme-light .reg-info-grid .info-box:nth-child(4) .info-val,
+.coordinator-app-container.theme-light .reg-info-grid .info-box:nth-child(4) .info-val {
+    color: #065f46 !important;
+    font-weight: 800 !important;
+}
+
+/* Fallback for generic info-box in light theme */
+.theme-light .info-box,
+.coordinator-app-container.theme-light .info-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.theme-light .info-label,
+.coordinator-app-container.theme-light .info-label {
+    color: #64748b;
+}
+
+.theme-light .info-val,
+.coordinator-app-container.theme-light .info-val {
+    color: #0f172a;
+}
+
+/* ---------------- 5. SHORTCUT ACTION BUTTONS ---------------- */
+.theme-light .shortcut-actions-row,
+.coordinator-app-container.theme-light .shortcut-actions-row {
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .shortcut-btn,
+.coordinator-app-container.theme-light .shortcut-btn {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #334155 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+.theme-light .shortcut-btn:hover,
+.coordinator-app-container.theme-light .shortcut-btn:hover {
+    background: #f0f9ff !important;
+    border-color: #0284c7 !important;
+    color: #0284c7 !important;
+    transform: translateY(-1px);
+}
+
+/* ---------------- 6. COUNTDOWN MINI STRIP ---------------- */
+.theme-light .countdown-mini-strip,
+.coordinator-app-container.theme-light .countdown-mini-strip {
+    background: #ffffff !important;
+    border: 1px solid #fde68a !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .cd-header,
+.coordinator-app-container.theme-light .cd-header {
+    color: #b45309 !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .cd-box,
+.coordinator-app-container.theme-light .cd-box {
+    background: #fffbeb !important;
+    border: 1px solid #fef3c7 !important;
+}
+
+.theme-light .cd-num,
+.coordinator-app-container.theme-light .cd-num {
+    color: #0f172a !important;
+    font-weight: 900 !important;
+}
+
+.theme-light .cd-lbl,
+.coordinator-app-container.theme-light .cd-lbl {
+    color: #92400e !important;
+    font-weight: 700 !important;
+}
+
+/* ---------------- 7. MEMBER MEAL PASSES SECTION ---------------- */
+.theme-light .section-sub-title,
+.coordinator-app-container.theme-light .section-sub-title {
+    color: #0f172a !important;
+}
+
+.theme-light .section-mini-desc,
+.coordinator-app-container.theme-light .section-mini-desc {
+    color: #64748b !important;
+}
+
+.theme-light .refresh-passes-btn,
+.coordinator-app-container.theme-light .refresh-passes-btn {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0284c7 !important;
+}
+
+.theme-light .refresh-passes-btn:hover,
+.coordinator-app-container.theme-light .refresh-passes-btn:hover {
+    background: #e0f2fe !important;
+    border-color: #0284c7 !important;
+}
+
+.theme-light .download-all-btn,
+.coordinator-app-container.theme-light .download-all-btn {
+    background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3) !important;
+}
+
+.theme-light .individual-pass-card,
+.coordinator-app-container.theme-light .individual-pass-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.theme-light .role-pill.leader,
+.coordinator-app-container.theme-light .role-pill.leader {
+    background: #fff7ed !important;
+    border: 1px solid #fed7aa !important;
+    color: #c2410c !important;
+}
+
+.theme-light .role-pill.member,
+.coordinator-app-container.theme-light .role-pill.member {
+    background: #f0f9ff !important;
+    border: 1px solid #bae6fd !important;
+    color: #0284c7 !important;
+}
+
+.theme-light .pid-pill,
+.coordinator-app-container.theme-light .pid-pill {
+    color: #64748b !important;
+}
+
+.theme-light .pass-member-name,
+.coordinator-app-container.theme-light .pass-member-name {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .pass-member-contact,
+.coordinator-app-container.theme-light .pass-member-contact {
+    color: #64748b !important;
+}
+
+.theme-light .meal-token-pill,
+.coordinator-app-container.theme-light .meal-token-pill {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+}
+
+.theme-light .meal-token-pill.ready,
+.coordinator-app-container.theme-light .meal-token-pill.ready {
+    background: #fff7ed !important;
+    border: 1px solid #fed7aa !important;
+    color: #c2410c !important;
+}
+
+.theme-light .meal-token-pill.redeemed,
+.coordinator-app-container.theme-light .meal-token-pill.redeemed {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    color: #059669 !important;
+}
+
+.theme-light .qr-box-mount,
+.coordinator-app-container.theme-light .qr-box-mount {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .qr-scan-hint,
+.coordinator-app-container.theme-light .qr-scan-hint {
+    color: #64748b !important;
+}
+
+.theme-light .download-pass-single-btn,
+.coordinator-app-container.theme-light .download-pass-single-btn {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+.theme-light .download-pass-single-btn:hover,
+.coordinator-app-container.theme-light .download-pass-single-btn:hover {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+}
+
+/* ---------------- 8. TAB 2: SQUAD DETAILS EDITOR ---------------- */
+.theme-light .editor-title,
+.coordinator-app-container.theme-light .editor-title {
+    color: #0f172a !important;
+}
+
+.theme-light .editor-sub,
+.coordinator-app-container.theme-light .editor-sub {
+    color: #64748b !important;
+}
+
+.theme-light .form-section-card,
+.coordinator-app-container.theme-light .form-section-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .card-section-heading,
+.coordinator-app-container.theme-light .card-section-heading {
+    color: #0284c7 !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .mitra-form-label,
+.coordinator-app-container.theme-light .mitra-form-label {
+    color: #334155 !important;
+    font-weight: 700 !important;
+}
+
+.theme-light .mitra-form-input,
+.coordinator-app-container.theme-light .mitra-form-input {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+.theme-light .mitra-form-input:focus,
+.coordinator-app-container.theme-light .mitra-form-input:focus {
+    background: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12) !important;
+}
+
+.theme-light .mitra-form-input.locked,
+.coordinator-app-container.theme-light .mitra-form-input.locked {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #64748b !important;
+}
+
+.theme-light .locked-pill,
+.coordinator-app-container.theme-light .locked-pill {
+    background: #fee2e2 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+}
+
+.theme-light .field-security-note,
+.coordinator-app-container.theme-light .field-security-note {
+    color: #64748b !important;
+}
+
+.theme-light .ps-quota-badge.locked,
+.coordinator-app-container.theme-light .ps-quota-badge.locked {
+    background: #fee2e2 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+}
+
+.theme-light .ps-quota-badge.editable,
+.coordinator-app-container.theme-light .ps-quota-badge.editable {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    color: #059669 !important;
+}
+
+.theme-light .ps-locked-notice,
+.coordinator-app-container.theme-light .ps-locked-notice {
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    color: #991b1b !important;
+}
+
+.theme-light .mitra-member-row,
+.coordinator-app-container.theme-light .mitra-member-row {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .member-index-tag,
+.coordinator-app-container.theme-light .member-index-tag {
+    color: #0284c7 !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .mitra-delete-btn,
+.coordinator-app-container.theme-light .mitra-delete-btn {
+    background: #fee2e2 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+}
+
+.theme-light .mitra-add-member-btn,
+.coordinator-app-container.theme-light .mitra-add-member-btn {
+    background: #f0fdf4 !important;
+    border: 1px dashed #86efac !important;
+    color: #15803d !important;
+}
+
+.theme-light .save-squad-action-btn,
+.coordinator-app-container.theme-light .save-squad-action-btn {
+    background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+}
+
+/* ---------------- 9. TAB 3: TIMELINE ---------------- */
+.theme-light .timeline-heading,
+.coordinator-app-container.theme-light .timeline-heading {
+    color: #0f172a !important;
+}
+
+.theme-light .timeline-sub,
+.coordinator-app-container.theme-light .timeline-sub {
+    color: #64748b !important;
+}
+
+.theme-light .tl-filter-btn,
+.coordinator-app-container.theme-light .tl-filter-btn {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+}
+
+.theme-light .tl-filter-btn.active,
+.coordinator-app-container.theme-light .tl-filter-btn.active {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
+}
+
+.theme-light .timeline-day-separator,
+.coordinator-app-container.theme-light .timeline-day-separator {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .mitra-timeline-item,
+.coordinator-app-container.theme-light .mitra-timeline-item {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+
+.theme-light .mitra-timeline-item.active-pulse,
+.coordinator-app-container.theme-light .mitra-timeline-item.active-pulse {
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 12px rgba(2, 132, 199, 0.2) !important;
+}
+
+.theme-light .mitra-time-chip,
+.coordinator-app-container.theme-light .mitra-time-chip {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .mitra-time-chip.highlight,
+.coordinator-app-container.theme-light .mitra-time-chip.highlight {
+    background: #eff6ff !important;
+    border-color: #bfdbfe !important;
+    color: #1d4ed8 !important;
+}
+
+.theme-light .mitra-timeline-details h4,
+.coordinator-app-container.theme-light .mitra-timeline-details h4 {
+    color: #0f172a !important;
+}
+
+.theme-light .mitra-timeline-details p,
+.coordinator-app-container.theme-light .mitra-timeline-details p {
+    color: #475569 !important;
+}
+
+.theme-light .mitra-venue-tag,
+.coordinator-app-container.theme-light .mitra-venue-tag {
+    background: #f0f9ff !important;
+    color: #0284c7 !important;
+    border: 1px solid #bae6fd !important;
+}
+
+/* ---------------- 10. TAB 4: RESULTS & CERTIFICATES ---------------- */
+.theme-light .results-card-container,
+.theme-light .certificates-card-container,
+.coordinator-app-container.theme-light .results-card-container,
+.coordinator-app-container.theme-light .certificates-card-container {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .results-heading,
+.theme-light .cert-heading,
+.coordinator-app-container.theme-light .results-heading,
+.coordinator-app-container.theme-light .cert-heading {
+    color: #0f172a !important;
+}
+
+.theme-light .results-notice-box,
+.coordinator-app-container.theme-light .results-notice-box {
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+}
+
+.theme-light .notice-title,
+.coordinator-app-container.theme-light .notice-title {
+    color: #92400e !important;
+}
+
+.theme-light .notice-body,
+.coordinator-app-container.theme-light .notice-body {
+    color: #78350f !important;
+}
+
+.theme-light .rounds-title,
+.coordinator-app-container.theme-light .rounds-title {
+    color: #0f172a !important;
+}
+
+.theme-light .round-step-item,
+.coordinator-app-container.theme-light .round-step-item {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .step-content strong,
+.coordinator-app-container.theme-light .step-content strong {
+    color: #0f172a !important;
+}
+
+.theme-light .step-content p,
+.coordinator-app-container.theme-light .step-content p {
+    color: #475569 !important;
+}
+
+.theme-light .cert-locked-box,
+.coordinator-app-container.theme-light .cert-locked-box {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .locked-badge-chip,
+.coordinator-app-container.theme-light .locked-badge-chip {
+    background: #fee2e2 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+}
+
+.theme-light .locked-state-title,
+.coordinator-app-container.theme-light .locked-state-title {
+    color: #0f172a !important;
+}
+
+.theme-light .locked-state-desc,
+.coordinator-app-container.theme-light .locked-state-desc {
+    color: #475569 !important;
+}
+
+.theme-light .certificate-mock-preview,
+.coordinator-app-container.theme-light .certificate-mock-preview {
+    background: #ffffff !important;
+    border: 2px dashed #cbd5e1 !important;
+    color: #334155 !important;
+}
+
+.theme-light .mock-title,
+.coordinator-app-container.theme-light .mock-title {
+    color: #0f172a !important;
+}
+
+/* ---------------- 11. TAB 5: SOS & EMERGENCY ---------------- */
+.theme-light .sos-banner-alert,
+.coordinator-app-container.theme-light .sos-banner-alert {
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+}
+
+.theme-light .sos-banner-title,
+.coordinator-app-container.theme-light .sos-banner-title {
+    color: #be123c !important;
+}
+
+.theme-light .sos-banner-desc,
+.coordinator-app-container.theme-light .sos-banner-desc {
+    color: #881337 !important;
+}
+
+.theme-light .hotline-card,
+.coordinator-app-container.theme-light .hotline-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .hotline-role,
+.coordinator-app-container.theme-light .hotline-role {
+    color: #64748b !important;
+}
+
+.theme-light .hotline-number,
+.coordinator-app-container.theme-light .hotline-number {
+    color: #0f172a !important;
+}
+
+.theme-light .dial-btn,
+.coordinator-app-container.theme-light .dial-btn {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+}
+
+.theme-light .dial-btn.medical,
+.coordinator-app-container.theme-light .dial-btn.medical {
+    background: #e11d48 !important;
+    color: #ffffff !important;
+}
+
+/* ==========================================================================
+   PARTICIPANT LIVE BROADCAST NOTIFICATIONS & DRAWER
+   ========================================================================== */
+.p-notif-bell-btn {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    font-size: 13px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.p-notif-bell-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.p-notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 800;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+}
+
+/* Floating Live Broadcast Toast for Participants */
+.participant-live-toast {
+    position: fixed;
+    top: 70px;
+    left: 14px;
+    right: 14px;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    z-index: 9999;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    animation: toastSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.p-toast-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #0284c7;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.p-toast-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.p-toast-top-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.p-toast-category-tag {
+    font-size: 8px;
+    font-weight: 800;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+.p-toast-author {
+    font-size: 9px;
+    color: #94a3b8;
+}
+
+.p-toast-heading {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
+.p-toast-text {
+    font-size: 11px;
+    color: #cbd5e1;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.p-toast-dismiss {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px;
+}
+
+/* Participant Announcements Drawer */
+.participant-notif-drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.participant-notif-drawer-pane {
+    background: #ffffff;
+    width: 85%;
+    max-width: 380px;
+    height: 100%;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+    animation: drawerSlideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.p-notif-drawer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 14px;
+}
+
+.p-notif-drawer-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 2px;
+}
+
+.p-notif-drawer-desc {
+    font-size: 11px;
+    color: #64748b;
+    margin: 0;
+}
+
+.p-notif-drawer-exit {
+    background: #f1f5f9;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.p-notif-drawer-items-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.p-notif-drawer-none {
+    text-align: center;
+    padding: 40px 16px;
+    color: #94a3b8;
+}
+
+.p-notif-drawer-none-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+}
+
+.p-notif-card-item {
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.p-notif-card-item:hover {
+    background: #f1f5f9;
+}
+
+.p-notif-card-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.p-notif-card-tag {
+    font-size: 8px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.p-notif-card-tag.urgent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.p-notif-card-tag.meal {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.p-notif-card-time {
+    font-size: 9.5px;
+    color: #94a3b8;
+}
+
+.p-notif-card-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 3px;
+}
+
+.p-notif-card-text {
+    font-size: 11.5px;
+    color: #64748b;
+    margin: 0 0 6px;
+    line-height: 1.4;
+}
+
+.p-notif-card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5px;
+    color: #94a3b8;
+}
+
+/* ---------------- DARK THEME FOR PARTICIPANT NOTIFS ---------------- */
+.theme-dark .p-notif-bell-btn,
+.coordinator-app-container.theme-dark .p-notif-bell-btn {
+    background: #0d1527 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f8fafc !important;
+}
+
+.theme-dark .participant-notif-drawer-pane,
+.coordinator-app-container.theme-dark .participant-notif-drawer-pane {
+    background: #090e1a !important;
+    border-left: 1px solid rgba(56, 189, 248, 0.2) !important;
+}
+
+.theme-dark .p-notif-drawer-title,
+.coordinator-app-container.theme-dark .p-notif-drawer-title {
+    color: #f8fafc !important;
+}
+
+.theme-dark .p-notif-card-item,
+.coordinator-app-container.theme-dark .p-notif-card-item {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-dark .p-notif-card-title,
+.coordinator-app-container.theme-dark .p-notif-card-title {
+    color: #f8fafc !important;
+}
+
+.theme-dark .p-notif-card-text,
+.coordinator-app-container.theme-dark .p-notif-card-text {
+    color: #94a3b8 !important;
+}
+
+

@@ -9,6 +9,7 @@ const Timer = require('../models/Timer');
 const CommitteeMember = require('../models/CommitteeMember');
 const Recruitment = require('../models/Recruitment');
 const CoordinatorTask = require('../models/CoordinatorTask');
+const Notification = require('../models/Notification');
 
 const coreMembersUtil = require('../utils/coreMembers');
 const accessControl = require('../utils/accessControl');
@@ -1243,6 +1244,112 @@ router.put('/coordinator-tasks/:id/status', async (req, res) => {
         res.json({ success: true, task });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// ==========================================================================
+// BROADCAST CUSTOM NOTIFICATIONS (VEDANT.NAVONMESH & NIHAL.NAVONMESH ONLY)
+// ==========================================================================
+
+// POST /api/admin/broadcast-notification
+router.post('/broadcast-notification', async (req, res) => {
+    try {
+        const { senderId, senderName, title, message, target, category } = req.body;
+        const cleanSenderId = (senderId || req.headers['x-admin-id'] || '').trim().toLowerCase();
+
+        const allowedSenders = ['vedant.navonmesh', 'nihal.navonmesh', 'vedant,navonmesh'];
+        if (!allowedSenders.includes(cleanSenderId)) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access Denied: Only Overall Heads (vedant.navonmesh and nihal.navonmesh) are authorized to broadcast customized notifications.'
+            });
+        }
+
+        if (!title || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'Notification title and message are required.'
+            });
+        }
+
+        const validTargets = ['all', 'coordinator', 'participant'];
+        const selectedTarget = validTargets.includes(target) ? target : 'all';
+
+        const validCategories = ['announcement', 'urgent', 'meal', 'schedule', 'general'];
+        const selectedCategory = validCategories.includes(category) ? category : 'announcement';
+
+        const notification = new Notification({
+            title: title.trim(),
+            message: message.trim(),
+            target: selectedTarget,
+            category: selectedCategory,
+            senderId: cleanSenderId,
+            senderName: senderName || (cleanSenderId.includes('nihal') ? 'Nihal Kankal (Overall Head)' : 'Vedant Darokar (Overall Head)')
+        });
+
+        await notification.save();
+
+        // Broadcast in real-time via Socket.io
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('new-notification', notification);
+            console.log(`[Socket] Notification broadcasted by ${cleanSenderId} to ${selectedTarget}: "${title}"`);
+        }
+
+        res.json({
+            success: true,
+            message: 'Custom notification broadcasted successfully.',
+            notification
+        });
+    } catch (err) {
+        console.error('Error broadcasting notification:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// GET /api/admin/notifications (Filtered by target role)
+router.get('/notifications', async (req, res) => {
+    try {
+        const { role } = req.query;
+        let query = {};
+        if (role && role !== 'all') {
+            query = { target: { $in: ['all', role.toLowerCase()] } };
+        }
+
+        const notifications = await Notification.find(query)
+            .sort({ createdAt: -1 })
+            .limit(50);
+
+        res.json({
+            success: true,
+            notifications,
+            count: notifications.length
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// DELETE /api/admin/notifications/:id
+router.delete('/notifications/:id', async (req, res) => {
+    try {
+        const adminId = (req.headers['x-admin-id'] || req.query.senderId || req.body.senderId || '').trim().toLowerCase();
+        const allowedSenders = ['vedant.navonmesh', 'nihal.navonmesh', 'vedant,navonmesh'];
+        if (!allowedSenders.includes(adminId)) {
+            return res.status(403).json({ success: false, message: 'Unauthorized: Only Overall Heads can revoke notifications.' });
+        }
+
+        const deleted = await Notification.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ success: false, message: 'Notification not found.' });
+
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('notification-deleted', { id: req.params.id });
+        }
+
+        res.json({ success: true, message: 'Notification revoked successfully.' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
     }
 });
 

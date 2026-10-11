@@ -1,0 +1,253 @@
+/* ==========================================================================
+   NAVONMESH APP SPLASH SCREEN (BLINKIT-STYLE OPENING EXPERIENCE)
+   - Fullscreen immersive entrance
+   - High-contrast typography & brand emblem
+   - Dynamic support: Blinkit Vibrant Golden Yellow in Light, Deep Cosmic in Dark
+   - Smooth entrance & fade-out transitions
+   ========================================================================== */
+
+.nav-splash-screen {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light Theme: Matches overall app background */
+.nav-splash-screen.theme-light {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+/* Dark Theme: Matches overall app background */
+.nav-splash-screen.theme-dark {
+    background-color: #070b14;
+    color: #f8fafc;
+}
+
+/* Exit Fade-out animation */
+.nav-splash-screen.splash-fading {
+    opacity: 0;
+    transform: scale(1.03);
+    pointer-events: none;
+}
+
+/* Central Brand Content Container */
+.nav-splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 380px;
+    width: 100%;
+    animation: navSplashEntrance 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes navSplashEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(12px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Emblem Box */
+.nav-splash-emblem-box {
+    margin-bottom: 16px;
+    padding: 6px 14px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.nav-splash-screen.theme-light .nav-splash-emblem-box {
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    width: 120px;
+    height: 52px;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-emblem-box {
+    background: #0f172a;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    width: 120px;
+    height: 52px;
+}
+
+.nav-splash-emblem-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Bold lowercase brand wordmark (matching Blinkit typography hierarchy) */
+.nav-splash-wordmark {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin: 0 0 8px 0;
+    line-height: 1;
+}
+
+.nav-splash-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 44px;
+    font-weight: 900 !important;
+    letter-spacing: 2.5px;
+    margin: 0;
+    line-height: 1;
+    text-transform: uppercase;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
+    text-shadow: none !important;
+}
+
+/* Black text segment: NAVON */
+.nav-splash-screen.theme-light .nav-splash-text-black {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    font-weight: 900 !important;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-text-black {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 900 !important;
+}
+
+/* Blue text segment: MESH */
+.nav-splash-screen.theme-light .nav-splash-text-blue {
+    color: #0284c7 !important; /* Premium vibrant sapphire blue */
+    -webkit-text-fill-color: #0284c7 !important;
+    font-weight: 900 !important;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-text-blue {
+    color: #38bdf8 !important; /* Electric cyan-blue */
+    -webkit-text-fill-color: #38bdf8 !important;
+    font-weight: 900 !important;
+}
+
+/* Subtitle / Tagline: "Official Technical Fest App" */
+.nav-splash-tagline {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    margin: 8px 0 0 0;
+    line-height: 1.3;
+}
+
+.nav-splash-screen.theme-light .nav-splash-tagline {
+    color: #334155;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-tagline {
+    color: #cbd5e1;
+}
+
+/* Subtle Divider Line (matches thin rule in Blinkit screen) */
+.nav-splash-divider {
+    width: 220px;
+    max-width: 60%;
+    height: 1px;
+    margin: 28px auto 20px auto;
+}
+
+.nav-splash-screen.theme-light .nav-splash-divider {
+    background: #cbd5e1;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-divider {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+/* Sub-footer text: "AN SSGMCE INITIATIVE" */
+.nav-splash-footer {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+}
+
+.nav-splash-screen.theme-light .nav-splash-footer {
+    color: #1f2937;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-footer {
+    color: #94a3b8;
+}
+
+/* Bottom Progress Bar (Subtle indication of app readiness) */
+.nav-splash-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+}
+
+.nav-splash-bottom-fill {
+    height: 100%;
+    width: 0%;
+    animation: navSplashFill 2s linear forwards;
+}
+
+.nav-splash-screen.theme-light .nav-splash-bottom-fill {
+    background: #0284c7;
+}
+
+.nav-splash-screen.theme-dark .nav-splash-bottom-fill {
+    background: #38bdf8;
+}
+
+@keyframes navSplashFill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* Responsive adjustments for narrow mobile screens */
+@media (max-width: 380px) {
+    .nav-splash-title {
+        font-size: 42px;
+        letter-spacing: -1.5px;
+    }
+
+    .nav-splash-tagline {
+        font-size: 16px;
+    }
+
+    .nav-splash-divider {
+        margin: 24px auto 18px auto;
+    }
+
+    .nav-splash-footer {
+        font-size: 10px;
+        letter-spacing: 1.8px;
+    }
+}

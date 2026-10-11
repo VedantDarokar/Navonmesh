@@ -3,11 +3,12 @@ import {
     FaHome, FaUsers, FaCalendarAlt, FaAward, FaQuestionCircle, 
     FaCheckCircle, FaExclamationTriangle, FaDownload, FaEdit, FaSave, FaPlus, FaTrash, 
     FaPhone, FaMapMarkerAlt, FaBullhorn, FaClock, FaPaperPlane, FaShieldAlt,
-    FaLock, FaUnlock, FaQrcode, FaUtensils, FaArrowRight, FaSync
+    FaLock, FaUnlock, FaQrcode, FaUtensils, FaArrowRight, FaSync, FaTimes, FaBell
 } from 'react-icons/fa';
 import '../Styles/participant_portal.css';
 import { getApiUrl } from '../utils/apiConfig';
 import QRCode from 'qrcode';
+import { io } from 'socket.io-client';
 
 // Official Problem Statements List (Restricted to 3 Tracks as requested)
 const OFFICIAL_PROBLEM_STATEMENTS = [
@@ -16,7 +17,7 @@ const OFFICIAL_PROBLEM_STATEMENTS = [
     { id: 'PS03', title: 'Problem Statement 2', category: 'Domain Track 2', desc: 'Advanced technical challenge problem statement 2.' }
 ];
 
-const ParticipantPortal = ({ teamData, onLogout }) => {
+const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
     // 5 Dedicated App Tabs: 'home' | 'squad' | 'timeline' | 'results_certs' | 'sos'
     const [tab, setTab] = useState('home');
 
@@ -56,6 +57,12 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
 
     // Countdown State (To March 2026 Event Day)
     const [timeLeft, setTimeLeft] = useState({ days: 12, hours: 8, minutes: 24, seconds: 15 });
+
+    // Live Broadcast Notifications State
+    const [notifications, setNotifications] = useState([]);
+    const [showNotifDrawer, setShowNotifDrawer] = useState(false);
+    const [unreadNotifCount, setUnreadNotifCount] = useState(0);
+    const [activeToast, setActiveToast] = useState(null);
 
     const API_URL = getApiUrl();
 
@@ -161,8 +168,58 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
         }
     };
 
+    // Fetch Live Announcements for Participants
+    const fetchNotifications = async () => {
+        try {
+            const res = await fetch(`${API_URL}/api/admin/notifications?role=participant`);
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setNotifications(data.notifications || []);
+            }
+        } catch (e) {}
+    };
+
     useEffect(() => {
         fetchLatestProfile();
+        fetchNotifications();
+
+        let socket = null;
+        try {
+            socket = io(API_URL, { transports: ['websocket'] });
+            socket.on('new-notification', (notif) => {
+                if (notif.target === 'all' || notif.target === 'participant') {
+                    setNotifications(prev => [notif, ...prev]);
+                    setUnreadNotifCount(c => c + 1);
+                    setActiveToast(notif);
+                    setTimeout(() => setActiveToast(null), 8000);
+
+                    // Trigger device notification if granted
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        try {
+                            new Notification(notif.title, {
+                                body: notif.message,
+                                icon: '/navonmesh_official_logo.png'
+                            });
+                        } catch (err) {}
+                    }
+                }
+            });
+
+            socket.on('notification-deleted', ({ id }) => {
+                setNotifications(prev => prev.filter(n => n._id !== id));
+            });
+        } catch (err) {
+            console.warn('Participant socket fallback:', err);
+        }
+
+        const interval = setInterval(() => {
+            fetchNotifications();
+        }, 12000);
+
+        return () => {
+            clearInterval(interval);
+            if (socket) socket.disconnect();
+        };
     }, []);
 
     useEffect(() => {
@@ -365,7 +422,7 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
     const isPsLocked = (team?.psChangeCount || 0) >= 1;
 
     return (
-        <div className="participant-portal-container">
+        <div className={`participant-portal-container ${theme || 'theme-light'}`}>
             {/* ---------------------------------------------------- */}
             {/* APP TOP NAVIGATION TABS (5 DEDICATED SECTIONS)        */}
             {/* ---------------------------------------------------- */}
@@ -425,13 +482,25 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
                                     </span>
                                 </div>
                             </div>
-                            <button 
-                                onClick={fetchLatestProfile} 
-                                className="refresh-mini-btn" 
-                                title="Refresh Squad Data"
-                            >
-                                <FaSync className={loadingTeam ? 'spin-icon' : ''} />
-                            </button>
+                            <div className="mitra-hero-actions-flex" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <button 
+                                    onClick={() => { setShowNotifDrawer(true); setUnreadNotifCount(0); }} 
+                                    className="p-notif-bell-btn" 
+                                    title="View Fest Broadcasts & Announcements"
+                                    type="button"
+                                >
+                                    <FaBell />
+                                    {unreadNotifCount > 0 && <span className="p-notif-badge">{unreadNotifCount}</span>}
+                                </button>
+                                <button 
+                                    onClick={() => { fetchLatestProfile(); fetchNotifications(); }} 
+                                    className="refresh-mini-btn" 
+                                    title="Refresh Squad Data"
+                                    type="button"
+                                >
+                                    <FaSync className={loadingTeam ? 'spin-icon' : ''} />
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -1315,6 +1384,63 @@ const ParticipantPortal = ({ teamData, onLogout }) => {
                             <div className="venue-pill"><strong>Hostel Block A & C:</strong> Boys Accommodation</div>
                             <div className="venue-pill"><strong>Hostel Block E:</strong> Girls Accommodation</div>
                             <div className="venue-pill"><strong>Campus Dispensary:</strong> 24/7 Medical Doctor on Duty</div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* FLOATING LIVE BROADCAST NOTIFICATION TOAST */}
+            {activeToast && (
+                <div className="participant-live-toast animate-slide-down">
+                    <div className="p-toast-icon-wrap"><FaBullhorn /></div>
+                    <div className="p-toast-details">
+                        <div className="p-toast-top-row">
+                            <span className="p-toast-category-tag">{activeToast.category?.toUpperCase() || 'ANNOUNCEMENT'}</span>
+                            <span className="p-toast-author">From {activeToast.senderName}</span>
+                        </div>
+                        <strong className="p-toast-heading">{activeToast.title}</strong>
+                        <p className="p-toast-text">{activeToast.message}</p>
+                    </div>
+                    <button className="p-toast-dismiss" onClick={() => setActiveToast(null)}>
+                        <FaTimes />
+                    </button>
+                </div>
+            )}
+
+            {/* LIVE ANNOUNCEMENTS FEED DRAWER */}
+            {showNotifDrawer && (
+                <div className="participant-notif-drawer-backdrop" onClick={() => setShowNotifDrawer(false)}>
+                    <div className="participant-notif-drawer-pane" onClick={(e) => e.stopPropagation()}>
+                        <div className="p-notif-drawer-top">
+                            <div>
+                                <h3 className="p-notif-drawer-title">Fest Announcements</h3>
+                                <p className="p-notif-drawer-desc">Official broadcasts from Overall Heads</p>
+                            </div>
+                            <button className="p-notif-drawer-exit" onClick={() => setShowNotifDrawer(false)}>
+                                <FaTimes />
+                            </button>
+                        </div>
+                        <div className="p-notif-drawer-items-list">
+                            {notifications.length === 0 ? (
+                                <div className="p-notif-drawer-none">
+                                    <FaBell className="p-notif-drawer-none-icon" />
+                                    <p>No broadcast announcements yet today.</p>
+                                </div>
+                            ) : (
+                                notifications.map((n) => (
+                                    <div key={n._id} className="p-notif-card-item">
+                                        <div className="p-notif-card-top">
+                                            <span className={`p-notif-card-tag ${n.category || 'announcement'}`}>{n.category?.toUpperCase() || 'INFO'}</span>
+                                            <span className="p-notif-card-time">{new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
+                                        <h4 className="p-notif-card-title">{n.title}</h4>
+                                        <p className="p-notif-card-text">{n.message}</p>
+                                        <div className="p-notif-card-footer">
+                                            <span>From: <strong>{n.senderName}</strong></span>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>

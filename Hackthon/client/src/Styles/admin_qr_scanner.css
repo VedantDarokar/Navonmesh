@@ -1442,3 +1442,394 @@
     font-size: 10.5px;
     cursor: pointer;
 }
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES FOR SCANNER (MATCHING MOCKUP TOP HALF SCREEN 2)
+   ========================================================================== */
+.theme-light .admin-qr-scanner-wrapper {
+    color: #0f172a;
+}
+
+.theme-light .coordinator-selector-group {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.theme-light .meal-slot-pill {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #475569;
+}
+
+.theme-light .meal-slot-pill.active {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+}
+
+.theme-light .viewfinder-container {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.theme-light .vf-corner {
+    border-color: #0284c7;
+}
+
+.theme-light .big-qr-icon {
+    color: #0284c7;
+}
+
+.theme-light .scanner-start-overlay h3 {
+    color: #0f172a;
+}
+
+.theme-light .scanner-start-overlay p {
+    color: #64748b;
+}
+
+.theme-light .start-scan-btn {
+    background: #0284c7;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+.theme-light .btn-pick-qr-file {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+.theme-light .scanner-status-strip {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.theme-light .strip-date,
+.theme-light .strip-stat {
+    color: #475569;
+}
+
+.theme-light .strip-stat strong {
+    color: #0f172a;
+}
+
+.theme-light .date-meal-filter-bar {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.theme-light .cyber-date-trigger-btn {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+.theme-light .btn-jump-today {
+    background: rgba(2, 132, 199, 0.12);
+    border-color: rgba(2, 132, 199, 0.35);
+    color: #0284c7;
+}
+
+.theme-light .btn-toggle-date-history {
+    background: #ffffff;
+    border-color: #0284c7;
+    color: #0284c7;
+}
+
+/* ---------------- LIGHT THEME OVERRIDES: COORDINATOR SELECTOR ---------------- */
+.theme-light .coordinator-selector-group,
+.coordinator-app-container.theme-light .coordinator-selector-group,
+.admin-qr-scanner-wrapper.theme-light .coordinator-selector-group {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .control-label,
+.coordinator-app-container.theme-light .control-label,
+.admin-qr-scanner-wrapper.theme-light .control-label {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .control-label-icon,
+.coordinator-app-container.theme-light .control-label-icon,
+.admin-qr-scanner-wrapper.theme-light .control-label-icon {
+    color: #0284c7 !important;
+}
+
+.theme-light .custom-coord-trigger,
+.coordinator-app-container.theme-light .custom-coord-trigger,
+.admin-qr-scanner-wrapper.theme-light .custom-coord-trigger {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.theme-light .custom-coord-trigger:hover,
+.theme-light .custom-coord-trigger.open,
+.coordinator-app-container.theme-light .custom-coord-trigger:hover,
+.coordinator-app-container.theme-light .custom-coord-trigger.open,
+.admin-qr-scanner-wrapper.theme-light .custom-coord-trigger:hover,
+.admin-qr-scanner-wrapper.theme-light .custom-coord-trigger.open {
+    background: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12) !important;
+}
+
+.theme-light .coord-trigger-name,
+.coordinator-app-container.theme-light .coord-trigger-name,
+.admin-qr-scanner-wrapper.theme-light .coord-trigger-name {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+.theme-light .coord-trigger-icon-badge,
+.coordinator-app-container.theme-light .coord-trigger-icon-badge,
+.admin-qr-scanner-wrapper.theme-light .coord-trigger-icon-badge {
+    background: #e2e8f0 !important;
+    color: #0284c7 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+.theme-light .coord-trigger-chevron,
+.coordinator-app-container.theme-light .coord-trigger-chevron,
+.admin-qr-scanner-wrapper.theme-light .coord-trigger-chevron {
+    color: #0284c7 !important;
+}
+
+.theme-light .custom-coord-dropdown-menu,
+.coordinator-app-container.theme-light .custom-coord-dropdown-menu,
+.admin-qr-scanner-wrapper.theme-light .custom-coord-dropdown-menu {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+.theme-light .custom-coord-dropdown-header,
+.coordinator-app-container.theme-light .custom-coord-dropdown-header,
+.admin-qr-scanner-wrapper.theme-light .custom-coord-dropdown-header {
+    background: #f8fafc !important;
+    color: #0284c7 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .coord-dropdown-item,
+.coordinator-app-container.theme-light .coord-dropdown-item,
+.admin-qr-scanner-wrapper.theme-light .coord-dropdown-item {
+    color: #0f172a !important;
+}
+
+.theme-light .coord-dropdown-item:hover,
+.theme-light .coord-dropdown-item:focus,
+.coordinator-app-container.theme-light .coord-dropdown-item:hover,
+.coordinator-app-container.theme-light .coord-dropdown-item:focus,
+.admin-qr-scanner-wrapper.theme-light .coord-dropdown-item:hover,
+.admin-qr-scanner-wrapper.theme-light .coord-dropdown-item:focus {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+.theme-light .coord-dropdown-item.selected,
+.coordinator-app-container.theme-light .coord-dropdown-item.selected,
+.admin-qr-scanner-wrapper.theme-light .coord-dropdown-item.selected {
+    background: rgba(2, 132, 199, 0.1) !important;
+    border: 1px solid rgba(2, 132, 199, 0.3) !important;
+    color: #0284c7 !important;
+}
+
+.theme-light .coord-item-name,
+.coordinator-app-container.theme-light .coord-item-name,
+.admin-qr-scanner-wrapper.theme-light .coord-item-name {
+    color: #0f172a !important;
+}
+
+.theme-light .coord-item-role,
+.coordinator-app-container.theme-light .coord-item-role,
+.admin-qr-scanner-wrapper.theme-light .coord-item-role {
+    color: #64748b !important;
+}
+
+.theme-light .custom-coord-input,
+.coordinator-app-container.theme-light .custom-coord-input,
+.admin-qr-scanner-wrapper.theme-light .custom-coord-input {
+    background: #f8fafc !important;
+    border: 1px solid #0284c7 !important;
+    color: #0f172a !important;
+}
+
+/* ---------------- LIGHT THEME OVERRIDES: MANUAL SCAN INPUT ---------------- */
+.theme-light .manual-input,
+.coordinator-app-container.theme-light .manual-input,
+.admin-qr-scanner-wrapper.theme-light .manual-input {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .manual-input::placeholder,
+.coordinator-app-container.theme-light .manual-input::placeholder,
+.admin-qr-scanner-wrapper.theme-light .manual-input::placeholder {
+    color: #64748b !important;
+}
+
+.theme-light .manual-input:focus,
+.coordinator-app-container.theme-light .manual-input:focus,
+.admin-qr-scanner-wrapper.theme-light .manual-input:focus {
+    border-color: #0284c7 !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+.theme-light .manual-submit-btn,
+.coordinator-app-container.theme-light .manual-submit-btn,
+.admin-qr-scanner-wrapper.theme-light .manual-submit-btn {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
+}
+
+/* ---------------- LIGHT THEME OVERRIDES: RECENT SCANS TABLE ---------------- */
+.theme-light .recent-scans-box,
+.coordinator-app-container.theme-light .recent-scans-box,
+.admin-qr-scanner-wrapper.theme-light .recent-scans-box {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .recent-header h5,
+.coordinator-app-container.theme-light .recent-header h5,
+.admin-qr-scanner-wrapper.theme-light .recent-header h5 {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+.theme-light .no-scans-text,
+.coordinator-app-container.theme-light .no-scans-text,
+.admin-qr-scanner-wrapper.theme-light .no-scans-text {
+    color: #64748b !important;
+}
+
+.theme-light .mini-scans-table th,
+.coordinator-app-container.theme-light .mini-scans-table th,
+.admin-qr-scanner-wrapper.theme-light .mini-scans-table th {
+    color: #64748b !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .mini-scans-table td,
+.coordinator-app-container.theme-light .mini-scans-table td,
+.admin-qr-scanner-wrapper.theme-light .mini-scans-table td {
+    color: #334155 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.theme-light .mini-scans-table td.strong,
+.coordinator-app-container.theme-light .mini-scans-table td.strong,
+.admin-qr-scanner-wrapper.theme-light .mini-scans-table td.strong {
+    color: #0f172a !important;
+}
+
+.theme-light .sync-sm-btn,
+.coordinator-app-container.theme-light .sync-sm-btn,
+.admin-qr-scanner-wrapper.theme-light .sync-sm-btn {
+    color: #64748b !important;
+}
+
+.theme-light .sync-sm-btn:hover,
+.coordinator-app-container.theme-light .sync-sm-btn:hover,
+.admin-qr-scanner-wrapper.theme-light .sync-sm-btn:hover {
+    color: #0284c7 !important;
+}
+
+/* ---------------- LIGHT THEME OVERRIDES: HISTORY BUTTONS ---------------- */
+.theme-light .btn-date-today,
+.coordinator-app-container.theme-light .btn-date-today,
+.admin-qr-scanner-wrapper.theme-light .btn-date-today {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+}
+
+.theme-light .btn-date-today.active,
+.coordinator-app-container.theme-light .btn-date-today.active,
+.admin-qr-scanner-wrapper.theme-light .btn-date-today.active {
+    background: rgba(2, 132, 199, 0.12) !important;
+    border-color: #0284c7 !important;
+    color: #0284c7 !important;
+}
+
+.theme-light .btn-open-history,
+.coordinator-app-container.theme-light .btn-open-history,
+.admin-qr-scanner-wrapper.theme-light .btn-open-history {
+    background: rgba(2, 132, 199, 0.1) !important;
+    border: 1px solid rgba(2, 132, 199, 0.3) !important;
+    color: #0284c7 !important;
+}
+
+/* ---------------- LIGHT THEME OVERRIDES: CALENDAR POPOVER ---------------- */
+.theme-light .cyber-calendar-popover,
+.coordinator-app-container.theme-light .cyber-calendar-popover,
+.admin-qr-scanner-wrapper.theme-light .cyber-calendar-popover {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+.theme-light .cyber-cal-header,
+.coordinator-app-container.theme-light .cyber-cal-header {
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .cyber-cal-month,
+.coordinator-app-container.theme-light .cyber-cal-month {
+    color: #0284c7 !important;
+    text-shadow: none !important;
+}
+
+.theme-light .cyber-cal-year,
+.coordinator-app-container.theme-light .cyber-cal-year {
+    color: #0f172a !important;
+}
+
+.theme-light .cyber-cal-weekday,
+.coordinator-app-container.theme-light .cyber-cal-weekday {
+    color: #64748b !important;
+}
+
+.theme-light .cyber-cal-day-cell,
+.coordinator-app-container.theme-light .cyber-cal-day-cell {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .cyber-cal-day-cell:hover:not(.selected),
+.coordinator-app-container.theme-light .cyber-cal-day-cell:hover:not(.selected) {
+    background: rgba(2, 132, 199, 0.15) !important;
+    border-color: #0284c7 !important;
+    color: #0284c7 !important;
+}
+
+.theme-light .cyber-cal-day-cell.selected,
+.coordinator-app-container.theme-light .cyber-cal-day-cell.selected {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+}
+
+.theme-light .cyber-cal-nav-btn,
+.coordinator-app-container.theme-light .cyber-cal-nav-btn {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+}
+
+

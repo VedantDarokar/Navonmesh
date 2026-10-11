@@ -11,52 +11,58 @@
     --coor-display-font: 'Orbitron', 'Inter', sans-serif;
 }
 
-/* ---------------- THEME: COSMIC GOLD (DEFAULT - MATCHES LOGO) ---------------- */
-.coordinator-app-container.theme-gold {
-    --coor-bg: #070a13;
-    --coor-surface: #0e1424;
-    --coor-surface-trans: rgba(14, 20, 36, 0.85);
-    --coor-card-bg: rgba(19, 27, 48, 0.7);
-    --coor-card-border: rgba(212, 175, 55, 0.25);
-    --coor-accent: #d4af37;
-    --coor-accent-bright: #fbbf24;
-    --coor-accent-glow: rgba(251, 191, 36, 0.3);
+/* ---------------- THEME: LIGHT THEME (DEFAULT - MATCHING MOCKUP TOP HALF) ---------------- */
+.coordinator-app-container.theme-light,
+.coordinator-app-container {
+    --coor-bg: #f8fafc;
+    --coor-surface: #ffffff;
+    --coor-surface-trans: rgba(255, 255, 255, 0.94);
+    --coor-card-bg: #ffffff;
+    --coor-card-border: #e2e8f0;
+    --coor-card-border-subtle: #edf2f7;
+    --coor-accent: #0284c7;
+    --coor-accent-bright: #0ea5e9;
+    --coor-accent-glow: rgba(14, 165, 233, 0.12);
+    --coor-text-main: #0f172a;
+    --coor-text-sub: #475569;
+    --coor-text-muted: #94a3b8;
+    --coor-tab-active: #0284c7;
+    --coor-pill-bg: #f1f5f9;
+    --coor-bottom-nav-bg: #ffffff;
+    --coor-bottom-nav-border: #e2e8f0;
+    --coor-card-shadow: 0 2px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    /* Logo box theming */
+    --coor-logo-box-bg: #ffffff;
+    --coor-logo-box-border: #cbd5e1;
+    --coor-logo-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --coor-header-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+    --coor-accent-glow: rgba(14, 165, 233, 0);
+}
+
+/* ---------------- THEME: DARK THEME (MATCHING MOCKUP BOTTOM HALF) ---------------- */
+.coordinator-app-container.theme-dark {
+    --coor-bg: #070b14;
+    --coor-surface: #0e1626;
+    --coor-surface-trans: rgba(14, 22, 38, 0.92);
+    --coor-card-bg: #0d1527;
+    --coor-card-border: rgba(0, 240, 255, 0.22);
+    --coor-card-border-subtle: rgba(255, 255, 255, 0.08);
+    --coor-accent: #00f0ff;
+    --coor-accent-bright: #38bdf8;
+    --coor-accent-glow: rgba(0, 240, 255, 0.22);
     --coor-text-main: #f8fafc;
     --coor-text-sub: #94a3b8;
     --coor-text-muted: #64748b;
-    --coor-tab-active: #fbbf24;
-}
-
-/* ---------------- THEME: CYBER EMERALD ---------------- */
-.coordinator-app-container.theme-emerald {
-    --coor-bg: #050e12;
-    --coor-surface: #0a1b20;
-    --coor-surface-trans: rgba(10, 27, 32, 0.88);
-    --coor-card-bg: rgba(13, 34, 40, 0.75);
-    --coor-card-border: rgba(16, 185, 129, 0.3);
-    --coor-accent: #10b981;
-    --coor-accent-bright: #34d399;
-    --coor-accent-glow: rgba(52, 211, 153, 0.3);
-    --coor-text-main: #f0fdf4;
-    --coor-text-sub: #94a3b8;
-    --coor-text-muted: #64748b;
-    --coor-tab-active: #34d399;
-}
-
-/* ---------------- THEME: DEEP NEBULA ---------------- */
-.coordinator-app-container.theme-nebula {
-    --coor-bg: #080816;
-    --coor-surface: #10112a;
-    --coor-surface-trans: rgba(16, 17, 42, 0.88);
-    --coor-card-bg: rgba(22, 24, 58, 0.75);
-    --coor-card-border: rgba(139, 92, 246, 0.3);
-    --coor-accent: #8b5cf6;
-    --coor-accent-bright: #a78bfa;
-    --coor-accent-glow: rgba(167, 139, 250, 0.3);
-    --coor-text-main: #f5f3ff;
-    --coor-text-sub: #94a3b8;
-    --coor-text-muted: #64748b;
-    --coor-tab-active: #c084fc;
+    --coor-tab-active: #00f0ff;
+    --coor-pill-bg: rgba(255, 255, 255, 0.06);
+    --coor-bottom-nav-bg: #090e1a;
+    --coor-bottom-nav-border: rgba(255, 255, 255, 0.08);
+    --coor-card-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+    /* Logo box theming */
+    --coor-logo-box-bg: #000000;
+    --coor-logo-box-border: rgba(255, 255, 255, 0.22);
+    --coor-logo-box-shadow: 0 0 10px rgba(251, 191, 36, 0.25);
+    --coor-header-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* ---------------- BASE APP LAYOUT ---------------- */
@@ -104,7 +110,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 6px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--coor-header-shadow, 0 2px 12px rgba(0, 0, 0, 0.08));
 }
 
 .coor-header-brand {
@@ -113,20 +119,21 @@
     gap: 8px;
     text-decoration: none;
     min-width: 0;
-    flex-shrink: 1;
+    flex: 1;
+    overflow: hidden;
 }
 
 .coor-header-logo-box {
     width: 38px;
     height: 34px;
     border-radius: 8px;
-    background: #000000;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: var(--coor-logo-box-bg, #f0f4ff);
+    border: 1px solid var(--coor-logo-box-border, rgba(2, 132, 199, 0.25));
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2px 4px;
-    box-shadow: 0 0 10px rgba(251, 191, 36, 0.25);
+    box-shadow: var(--coor-logo-box-shadow, 0 0 8px rgba(2, 132, 199, 0.18));
     flex-shrink: 0;
 }
 
@@ -136,12 +143,26 @@
     object-fit: contain;
 }
 
+.coor-brand-text-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
 .coor-brand-title {
     font-family: var(--coor-display-font);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.8px;
     color: var(--coor-text-main);
+    -webkit-text-fill-color: currentColor;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
+    text-shadow: none !important;
     margin: 0;
     line-height: 1.2;
     white-space: nowrap;
@@ -151,8 +172,8 @@
 
 .coor-brand-sub {
     font-size: 9px;
-    color: var(--coor-accent-bright);
-    font-weight: 600;
+    color: var(--coor-accent);
+    font-weight: 700;
     letter-spacing: 0.4px;
     margin: 0;
     white-space: nowrap;
@@ -189,26 +210,71 @@
     border-radius: 50%;
 }
 
-/* Theme Selector Pill */
-.coor-theme-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--coor-card-border);
-    color: var(--coor-text-main);
-    border-radius: 14px;
-    padding: 3px 6px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+/* Compact Theme Toggle Button (Switch only - eliminates text label overlap) */
+.coor-theme-switch-btn {
+    background: transparent;
+    border: none;
+    padding: 2px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    border-radius: 20px;
     flex-shrink: 0;
-    white-space: nowrap;
+    user-select: none;
 }
 
-.coor-theme-btn:active {
-    transform: scale(0.96);
-    background: var(--coor-accent-glow);
+.coor-theme-switch-btn:hover {
+    opacity: 0.9;
+}
+
+.coor-theme-switch-btn .theme-switch-track {
+    width: 36px;
+    height: 20px;
+    border-radius: 12px;
+    background: #cbd5e1;
+    position: relative;
+    transition: background 0.25s ease;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.coor-theme-switch-btn .theme-switch-track.dark {
+    background: #0284c7;
+}
+
+.coor-theme-switch-btn .theme-switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s ease;
+}
+
+.coor-theme-switch-btn .theme-switch-track.dark .theme-switch-thumb {
+    transform: translateX(16px);
+    background: #070b14;
+}
+
+.theme-switch-thumb-icon {
+    font-size: 8.5px;
+}
+
+.theme-switch-track.light .theme-switch-thumb-icon {
+    color: #f59e0b;
+}
+
+.theme-switch-track.dark .theme-switch-thumb-icon {
+    color: #38bdf8;
 }
 
 .coor-logout-btn {
@@ -321,6 +387,12 @@
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--coor-text-main);
+    -webkit-text-fill-color: currentColor;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
+    text-shadow: none !important;
     margin: 0 0 4px 0;
 }
 
@@ -556,3 +628,93 @@
         transform: translateY(0);
     }
 }
+
+/* ---------------- LIGHT THEME OVERRIDES ---------------- */
+/* Light Theme Brand Logo - Clean white box, no glow */
+.coordinator-app-container.theme-light .coor-header-logo-box {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    width: 42px !important;
+    height: 36px !important;
+    padding: 3px 5px !important;
+    border-radius: 8px !important;
+}
+
+.coordinator-app-container.theme-light .coor-header-logo-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+/* Suppress ambient background glow in light mode */
+.coordinator-app-container.theme-light::before {
+    display: none !important;
+}
+
+.coordinator-app-container.theme-light .coor-brand-title,
+.coordinator-app-container.theme-light .coor-auth-heading,
+.coordinator-app-container.theme-light h1,
+.coordinator-app-container.theme-light h2 {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    text-shadow: none !important;
+    animation: none !important;
+    font-weight: 900 !important;
+    opacity: 1 !important;
+}
+
+.coordinator-app-container.theme-light .coor-brand-sub {
+    color: #1d4ed8 !important;
+    -webkit-text-fill-color: #1d4ed8 !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+}
+
+.coordinator-app-container.theme-light .coor-auth-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.coordinator-app-container.theme-light .coor-auth-logo-frame {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
+    width: 160px !important;
+    height: 64px !important;
+    padding: 8px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.coordinator-app-container.theme-light .coor-auth-logo-img {
+    width: auto !important;
+    max-width: 160px !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+.coordinator-app-container.theme-light .coor-input-field {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+}
+
+.coordinator-app-container.theme-light .coor-input-field:focus {
+    background: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.coordinator-app-container.theme-light .coor-auth-submit-btn {
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+

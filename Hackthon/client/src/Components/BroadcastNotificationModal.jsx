@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
     FaBroadcastTower, FaTimes, FaPaperPlane, FaBell, FaUsers, 
     FaShieldAlt, FaRocket, FaExclamationTriangle, FaUtensils, 
@@ -121,11 +122,100 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
         }
     };
 
-    return (
-        <div className={`broadcast-modal-backdrop ${theme}`}>
-            <div className="broadcast-modal-dialog">
+    const isLight = theme === 'theme-light';
+
+    const getTargetBtnStyle = (tKey) => {
+        const isActive = target === tKey;
+        return {
+            padding: '8px 6px',
+            borderRadius: '10px',
+            border: isActive ? '1px solid #0284c7' : (isLight ? '1px solid #e2e8f0' : '1px solid #334155'),
+            background: isActive ? '#0284c7' : (isLight ? '#f8fafc' : '#1e293b'),
+            color: isActive ? '#ffffff' : (isLight ? '#475569' : '#94a3b8'),
+            fontSize: '11px',
+            fontWeight: 700,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            cursor: 'pointer',
+            boxSizing: 'border-box'
+        };
+    };
+
+    const getCatPillStyle = (cKey) => {
+        const isActive = category === cKey;
+        let activeBg = isLight ? '#0f172a' : '#0284c7';
+        if (cKey === 'urgent') activeBg = '#ef4444';
+        if (cKey === 'meal') activeBg = '#10b981';
+
+        return {
+            padding: '5px 11px',
+            borderRadius: '20px',
+            border: isActive ? `1px solid ${activeBg}` : (isLight ? '1px solid #e2e8f0' : '1px solid #334155'),
+            background: isActive ? activeBg : (isLight ? '#f8fafc' : '#1e293b'),
+            color: isActive ? '#ffffff' : (isLight ? '#475569' : '#94a3b8'),
+            fontSize: '11px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxSizing: 'border-box'
+        };
+    };
+
+    const modalContent = (
+        <div 
+            className={`broadcast-modal-backdrop ${theme}`}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100vw',
+                height: '100vh',
+                height: '100dvh',
+                zIndex: 999999,
+                backgroundColor: 'rgba(15, 23, 42, 0.78)',
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '14px',
+                boxSizing: 'border-box'
+            }}
+        >
+            <div 
+                className="broadcast-modal-dialog"
+                style={{
+                    backgroundColor: isLight ? '#ffffff' : '#0f172a',
+                    color: isLight ? '#0f172a' : '#f8fafc',
+                    borderRadius: '20px',
+                    maxWidth: '540px',
+                    width: '100%',
+                    maxHeight: '90vh',
+                    maxHeight: '90dvh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                    boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35)',
+                    border: isLight ? '1px solid #e2e8f0' : '1px solid rgba(255, 255, 255, 0.15)',
+                    boxSizing: 'border-box'
+                }}
+            >
                 {/* Modal Top Header */}
-                <div className="bcast-modal-header">
+                <div 
+                    className="bcast-modal-header"
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        padding: '16px 18px',
+                        borderBottom: isLight ? '1px solid #f1f5f9' : '1px solid #1e293b',
+                        background: isLight ? '#fafafa' : '#0b1120'
+                    }}
+                >
                     <div className="bcast-header-title-flex">
                         <div className="bcast-icon-pulse">
                             <FaBroadcastTower />
@@ -143,7 +233,17 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                     </button>
                 </div>
 
-                <div className="bcast-modal-body">
+                <div 
+                    className="bcast-modal-body"
+                    style={{
+                        overflowY: 'auto',
+                        padding: '16px 18px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        boxSizing: 'border-box'
+                    }}
+                >
                     {/* Broadcast Form */}
                     <form onSubmit={handleBroadcast} className="bcast-form">
                         {/* 1. Target Audience Selector */}
@@ -154,6 +254,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-target-btn ${target === 'all' ? 'active' : ''}`}
                                     onClick={() => setTarget('all')}
+                                    style={getTargetBtnStyle('all')}
                                 >
                                     <FaUsers />
                                     <span>All Fest (Everyone)</span>
@@ -162,6 +263,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-target-btn ${target === 'coordinator' ? 'active' : ''}`}
                                     onClick={() => setTarget('coordinator')}
+                                    style={getTargetBtnStyle('coordinator')}
                                 >
                                     <FaShieldAlt />
                                     <span>Coordinators Only</span>
@@ -170,6 +272,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-target-btn ${target === 'participant' ? 'active' : ''}`}
                                     onClick={() => setTarget('participant')}
+                                    style={getTargetBtnStyle('participant')}
                                 >
                                     <FaRocket />
                                     <span>Participants Only</span>
@@ -185,6 +288,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-cat-pill ${category === 'announcement' ? 'active' : ''}`}
                                     onClick={() => setCategory('announcement')}
+                                    style={getCatPillStyle('announcement')}
                                 >
                                     📢 Announcement
                                 </button>
@@ -192,6 +296,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-cat-pill urgent ${category === 'urgent' ? 'active' : ''}`}
                                     onClick={() => setCategory('urgent')}
+                                    style={getCatPillStyle('urgent')}
                                 >
                                     🚨 Urgent Alert
                                 </button>
@@ -199,6 +304,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-cat-pill meal ${category === 'meal' ? 'active' : ''}`}
                                     onClick={() => setCategory('meal')}
+                                    style={getCatPillStyle('meal')}
                                 >
                                     🍱 Food / Mess
                                 </button>
@@ -206,6 +312,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-cat-pill ${category === 'schedule' ? 'active' : ''}`}
                                     onClick={() => setCategory('schedule')}
+                                    style={getCatPillStyle('schedule')}
                                 >
                                     ⏱️ Schedule Shift
                                 </button>
@@ -213,6 +320,7 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                     type="button"
                                     className={`bcast-cat-pill ${category === 'general' ? 'active' : ''}`}
                                     onClick={() => setCategory('general')}
+                                    style={getCatPillStyle('general')}
                                 >
                                     ℹ️ General Info
                                 </button>
@@ -230,6 +338,17 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                 onChange={(e) => setTitle(e.target.value)}
                                 maxLength={80}
                                 required
+                                style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    borderRadius: '10px',
+                                    border: isLight ? '1px solid #cbd5e1' : '1px solid #334155',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    color: isLight ? '#0f172a' : '#f8fafc',
+                                    background: isLight ? '#ffffff' : '#1e293b',
+                                    boxSizing: 'border-box'
+                                }}
                             />
                         </div>
 
@@ -244,29 +363,93 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                                 onChange={(e) => setMessage(e.target.value)}
                                 maxLength={300}
                                 required
+                                style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    borderRadius: '10px',
+                                    border: isLight ? '1px solid #cbd5e1' : '1px solid #334155',
+                                    fontSize: '13px',
+                                    lineHeight: '1.45',
+                                    color: isLight ? '#0f172a' : '#f8fafc',
+                                    background: isLight ? '#ffffff' : '#1e293b',
+                                    resize: 'none',
+                                    boxSizing: 'border-box'
+                                }}
                             />
                             <div className="bcast-char-count">{message.length}/300</div>
                         </div>
 
                         {/* 5. Mobile Phone Preview */}
-                        <div className="bcast-preview-card">
+                        <div 
+                            className="bcast-preview-card"
+                            style={{
+                                background: isLight ? '#f8fafc' : '#1e293b',
+                                border: isLight ? '1px solid #e2e8f0' : '1px solid #334155',
+                                borderRadius: '14px',
+                                padding: '12px',
+                                boxSizing: 'border-box'
+                            }}
+                        >
                             <div className="bcast-preview-header">
                                 <FaMobileAlt />
                                 <span>LIVE PHONE NOTIFICATION PREVIEW</span>
                             </div>
-                            <div className="bcast-preview-banner">
-                                <div className="bcast-preview-app-icon">
-                                    <img src={navonmeshLogo} alt="Navonmesh" />
+                            <div 
+                                className="bcast-preview-banner"
+                                style={{
+                                    background: isLight ? '#ffffff' : '#0f172a',
+                                    border: isLight ? '1px solid #cbd5e1' : '1px solid #334155',
+                                    borderRadius: '12px',
+                                    padding: '10px 12px',
+                                    display: 'flex',
+                                    alignItems: 'flex-start',
+                                    gap: '10px',
+                                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+                                    boxSizing: 'border-box'
+                                }}
+                            >
+                                <div 
+                                    className="bcast-preview-app-icon"
+                                    style={{
+                                        width: '36px',
+                                        minWidth: '36px',
+                                        maxWidth: '36px',
+                                        height: '36px',
+                                        minHeight: '36px',
+                                        maxHeight: '36px',
+                                        overflow: 'hidden',
+                                        flexShrink: 0,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        background: '#f1f5f9',
+                                        borderRadius: '8px',
+                                        padding: '3px',
+                                        boxSizing: 'border-box'
+                                    }}
+                                >
+                                    <img 
+                                        src={navonmeshLogo} 
+                                        alt="Navonmesh" 
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            maxWidth: '100%',
+                                            maxHeight: '100%',
+                                            objectFit: 'contain',
+                                            display: 'block'
+                                        }}
+                                    />
                                 </div>
-                                <div className="bcast-preview-text">
+                                <div className="bcast-preview-text" style={{ flex: 1, minWidth: 0 }}>
                                     <div className="bcast-preview-top-line">
                                         <strong className="bcast-preview-app-name">NAVONMESH MITRA</strong>
                                         <span className="bcast-preview-time">Just now</span>
                                     </div>
-                                    <h5 className="bcast-preview-title">
+                                    <h5 className="bcast-preview-title" style={{ color: isLight ? '#0f172a' : '#f8fafc' }}>
                                         {title || 'Notification Title Preview'}
                                     </h5>
-                                    <p className="bcast-preview-body">
+                                    <p className="bcast-preview-body" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
                                         {message || 'Your custom message will appear here on every recipient phone in real time.'}
                                     </p>
                                     <div className="bcast-preview-tags">
@@ -294,6 +477,25 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
                             type="submit"
                             className="bcast-submit-btn"
                             disabled={sending || !title.trim() || !message.trim()}
+                            style={{
+                                width: '100%',
+                                padding: '12px 16px',
+                                borderRadius: '12px',
+                                border: 'none',
+                                background: 'linear-gradient(135deg, #0284c7, #0369a1)',
+                                color: '#ffffff',
+                                fontSize: '13px',
+                                fontWeight: 800,
+                                letterSpacing: '0.6px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                cursor: (sending || !title.trim() || !message.trim()) ? 'not-allowed' : 'pointer',
+                                opacity: (sending || !title.trim() || !message.trim()) ? 0.6 : 1,
+                                boxShadow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+                                boxSizing: 'border-box'
+                            }}
                         >
                             <FaPaperPlane />
                             <span>
@@ -347,6 +549,11 @@ const BroadcastNotificationModal = ({ isOpen, onClose, adminUser, theme = 'theme
             </div>
         </div>
     );
+
+    if (typeof document !== 'undefined') {
+        return createPortal(modalContent, document.body);
+    }
+    return modalContent;
 };
 
 export default BroadcastNotificationModal;

@@ -223,18 +223,20 @@ const CoordinatorApp = () => {
         ? { background: '#ffffff', border: '1px solid #cbd5e1', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', borderRadius: '8px', padding: '3px 5px', width: '42px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }
         : { background: '#000000', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 0 10px rgba(251,191,36,0.2)', borderRadius: '8px', padding: '3px 5px', width: '42px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
 
+    // Early return during splash screen to guarantee nothing renders underneath
+    if (showSplash) {
+        return (
+            <NavonmeshAppSplash 
+                theme={theme} 
+                onFinish={() => setShowSplash(false)} 
+            />
+        );
+    }
+
     return (
         <div className={`coordinator-app-container ${theme}`}>
-            {/* BLINKIT-STYLE APP OPENING SPLASH */}
-            {showSplash && (
-                <NavonmeshAppSplash 
-                    theme={theme} 
-                    onFinish={() => setShowSplash(false)} 
-                />
-            )}
-
             {/* FIRST-TIME DEVICE PERMISSIONS REQUEST MODAL */}
-            {!showSplash && showPermissionsModal && (
+            {showPermissionsModal && (
                 <AppPermissionsModal 
                     theme={theme} 
                     onComplete={() => setShowPermissionsModal(false)} 

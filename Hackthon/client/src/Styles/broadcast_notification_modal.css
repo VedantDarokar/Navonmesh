@@ -293,22 +293,31 @@
 }
 
 .bcast-preview-app-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    border-radius: 8px !important;
     background: #f1f5f9;
     border: 1px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    flex-shrink: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3px !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
 }
 
 .bcast-preview-app-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
 }
 
 .bcast-preview-text {

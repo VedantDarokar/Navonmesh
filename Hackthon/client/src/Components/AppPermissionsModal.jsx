@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FaBell, FaFolderOpen, FaCheckCircle, FaShieldAlt, FaTimes } from 'react-icons/fa';
 import '../Styles/app_permissions_modal.css';
 import navonmeshLogo from '../assets/navonmesh_official_logo.png';
@@ -49,17 +50,79 @@ const AppPermissionsModal = ({ onComplete, theme = 'theme-light' }) => {
         if (onComplete) onComplete();
     };
 
-    return (
-        <div className={`perm-modal-backdrop ${theme}`}>
-            <div className="perm-modal-card">
+    const isLight = theme === 'theme-light';
+
+    const modalContent = (
+        <div 
+            className={`perm-modal-backdrop ${theme}`}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: '100vw',
+                height: '100vh',
+                height: '100dvh',
+                zIndex: 999999,
+                backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '16px',
+                boxSizing: 'border-box'
+            }}
+        >
+            <div 
+                className="perm-modal-card"
+                style={{
+                    backgroundColor: isLight ? '#ffffff' : '#0f172a',
+                    color: isLight ? '#0f172a' : '#f8fafc',
+                    borderRadius: '20px',
+                    maxWidth: '440px',
+                    width: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    boxSizing: 'border-box'
+                }}
+            >
                 <button className="perm-skip-btn" onClick={handleSkip} title="Skip for now">
                     <FaTimes />
                 </button>
 
                 {/* Header with App Logo */}
                 <div className="perm-header">
-                    <div className="perm-logo-circle">
-                        <img src={navonmeshLogo} alt="Navonmesh Logo" className="perm-logo-img" />
+                    <div 
+                        className="perm-logo-circle"
+                        style={{
+                            width: '56px',
+                            maxWidth: '56px',
+                            height: '56px',
+                            maxHeight: '56px',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '6px',
+                            margin: '0 auto 12px auto',
+                            boxSizing: 'border-box',
+                            background: isLight ? '#f1f5f9' : '#1e293b'
+                        }}
+                    >
+                        <img 
+                            src={navonmeshLogo} 
+                            alt="Navonmesh Logo" 
+                            className="perm-logo-img" 
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                width: 'auto',
+                                height: 'auto',
+                                objectFit: 'contain',
+                                display: 'block'
+                            }}
+                        />
                     </div>
                     <div className="perm-tag">
                         <FaShieldAlt /> OFFICIAL FEST COMPANION
@@ -133,10 +196,14 @@ const AppPermissionsModal = ({ onComplete, theme = 'theme-light' }) => {
 
                 <p className="perm-privacy-footer">
                     🔒 Your privacy is protected. Permissions can be changed anytime in device settings.
-                </p>
             </div>
         </div>
     );
+
+    if (typeof document !== 'undefined') {
+        return createPortal(modalContent, document.body);
+    }
+    return modalContent;
 };
 
 export default AppPermissionsModal;

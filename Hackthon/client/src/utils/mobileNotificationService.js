@@ -1,9 +1,11 @@
 import { Capacitor } from '@capacitor/core';
-import { PushNotifications } from '@capacitor/push-notifications';
-import { LocalNotifications } from '@capacitor/local-notifications';
 import { getApiUrl } from './apiConfig';
 
 const HIGH_PRIORITY_CHANNEL_ID = 'navonmesh_alerts';
+
+// Safely access Capacitor native plugins from the global runtime bridge
+const getPushPlugin = () => Capacitor.Plugins?.PushNotifications;
+const getLocalPlugin = () => Capacitor.Plugins?.LocalNotifications;
 
 /**
  * Creates high-priority notification channels in Android.
@@ -11,6 +13,8 @@ const HIGH_PRIORITY_CHANNEL_ID = 'navonmesh_alerts';
  */
 export async function setupNotificationChannels() {
     if (!Capacitor.isNativePlatform()) return;
+    const LocalNotifications = getLocalPlugin();
+    if (!LocalNotifications?.createChannel) return;
 
     try {
         await LocalNotifications.createChannel({
@@ -70,50 +74,56 @@ export async function initMobileNotifications({ userRole = 'coordinator', userId
         // 2. Configure Android Heads-Up Channel
         await setupNotificationChannels();
 
-        // 3. Request Local & Push notification permissions
-        let localPerm = await LocalNotifications.requestPermissions();
-        let pushPerm = await PushNotifications.requestPermissions();
+        const LocalNotifications = getLocalPlugin();
+        const PushNotifications = getPushPlugin();
 
-        console.log('[NotificationService] Permissions:', { local: localPerm.display, push: pushPerm.receive });
-
-        if (pushPerm.receive === 'granted') {
-            // Register with Google Play Services / FCM
-            await PushNotifications.register();
+        if (LocalNotifications?.requestPermissions) {
+            try {
+                await LocalNotifications.requestPermissions();
+            } catch (e) {}
         }
 
-        // Listen for successful token registration
-        PushNotifications.removeAllListeners();
+        if (PushNotifications) {
+            let pushPerm = await PushNotifications.requestPermissions();
+            if (pushPerm?.receive === 'granted') {
+                // Register with Google Play Services / FCM
+                await PushNotifications.register();
+            }
 
-        PushNotifications.addListener('registration', async (token) => {
-            console.log('[NotificationService] Device Push Token received:', token.value);
-            localStorage.setItem('navonmesh_fcm_token', token.value);
-            await sendTokenToBackend(token.value, userRole, userId);
-        });
+            // Listen for successful token registration
+            PushNotifications.removeAllListeners();
 
-        PushNotifications.addListener('registrationError', (error) => {
-            console.warn('[NotificationService] FCM Registration error:', error);
-        });
-
-        // Heads-up popup when notification arrives in foreground
-        PushNotifications.addListener('pushNotificationReceived', async (notification) => {
-            console.log('[NotificationService] Push notification received in app:', notification);
-            
-            // Trigger heads-up popup banner locally
-            await showLocalHeadsUpNotification({
-                title: notification.title || 'Navonmesh Alert',
-                body: notification.body || '',
-                id: Date.now() % 100000,
-                extra: notification.data
+            PushNotifications.addListener('registration', async (token) => {
+                console.log('[NotificationService] Device Push Token received:', token.value);
+                localStorage.setItem('navonmesh_fcm_token', token.value);
+                await sendTokenToBackend(token.value, userRole, userId);
             });
 
-            if (onReceived) onReceived(notification);
-        });
+            PushNotifications.addListener('registrationError', (error) => {
+                console.warn('[NotificationService] FCM Registration error:', error);
+            });
 
-        // Action when user taps the popup banner on their home screen or status bar
-        PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
-            console.log('[NotificationService] User tapped notification banner:', action);
-            if (onClicked) onClicked(action.notification);
-        });
+            // Heads-up popup when notification arrives in foreground
+            PushNotifications.addListener('pushNotificationReceived', async (notification) => {
+                console.log('[NotificationService] Push notification received in app:', notification);
+                
+                // Trigger heads-up popup banner locally
+                await showLocalHeadsUpNotification({
+                    title: notification.title || 'Navonmesh Alert',
+                    body: notification.body || '',
+                    id: Date.now() % 100000,
+                    extra: notification.data
+                });
+
+                if (onReceived) onReceived(notification);
+            });
+
+            // Action when user taps the popup banner on their home screen or status bar
+            PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+                console.log('[NotificationService] User tapped notification banner:', action);
+                if (onClicked) onClicked(action.notification);
+            });
+        }
 
     } catch (err) {
         console.warn('[NotificationService] Mobile notification initialization failed:', err);
@@ -126,28 +136,31 @@ export async function initMobileNotifications({ userRole = 'coordinator', userId
  */
 export async function showLocalHeadsUpNotification({ title, body, id = null, extra = {} }) {
     if (Capacitor.isNativePlatform()) {
-        try {
-            await setupNotificationChannels();
-            const notifId = id || (Date.now() % 100000);
+        const LocalNotifications = getLocalPlugin();
+        if (LocalNotifications?.schedule) {
+            try {
+                await setupNotificationChannels();
+                const notifId = id || (Date.now() % 100000);
 
-            await LocalNotifications.schedule({
-                notifications: [
-                    {
-                        title: title,
-                        body: body,
-                        id: notifId,
-                        channelId: HIGH_PRIORITY_CHANNEL_ID,
-                        sound: 'beep.wav',
-                        smallIcon: 'ic_launcher',
-                        largeIcon: 'ic_launcher',
-                        extra: extra,
-                        schedule: { at: new Date(Date.now() + 100) } // instant
-                    }
-                ]
-            });
-            return;
-        } catch (err) {
-            console.warn('[NotificationService] LocalNotifications schedule failed:', err);
+                await LocalNotifications.schedule({
+                    notifications: [
+                        {
+                            title: title,
+                            body: body,
+                            id: notifId,
+                            channelId: HIGH_PRIORITY_CHANNEL_ID,
+                            sound: 'beep.wav',
+                            smallIcon: 'ic_launcher',
+                            largeIcon: 'ic_launcher',
+                            extra: extra,
+                            schedule: { at: new Date(Date.now() + 100) } // instant
+                        }
+                    ]
+                });
+                return;
+            } catch (err) {
+                console.warn('[NotificationService] LocalNotifications schedule failed:', err);
+            }
         }
     }
 

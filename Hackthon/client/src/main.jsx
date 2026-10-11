@@ -9,6 +9,7 @@ import './Styles/breakTimer.css'
 import './Styles/navonmesh_splash.css'
 import './Styles/app_permissions_modal.css'
 import './Styles/broadcast_notification_modal.css'
+import './Styles/pass_save_modal.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(

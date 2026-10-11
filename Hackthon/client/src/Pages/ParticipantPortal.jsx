@@ -10,6 +10,8 @@ import { getApiUrl } from '../utils/apiConfig';
 import QRCode from 'qrcode';
 import { io } from 'socket.io-client';
 import { initMobileNotifications, showLocalHeadsUpNotification } from '../utils/mobileNotificationService';
+import PassSaveModal from '../Components/PassSaveModal';
+import { savePassImage } from '../utils/passSaver';
 
 // Official Problem Statements List (Restricted to 3 Tracks as requested)
 const OFFICIAL_PROBLEM_STATEMENTS = [
@@ -40,6 +42,15 @@ const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
     const [passesData, setPassesData] = useState(null);
     const [passesLoading, setPassesLoading] = useState(false);
     const [passesError, setPassesError] = useState('');
+
+    // Modal state for viewing, sharing, and saving pass to Gallery / Photos
+    const [selectedPassModal, setSelectedPassModal] = useState({
+        isOpen: false,
+        passDataUrl: '',
+        passFile: null,
+        participantName: '',
+        fileName: ''
+    });
 
     // Timeline Selector (Default matches registered event)
     const [selectedTimelineEvent, setSelectedTimelineEvent] = useState(() => {
@@ -353,8 +364,7 @@ const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
 
         // QR Code
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
+        img.onload = async () => {
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
             ctx.roundRect(165, 290, 270, 270, 16);
@@ -372,10 +382,17 @@ const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
             ctx.fillText(`Registered Event: ${team?.event || 'National Tech Fest'}`, 300, 640);
             ctx.fillText(`Generated: ${new Date().toLocaleDateString('en-IN')}`, 300, 670);
 
-            const link = document.createElement('a');
-            link.download = `Pass_${participant.name.replace(/\s+/g, '_')}_${participant.participantId}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            const fileName = `Pass_${(participant.name || 'Member').replace(/\s+/g, '_')}_${participant.participantId || 'ID'}.png`;
+            const saveRes = await savePassImage(canvas, fileName, participant.name);
+
+            // Open PassSaveModal for visual confirmation, native Android Gallery sharing, and long-press saving
+            setSelectedPassModal({
+                isOpen: true,
+                passDataUrl: saveRes.dataUrl || canvas.toDataURL('image/png'),
+                passFile: saveRes.file || null,
+                participantName: participant.name,
+                fileName: fileName
+            });
         };
         img.src = participant.qrCodeUrl;
     };
@@ -1447,6 +1464,16 @@ const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
                     </div>
                 </div>
             )}
+
+            {/* Modal for saving pass to Android Gallery / Web Share / Direct Download */}
+            <PassSaveModal
+                isOpen={selectedPassModal.isOpen}
+                onClose={() => setSelectedPassModal(prev => ({ ...prev, isOpen: false }))}
+                passDataUrl={selectedPassModal.passDataUrl}
+                passFile={selectedPassModal.passFile}
+                participantName={selectedPassModal.participantName}
+                fileName={selectedPassModal.fileName}
+            />
         </div>
     );
 };

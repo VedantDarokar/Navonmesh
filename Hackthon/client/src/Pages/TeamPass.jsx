@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaQrcode, FaDownload, FaUtensils, FaUserShield, FaArrowLeft, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../Styles/team_pass.css';
+import PassSaveModal from '../Components/PassSaveModal';
+import { savePassImage } from '../utils/passSaver';
 
 const TeamPass = () => {
     const [loginId, setLoginId] = useState('');
@@ -8,6 +10,13 @@ const TeamPass = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [teamData, setTeamData] = useState(null);
+    const [selectedPassModal, setSelectedPassModal] = useState({
+        isOpen: false,
+        passDataUrl: '',
+        passFile: null,
+        participantName: '',
+        fileName: ''
+    });
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -89,8 +98,7 @@ const TeamPass = () => {
 
         // QR Code
         const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
+        img.onload = async () => {
             // White card for QR
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
@@ -110,11 +118,17 @@ const TeamPass = () => {
             ctx.fillText('Valid for 1 scan per meal slot (Breakfast, Lunch, Dinner)', 300, 665);
             ctx.fillText('Breakfast: 8-9:30 AM | Lunch: 11 AM-2 PM | Dinner: 7-9:30 PM', 300, 690);
 
-            // Trigger download
-            const a = document.createElement('a');
-            a.download = `MealPass_${participant.name.replace(/\s+/g, '_')}.png`;
-            a.href = canvas.toDataURL('image/png');
-            a.click();
+            const fileName = `MealPass_${(participant.name || 'Member').replace(/\s+/g, '_')}_${participant.participantId || 'ID'}.png`;
+            const saveRes = await savePassImage(canvas, fileName, participant.name);
+
+            // Open PassSaveModal for visual preview, native Android Gallery sharing & saving
+            setSelectedPassModal({
+                isOpen: true,
+                passDataUrl: saveRes.dataUrl || canvas.toDataURL('image/png'),
+                passFile: saveRes.file || null,
+                participantName: participant.name,
+                fileName: fileName
+            });
         };
         img.src = participant.qrCodeUrl;
     };
@@ -227,6 +241,16 @@ const TeamPass = () => {
                     </div>
                 </div>
             )}
+
+            {/* Modal for saving pass to Android Gallery / Web Share / Direct Download */}
+            <PassSaveModal
+                isOpen={selectedPassModal.isOpen}
+                onClose={() => setSelectedPassModal(prev => ({ ...prev, isOpen: false }))}
+                passDataUrl={selectedPassModal.passDataUrl}
+                passFile={selectedPassModal.passFile}
+                participantName={selectedPassModal.participantName}
+                fileName={selectedPassModal.fileName}
+            />
         </div>
     );
 };

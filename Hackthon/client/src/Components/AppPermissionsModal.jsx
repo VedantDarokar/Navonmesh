@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { FaBell, FaFolderOpen, FaCheckCircle, FaShieldAlt, FaTimes } from 'react-icons/fa';
 import '../Styles/app_permissions_modal.css';
 import navonmeshLogo from '../assets/navonmesh_official_logo.png';
+import { initMobileNotifications } from '../utils/mobileNotificationService';
 
 const AppPermissionsModal = ({ onComplete, theme = 'theme-light' }) => {
     const [requesting, setRequesting] = useState(false);
@@ -12,12 +13,15 @@ const AppPermissionsModal = ({ onComplete, theme = 'theme-light' }) => {
         setRequesting(true);
         setStatusMessage('Requesting system permissions...');
 
-        // 1. Request Notification Permission
+        // 1. Request Native Android / Web Notification Permission
         let notifGranted = false;
         try {
+            await initMobileNotifications();
             if ('Notification' in window) {
                 const permission = await Notification.requestPermission();
                 notifGranted = permission === 'granted';
+            } else {
+                notifGranted = true;
             }
         } catch (e) {
             console.warn('Notification permission error:', e);

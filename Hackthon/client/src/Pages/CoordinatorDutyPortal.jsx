@@ -14,6 +14,7 @@ import FoodScannerPage from './FoodScannerPage';
 import Admin from './Admin';
 import { io } from 'socket.io-client';
 import BroadcastNotificationModal from '../Components/BroadcastNotificationModal';
+import { initMobileNotifications, showLocalHeadsUpNotification } from '../utils/mobileNotificationService';
 
 const CoordinatorDutyPortal = ({ onLogout, theme = 'theme-light', onThemeToggle }) => {
     // 6 Main Tabs matching Mockup: 'hub' | 'scanner' | 'timer' | 'seats' | 'issues' | 'admin_full'
@@ -342,6 +343,9 @@ const CoordinatorDutyPortal = ({ onLogout, theme = 'theme-light', onThemeToggle 
         fetchMealStats();
         fetchNotifications();
 
+        // Initialize Native Android Push Notifications & Heads-Up Popup channel
+        initMobileNotifications({ userRole: 'coordinator' });
+
         let socket = null;
         try {
             socket = io(API_URL, { transports: ['websocket'] });
@@ -352,15 +356,13 @@ const CoordinatorDutyPortal = ({ onLogout, theme = 'theme-light', onThemeToggle 
                     setActiveNotificationToast(notif);
                     setTimeout(() => setActiveNotificationToast(null), 8000);
 
-                    // Trigger OS notification if allowed
-                    if ('Notification' in window && Notification.permission === 'granted') {
-                        try {
-                            new Notification(notif.title, {
-                                body: notif.message,
-                                icon: '/navonmesh_official_logo.png'
-                            });
-                        } catch (err) {}
-                    }
+                    // Trigger Android Native Heads-Up Popup (Drops down on mobile home screen)
+                    showLocalHeadsUpNotification({
+                        title: notif.title,
+                        body: notif.message,
+                        id: Date.now() % 100000,
+                        extra: { notifId: notif._id, target: notif.target }
+                    });
                 }
             });
 

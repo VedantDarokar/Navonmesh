@@ -10,6 +10,7 @@ const CommitteeMember = require('../models/CommitteeMember');
 const Recruitment = require('../models/Recruitment');
 const CoordinatorTask = require('../models/CoordinatorTask');
 const Notification = require('../models/Notification');
+const { sendFcmBroadcast } = require('../utils/fcmService');
 
 const coreMembersUtil = require('../utils/coreMembers');
 const accessControl = require('../utils/accessControl');
@@ -1295,6 +1296,11 @@ router.post('/broadcast-notification', async (req, res) => {
             io.emit('new-notification', notification);
             console.log(`[Socket] Notification broadcasted by ${cleanSenderId} to ${selectedTarget}: "${title}"`);
         }
+
+        // Dispatch Cloud Push to Android devices (triggers heads-up home screen popup even when closed)
+        sendFcmBroadcast(notification).catch(err => {
+            console.warn('[FCM Broadcast error]', err);
+        });
 
         res.json({
             success: true,

@@ -9,6 +9,7 @@ import '../Styles/participant_portal.css';
 import { getApiUrl } from '../utils/apiConfig';
 import QRCode from 'qrcode';
 import { io } from 'socket.io-client';
+import { initMobileNotifications, showLocalHeadsUpNotification } from '../utils/mobileNotificationService';
 
 // Official Problem Statements List (Restricted to 3 Tracks as requested)
 const OFFICIAL_PROBLEM_STATEMENTS = [
@@ -183,6 +184,9 @@ const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
         fetchLatestProfile();
         fetchNotifications();
 
+        // Initialize Native Android Push Notifications & Heads-Up Popup channel
+        initMobileNotifications({ userRole: 'participant', userId: teamData?.teamId });
+
         let socket = null;
         try {
             socket = io(API_URL, { transports: ['websocket'] });
@@ -193,15 +197,13 @@ const ParticipantPortal = ({ teamData, onLogout, theme = 'theme-light' }) => {
                     setActiveToast(notif);
                     setTimeout(() => setActiveToast(null), 8000);
 
-                    // Trigger device notification if granted
-                    if ('Notification' in window && Notification.permission === 'granted') {
-                        try {
-                            new Notification(notif.title, {
-                                body: notif.message,
-                                icon: '/navonmesh_official_logo.png'
-                            });
-                        } catch (err) {}
-                    }
+                    // Trigger Android Native Heads-Up Popup (Drops down on mobile home screen)
+                    showLocalHeadsUpNotification({
+                        title: notif.title,
+                        body: notif.message,
+                        id: Date.now() % 100000,
+                        extra: { notifId: notif._id, target: notif.target }
+                    });
                 }
             });
 

@@ -1,5 +1,5 @@
 {
-  "appId": "org.ssgmce.navonmesh.mitra",
+  "appId": "org.ssgmce.navonmesh.coordinator",
   "appName": "Navonmesh Mitra",
   "webDir": "dist",
   "server": {

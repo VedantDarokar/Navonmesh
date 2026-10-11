@@ -9,6 +9,25 @@
       "client_info": {
         "mobilesdk_app_id": "1:910511397408:android:0d46396515c416178eba45",
         "android_client_info": {
+          "package_name": "org.ssgmce.navonmesh.coordinator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7JLenrko0RNOkTPcJW4dNKjqGyKHF5eM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910511397408:android:0d46396515c416178eba45",
+        "android_client_info": {
           "package_name": "org.ssgmce.navonmesh.mitra"
         }
       },

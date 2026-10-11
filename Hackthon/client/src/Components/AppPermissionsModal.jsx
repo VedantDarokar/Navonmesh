@@ -63,7 +63,6 @@ const AppPermissionsModal = ({ onComplete, theme = 'theme-light' }) => {
                 bottom: 0,
                 width: '100vw',
                 height: '100vh',
-                height: '100dvh',
                 zIndex: 999999,
                 backgroundColor: 'rgba(15, 23, 42, 0.75)',
                 display: 'flex',
@@ -196,6 +195,7 @@ const AppPermissionsModal = ({ onComplete, theme = 'theme-light' }) => {
 
                 <p className="perm-privacy-footer">
                     🔒 Your privacy is protected. Permissions can be changed anytime in device settings.
+                </p>
             </div>
         </div>
     );
